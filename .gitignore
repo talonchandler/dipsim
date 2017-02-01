@@ -1,0 +1,20 @@
+# OSX
+*.DS_Store
+
+# Python
+*.pyc
+
+# PyPi
+dist/*
+pmst.egg-info/*
+
+# Docs
+docs/*
+
+# Results
+*png
+*pdf
+*asy
+*log
+*aux
+*dvi

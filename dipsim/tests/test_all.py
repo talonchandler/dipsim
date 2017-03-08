@@ -1,60 +1,63 @@
-import time; start = time.time(); print('Running...')
-from dipsim import dipole, exciter, detector, microscope
+from dipsim import fluorophore, illuminator, detector, microscope, stats, util
 import numpy as np
 import matplotlib.pyplot as plt
+import time; start = time.time(); print('Running...')
+import functools
 
-dip = dipole.Dipole(position=np.array([0, 0, 0]),
-                    orientation=np.array([1, 1, 1]),
-                    photon_yield=1)
+ill = illuminator.Illuminator(illum_type='kohler',
+                              optical_axis=np.array([0., 0., 1.]),
+                              f=1.0,
+                              bfp_rad=0.1,
+                              bfp_pol=np.array([0., 1., 0.]),
+                              bfp_n=64)
 
-e = exciter.Exciter(optic_axis=np.array([0, 0, 0]))
+det = detector.Detector(optical_axis=np.array([0, 0, 1]),
+                        na=1.5,
+                        n=1.5)
 
-det = detector.Detector(k=2*np.pi/(600e-9), na=1.0, n0=1.518, n1=1.0,
-                        optic_axis=np.array([0, 0, 1]),
-                        img_axis=np.array([1, 0, 0]),
-                        f_obj=3e-3,
-                        n_pixel=2**8,
-                        d_pixel=2./(2**8))
-
-# det = detector.Detector(k=1, n1=1,
-#                         optic_axis=np.array([1, 0, 0]),
-#                         img_axis=np.array([0, 0, 1]),
-#                         f_obj=1,
-#                         n_pixel=256,
-#                         d_pixel=10./256)
-
-m = microscope.Microscope(exciter=e,
+m = microscope.Microscope(illuminator=ill,
                           detector=det)
 
-start2 = time.time(); 
-m.calc_bfp(n_phi=256, n_theta=64, dipole=dip)
-m.calc_img()
-print('Calc time:', np.round(time.time() - start2, 2), 's')
+def my_micro(m, args):
+    theta = args[0]
+    phi = args[1]
+    
+    flu_dir = np.array([np.sin(theta)*np.cos(phi),
+                       np.sin(theta)*np.sin(phi),
+                       np.cos(theta)])
+    
+    flu = fluorophore.Fluorophore(position=np.array([0, 0, 0]),
+                                  mu_abs=flu_dir,
+                                  mu_em=flu_dir)
 
-m.plot_detector('z_det1.png')
+    I = m.calc_total_intensity([flu])
+    
+    n_photons = 1e6
+    return n_photons*I
 
-m.detector.optic_axis=np.array([1., 0, 0])
-m.detector.img_axis=np.array([0, 0, 1.])
-m.calc_bfp(n_phi=256, n_theta=64, dipole=dip)
-m.plot_detector('x_det1.png')
+my_pdf = functools.partial(my_micro, m)
 
-m.detector.optic_axis=np.array([1., 1., 1.])/np.sqrt(3)
-m.detector.img_axis=np.array([1.,-1.,0])/np.sqrt(2)
-m.calc_bfp(n_phi=256, n_theta=64, dipole=dip)
-m.plot_detector('oblique_det1.png')
+pdf = stats.Pdf(my_pdf, dist_type='poisson')
+#crlb = pdf.crlb([0.1, 2], [0.00001, 0.00001])
 
+# Calculate std_solid_angle
+def std_solid_angle(x0, dx):
+    var = pdf.crlb(x0, dx)
+    return np.sin(x0[0])*np.sqrt(var[0])*np.sqrt(var[1])
 
-m.detector.optic_axis=np.array([0, 0, 1.])
-m.detector.img_axis=np.array([1., 0, 0])
-dip.orientation = np.array([0, 0, 1])
-m.calc_bfp(n_phi=256, n_theta=64, dipole=dip)
-m.plot_detector('z_det2.png')
+# Calculate for each point
+n = 100
+tt, pp = np.meshgrid(np.linspace(0, np.pi, n), np.linspace(0, 2*np.pi, n))
+directions = np.stack((tt, pp))
+crlb_all = np.apply_along_axis(std_solid_angle, 0, directions, [0.00001, 0.00001])
+crlb = np.apply_along_axis(pdf.crlb, 0, directions, [0.00001, 0.00001])
+intensity = np.apply_along_axis(my_pdf, 0, directions) 
 
-m.detector.optic_axis=np.array([1., 0, 0])
-m.detector.img_axis=np.array([0, 0, 1.])
-m.calc_bfp(n_phi=256, n_theta=64, dipole=dip)
-m.plot_detector('x_det2.png')
-
+util.plot_sphere('solid.png', tt, pp, crlb_all)
+util.plot_sphere('theta.png', tt, pp, np.sqrt(crlb[0, :, :]))
+util.plot_sphere('phi.png', tt, pp, np.sqrt(crlb[1, :, :]))
+util.plot_sphere('intensity.png', tt, pp, intensity)
 
 print('Total time:', np.round(time.time() - start, 2), 's')
+
 

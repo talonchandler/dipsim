@@ -1,5 +1,15 @@
 import numpy as np
 
+def normalize(x):
+    """ 
+    Returns a normalized vector. Returns zero vector if input is zero.
+    """
+    len_x = np.linalg.norm(x)
+    if len_x == 0:
+        return x
+    else:
+        return x/len_x
+
 def rot_mat(theta, u):
     """
     Returns the rotation matrix that performs a right handed rotation by 

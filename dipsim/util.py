@@ -4,9 +4,11 @@ def rot_mat(theta, u):
     """
     Returns the rotation matrix that performs a right handed rotation by 
     angle theta about the vector u.
+
+    Reference: https://en.wikipedia.org/wiki/Rodrigues'_rotation_formula
     """
     u = u/np.linalg.norm(u)
-    K = np.array([[0, -u[2], u[1]], [u[2], 0, u[0]], [-u[1], u[0], 0]])
+    K = np.array([[0, -u[2], u[1]], [u[2], 0, -u[0]], [-u[1], u[0], 0]])
     return np.identity(3) + K*np.sin(theta) + np.dot(K, K)*(1 - np.cos(theta))
 
 def orthonormal_basis(v0):

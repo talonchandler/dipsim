@@ -1,11 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import functools
 
 class Microscope:
     """
-    A microscope is specified by its illumination path (an Illuminator object),
-    its detection path (a Detector object), and its fluorophores (a list of
-    Fluorophore objects).
+    A Microscope represents an experiment that collects a single frame of 
+    intensity data.  
+
+    A Microscope is specified by its illumination path (an Illuminator object),
+    and its detection path (a Detector object).
     """
     def __init__(self, illuminator, detector):
         self.illuminator = illuminator
@@ -16,7 +19,6 @@ class Microscope:
             f.mu_ind = f.mu_em*np.dot(f.mu_abs, self.illuminator.E_eff)
         
     def calc_total_intensity(self, fluorophores):
-        
         self.calc_induced_dipoles(fluorophores)
         # TODO Green's tensor integrated over area
         # For now sum over entire volume

@@ -44,13 +44,13 @@ class MultiFrameMicroscope:
         
         return solid_angle_std
 
-    def plot_solid_angle_min_std(self, filename, n=50):
-        tt, pp = np.meshgrid(np.linspace(0, np.pi, n),
-                             np.linspace(0, 2*np.pi, n))
-        directions = np.stack((tt, pp))
+    def plot_solid_angle_min_std(self, filename, n=50, display='save'):
+        directions = util.fibonacci_sphere(n)
+        print('Generating data for microscope: '+filename)
         min_std = np.apply_along_axis(self.calc_solid_angle_min_std,
-                                      0, directions)
-        util.plot_sphere(filename, tt, pp, min_std)
+                                      1, directions)
+        print('Plotting data for microscope: '+filename)
+        util.plot_sphere(filename, directions, min_std, display=display)
 
 class NFramePolScope(MultiFrameMicroscope):
     """
@@ -66,7 +66,6 @@ class NFramePolScope(MultiFrameMicroscope):
         det = detector.Detector(optical_axis=np.array([0, 0, 1]),
                                         na=1.5,
                                         n=1.5)
-
         # Changing illumination.
         m = []
         for n in range(self.n_frames):

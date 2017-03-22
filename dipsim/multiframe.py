@@ -25,7 +25,7 @@ class MultiFrameMicroscope:
         def ev_function(self, args):
             theta = args[0]
             phi = args[1]
-
+        
             flu_dir = np.array([np.sin(theta)*np.cos(phi),
                                np.sin(theta)*np.sin(phi),
                                np.cos(theta)])

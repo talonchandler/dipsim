@@ -56,124 +56,133 @@ def fibonacci_sphere(n):
 
     return np.array(pts)
 
-def plot_sphere(filename, directions, data, display='save'):
-    from glumpy import app, gl
-    from glumpy.graphics.text import FontManager
-    from glumpy.graphics.collections import TriangleCollection, PathCollection, GlyphCollection
-    from glumpy.transforms import Position, Trackball, Viewport
-    from glumpy.geometry import primitives
+def plot_sphere(filename, title, directions, data, display='save', random_colors=False, show_edges=False):
     from scipy.spatial import ConvexHull
-
-    # Shaders
-    vert = """
-    //attribute vec4 a_color;
-    varying vec4  v_color; 
-    void main()
-    {
-        fetch_uniforms();
-        v_color = a_color;
-        gl_Position = <transform(position)>;
-    }
-    """
-    frag = """
-    varying vec4 v_color;
-    void main(void)
-    {
-        gl_FragColor = v_color;
-    }
-    """
+    import vispy
+    from vispy import scene
+    from vispy.visuals.transforms import STTransform
+    from vispy.geometry import MeshData
     
-    # App Setup
-    n = 2000
-    app.use("glfw")
-    window = app.Window(color=(1,1,1,1), width=n, height=n)
+    # from vispy.gloo import Program
+    vispy.use('glfw')
+
+    canvas = scene.SceneCanvas(keys='interactive', bgcolor='white',
+                               size=(1000, 1000), show=True)
+
+    view = canvas.central_widget.add_view()
+    view.camera = 'turntable'
+    view.camera.azimuth = 135
     
-    @window.event
-    def on_draw(dt):
-        window.clear()
-        cells.draw()
-        #outlines.draw()
-        axes.draw()        
-        labels.draw()
-        if(display=='save'):
-            from glumpy.ext import png
-            framebuffer = np.zeros((window.height, window.width * 3),
-                                   dtype=np.uint8)
-            gl.glReadPixels(0, 0, window.width, window.height,
-                            gl.GL_RGB, gl.GL_UNSIGNED_BYTE, framebuffer)        
-            png.from_array(framebuffer, 'RGB').save(filename)
-
-    @window.event
-    def on_init():
-        transform.theta = 45
-        transform.phi = 135
-        transform.zoom = 16
-        
-        gl.glLineWidth(2)
-        gl.glEnable(gl.GL_DEPTH_TEST)
-        gl.glEnable(gl.GL_LINE_SMOOTH)
-
-    @window.event
-    def on_key_press(key, modifiers):
-        if key == app.window.key.SPACE:
-            on_init()
-
-    transform = Trackball(Position())            
-    viewport = Viewport(size=(1.0, 1.0))
-
-    # Setup Collections
-    cells = TriangleCollection("raw", user_dtype=[('a_color', (np.float32, 4), '!local', (0,0,0,1))], vertex=vert, fragment=frag, transform=transform)
-    outlines = PathCollection("raw", transform=transform, color='shared')
-    axes = PathCollection("raw", transform=transform, color='shared', viewport=viewport)    
-    labels = GlyphCollection(transform=transform)
 
     # Process Data
+    # Clean this!
     def tp2xyz(tp):
-        return [np.sin(tp[0])*np.cos(tp[1]),
-                np.sin(tp[0])*np.sin(tp[1]),
-                np.cos(tp[0])]
+        r = 0.8
+        return [r*np.sin(tp[0])*np.cos(tp[1]),
+                r*np.sin(tp[0])*np.sin(tp[1]),
+                r*np.cos(tp[0])]
     
     points = np.apply_along_axis(tp2xyz, 1, directions)
-    de = ConvexHull(points)
+    ch = ConvexHull(points)
+    mesh = MeshData(vertices=ch.points, faces=ch.simplices)
+
     data_norm = data/(2*np.percentile(data, 90))
-    
-    for i, simplex in enumerate(de.simplices):
-        def color_map(z):
-            return (.75+.25*z[0],.25+.75*z[0],.25+.75*z[0],1.0)
+    def color_map(z):
+        return (.75+.25*z[0],.25+.75*z[0],.25+.75*z[0],1.0)
 
-        z = np.expand_dims(data_norm[simplex], 1)
-        color = np.apply_along_axis(color_map, 1, z)
+    z = np.expand_dims(data_norm, 1)
+    color = np.apply_along_axis(color_map, 1, z)
+ 
+    # Random colors
+    if random_colors:
+        color = np.random.uniform(size=(mesh.get_vertices().shape[0], 4))
+        color[:,3] = 1
+
+    # Edges
+    if show_edges:
+        edge_color = 'black'
+    else:
+        edge_color = None
         
-        V = de.points[simplex]
-        I = np.zeros((len(V)-2,3))
-        I[:,1] = 1 + np.arange(len(I))
-        I[:,2] = 1 + I[:,1]
+    MySphere(parent=view.scene, radius=0.8, vertex_colors=color,
+                      edge_color=edge_color, mesh=mesh)
+    MyXYZAxis(parent=view.scene, origin=[1.5,0,1.5], length=0.3)
+    vispy.scene.Text(title, parent=view.scene, font_size=16, pos=(0,0,1.2))    
 
-        cells.append(V, I.ravel(), a_color=color)        
-        outlines.append(V, color=(0, 0, 0, 1), closed=True)
-
-    # Axes
-    X = np.array(([0.,0.,0.],[1.2,0.,0.]))
-    Y = np.array(([0.,0.,0.],[0.,1.2,0]))
-    Z = np.array(([0.,0.,0.],[0.,0.,1.2]))
-    axes.append(X, color=(0,0,0,1), closed=False)
-    axes.append(Y, color=(0,0,0,1), closed=False)
-    axes.append(Z, color=(0,0,0,1), closed=False)    
     
-    # Labels
-    font = FontManager.get("OpenSans-Regular.ttf")
-    scale = 0.002
-    labels.append('x', font, scale=scale, origin=(1.3,0,0), direction=(-1,1,0))
-    labels.append('y', font, scale=scale, origin=(0,1.3,0), direction=(-1,1,0))
-    labels.append('z', font, scale=scale, origin=(0,0,1.3), direction=(-1,1,0))
-    
-    window.attach(outlines["transform"])
-    window.attach(outlines["viewport"])
-    window.attach(axes["viewport"])
-    window.attach(labels["viewport"])    
-
     # Display
     if(display=='save'):
-        app.run(framecount=1)
+        import scipy.misc
+        scipy.misc.imsave(filename, canvas.render())
+        
     elif(display=='interact'):
-        app.run()
+        canvas.app.run()
+
+# MySphereVisual (move this to a separate file later)
+from vispy.geometry import create_sphere
+from vispy.visuals.mesh import MeshVisual
+from vispy.visuals import CompoundVisual
+from vispy.scene.visuals import create_visual_node
+
+class MySphereVisual(CompoundVisual):
+    
+    def __init__(self, radius=1.0, directions=None,
+                 edge_color='black', vertex_colors=None, mesh=None):
+        
+        self._mesh = MeshVisual(vertices=mesh.get_vertices(),
+                                faces=mesh.get_faces(),
+                                vertex_colors=vertex_colors)
+                                
+                                
+        if edge_color:
+            self._border = MeshVisual(vertices=mesh.get_vertices(),
+                                      faces=mesh.get_edges(),
+                                      color=edge_color, mode='lines')
+        else:
+            self._border = MeshVisual()
+
+        CompoundVisual.__init__(self, [self._mesh, self._border])
+        self.mesh.set_gl_state(polygon_offset_fill=True,
+                               polygon_offset=(1, 1), depth_test=True)
+
+    @property
+    def mesh(self):
+        """The vispy.visuals.MeshVisual that used to fil in.
+        """
+        return self._mesh
+
+    @property
+    def border(self):
+        """The vispy.visuals.MeshVisual that used to draw the border.
+        """
+        return self._border
+
+MySphere = create_visual_node(MySphereVisual)
+
+
+from vispy.visuals.line import LineVisual
+from vispy.visuals.text import TextVisual
+class MyXYZAxisVisual(CompoundVisual):
+    """
+    Simple 3D axis for indicating coordinate system orientation. Axes are
+    x=red, y=green, z=blue.
+    """
+    def __init__(self, origin=[0,0,0], length=1):
+        verts = origin + np.array([[0, 0, 0],
+                                   [length, 0, 0],
+                                   [0, 0, 0],
+                                   [0, length, 0],
+                                   [0, 0, 0],
+                                   [0, 0, length]])
+
+        line = LineVisual(pos=verts, color=np.array([0, 0, 0, 1]),
+                          connect='segments', method='gl')
+
+        x = TextVisual('x', font_size=12, pos=origin + np.array([1.25*length,0,0]))
+        y = TextVisual('y', font_size=12, pos=origin + np.array([0,1.25*length,0]))
+        z = TextVisual('z', font_size=12, pos=origin + np.array([0,0,1.25*length]))
+
+        CompoundVisual.__init__(self, [line, x, y, z])
+        
+
+MyXYZAxis = create_visual_node(MyXYZAxisVisual)        

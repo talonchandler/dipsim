@@ -44,13 +44,13 @@ class MultiFrameMicroscope:
         
         return solid_angle_std
 
-    def plot_solid_angle_min_std(self, filename, n=50, display='save'):
+    def plot_solid_angle_min_std(self, filename, title, n=50, display='save', random_colors=False, show_edges=False):
         directions = util.fibonacci_sphere(n)
         print('Generating data for microscope: '+filename)
         min_std = np.apply_along_axis(self.calc_solid_angle_min_std,
                                       1, directions)
         print('Plotting data for microscope: '+filename)
-        util.plot_sphere(filename, directions, min_std, display=display)
+        util.plot_sphere(filename, title, directions, min_std, display=display, random_colors=random_colors, show_edges=show_edges)
 
 class NFramePolScope(MultiFrameMicroscope):
     """
@@ -69,7 +69,7 @@ class NFramePolScope(MultiFrameMicroscope):
         # Changing illumination.
         m = []
         for n in range(self.n_frames):
-            theta = 2*np.pi*n/self.n_frames
+            theta = np.pi*n/self.n_frames
             bfp_pol = np.array([np.cos(theta), np.sin(theta), 0])
             ill = illuminator.Illuminator(illum_type='kohler',
                                           optical_axis=np.array([0., 0., 1.]),

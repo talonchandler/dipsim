@@ -5,7 +5,7 @@ import time; start = time.time(); print('Running...')
 
 for bfp_rad in np.arange(1, 7, 1):
     f = 10
-    bfp_n = 300
+    bfp_n = 100
 
     illx = illuminator.Illuminator(illum_type='kohler',
                                    optical_axis=np.array([0., 0., 1.]),
@@ -20,5 +20,5 @@ for bfp_rad in np.arange(1, 7, 1):
 
     m = microscope.Microscope(illuminator=illx, detector=det)
 
-    m.plot_intensities_from_single_fluorophore('intensity'+str(bfp_rad)+'.png', 'Intensity', n=5000, display='save')
-
+    m.plot_intensities_from_single_fluorophore('intensity'+str(bfp_rad)+'.png',
+                                               'Intensity', n=50000, interact=False, color_norm='linear')

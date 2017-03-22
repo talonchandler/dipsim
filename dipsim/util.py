@@ -1,4 +1,8 @@
+from dipsim import visuals
 import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
+import vispy
 
 def normalize(x):
     """ 
@@ -56,133 +60,83 @@ def fibonacci_sphere(n):
 
     return np.array(pts)
 
-def plot_sphere(filename, title, directions, data, display='save', random_colors=False, show_edges=False):
-    from scipy.spatial import ConvexHull
-    import vispy
-    from vispy import scene
-    from vispy.visuals.transforms import STTransform
-    from vispy.geometry import MeshData
+def tp2xyz(tp):
+    return [np.sin(tp[0])*np.cos(tp[1]),
+            np.sin(tp[0])*np.sin(tp[1]),
+            np.cos(tp[0])]
+
+def plot_sphere(filename, title, directions, data,
+                interact=False, color_norm='linear'):
     
-    # from vispy.gloo import Program
+    # Setup viewing window
     vispy.use('glfw')
-
-    canvas = scene.SceneCanvas(keys='interactive', bgcolor='white',
-                               size=(1000, 1000), show=True)
-
-    view = canvas.central_widget.add_view()
-    view.camera = 'turntable'
-    view.camera.azimuth = 135
+    canvas = vispy.scene.SceneCanvas(keys='interactive', bgcolor='white',
+                               size=(1000, 1000), show=interact)
+    my_cam = vispy.scene.cameras.turntable.TurntableCamera(fov=0, azimuth=135,
+                                                           scale_factor=2.05)
+    view = canvas.central_widget.add_view(camera=my_cam)
     
-
-    # Process Data
-    # Clean this!
-    def tp2xyz(tp):
-        r = 0.8
-        return [r*np.sin(tp[0])*np.cos(tp[1]),
-                r*np.sin(tp[0])*np.sin(tp[1]),
-                r*np.cos(tp[0])]
-    
+    # Convert spherical to cartesian
     points = np.apply_along_axis(tp2xyz, 1, directions)
-    ch = ConvexHull(points)
-    mesh = MeshData(vertices=ch.points, faces=ch.simplices)
 
-    data_norm = data/(2*np.percentile(data, 90))
-    def color_map(z):
-        return (.75+.25*z[0],.25+.75*z[0],.25+.75*z[0],1.0)
+    # Create mesh
+    import scipy.spatial
+    ch = scipy.spatial.ConvexHull(points)
+    mesh = vispy.geometry.MeshData(vertices=ch.points, faces=ch.simplices)
 
-    z = np.expand_dims(data_norm, 1)
-    color = np.apply_along_axis(color_map, 1, z)
- 
-    # Random colors
-    if random_colors:
-        color = np.random.uniform(size=(mesh.get_vertices().shape[0], 4))
-        color[:,3] = 1
-
-    # Edges
-    if show_edges:
-        edge_color = 'black'
-    else:
-        edge_color = None
+    # Find colors
+    cmap = matplotlib.cm.get_cmap('coolwarm')
+    data_ = np.expand_dims(data, 1)
+    if color_norm=='linear':
+        norm_data = data_/data_.max()
+        color = np.apply_along_axis(cmap, 1, norm_data)
+    elif color_norm=='log':
+        norm_data = np.log(data_)/np.log(data_).max()        
+        color = np.apply_along_axis(cmap, 1, norm_data)
         
-    MySphere(parent=view.scene, radius=0.8, vertex_colors=color,
-                      edge_color=edge_color, mesh=mesh)
-    MyXYZAxis(parent=view.scene, origin=[1.5,0,1.5], length=0.3)
-    vispy.scene.Text(title, parent=view.scene, font_size=16, pos=(0,0,1.2))    
-
+    # Plot dots
+    dots = vispy.scene.visuals.Markers(parent=view.scene)
+    dots.antialias = 0
+    dots.set_data(pos=np.array([[1.01,0,0],[0,1.01,0],[0,0,1.01]]),
+                  edge_color='black', face_color='black')
     
-    # Display
-    if(display=='save'):
-        import scipy.misc
-        scipy.misc.imsave(filename, canvas.render())
-        
-    elif(display=='interact'):
+    # Plot sphere
+    sphere = visuals.MySphere(parent=view.scene, radius=1.0,
+                              vertex_colors=color, mesh=mesh)
+    
+    # Display or save
+    if interact:
+        visuals.MyXYZAxis(parent=view.scene, origin=[0,1.3,-0.3], length=0.2)
         canvas.app.run()
-
-# MySphereVisual (move this to a separate file later)
-from vispy.geometry import create_sphere
-from vispy.visuals.mesh import MeshVisual
-from vispy.visuals import CompoundVisual
-from vispy.scene.visuals import create_visual_node
-
-class MySphereVisual(CompoundVisual):
-    
-    def __init__(self, radius=1.0, directions=None,
-                 edge_color='black', vertex_colors=None, mesh=None):
+    else:
+        im = canvas.render()
+        f = plt.figure(figsize=(5,5))
+        ax = plt.axes([0.0, 0, 0.9, 0.9]) # x, y, width, height
+        ax.axis('off')
+        ax.set_title(title, y=1.0)        
         
-        self._mesh = MeshVisual(vertices=mesh.get_vertices(),
-                                faces=mesh.get_faces(),
-                                vertex_colors=vertex_colors)
-                                
-                                
-        if edge_color:
-            self._border = MeshVisual(vertices=mesh.get_vertices(),
-                                      faces=mesh.get_edges(),
-                                      color=edge_color, mode='lines')
-        else:
-            self._border = MeshVisual()
+        # Colorbar
+        cax = plt.axes([0.95, 0.01, 0.025, 0.86])
+        if color_norm == 'linear':
+            norm = matplotlib.colors.Normalize(vmin=data.min(), vmax=data.max())
+            cmap = ax.imshow(im, interpolation='none', cmap='coolwarm', norm=norm)# vmin=0, vmax=data.max())
+            f.colorbar(cmap, cax=cax, orientation='vertical')
+        elif color_norm == 'log':
+            norm = matplotlib.colors.LogNorm(vmin=data.min(), vmax=data.max())
+            cmap = ax.imshow(im, interpolation='none', cmap='coolwarm', norm=norm)# vmin=0, vmax=data.max())
+            cb = f.colorbar(cmap, cax=cax, orientation='vertical')
+            cb.set_ticks([10**x for x in range(int(np.ceil(np.log10(data).min())), int(np.ceil(np.log10(data).max())))])
 
-        CompoundVisual.__init__(self, [self._mesh, self._border])
-        self.mesh.set_gl_state(polygon_offset_fill=True,
-                               polygon_offset=(1, 1), depth_test=True)
+        # Axis
+        length=0.1
+        center=np.array((0.925, 0.1))
+        angles = np.pi/2 + np.array((0, 2*np.pi/3, 4*np.pi/3))
+        labels = ('$z$', '$x$', '$y$')
+        for angle, label in zip(angles, labels):
+            end = center + np.array((length*np.cos(angle), length*np.sin(angle)))
+            ax.annotate(label,ha='center', va='center', xy=center, xytext=end,
+                        xycoords='axes fraction', 
+                        arrowprops=dict(arrowstyle="<-", shrinkA=0, shrinkB=0))
 
-    @property
-    def mesh(self):
-        """The vispy.visuals.MeshVisual that used to fil in.
-        """
-        return self._mesh
-
-    @property
-    def border(self):
-        """The vispy.visuals.MeshVisual that used to draw the border.
-        """
-        return self._border
-
-MySphere = create_visual_node(MySphereVisual)
-
-
-from vispy.visuals.line import LineVisual
-from vispy.visuals.text import TextVisual
-class MyXYZAxisVisual(CompoundVisual):
-    """
-    Simple 3D axis for indicating coordinate system orientation. Axes are
-    x=red, y=green, z=blue.
-    """
-    def __init__(self, origin=[0,0,0], length=1):
-        verts = origin + np.array([[0, 0, 0],
-                                   [length, 0, 0],
-                                   [0, 0, 0],
-                                   [0, length, 0],
-                                   [0, 0, 0],
-                                   [0, 0, length]])
-
-        line = LineVisual(pos=verts, color=np.array([0, 0, 0, 1]),
-                          connect='segments', method='gl')
-
-        x = TextVisual('x', font_size=12, pos=origin + np.array([1.25*length,0,0]))
-        y = TextVisual('y', font_size=12, pos=origin + np.array([0,1.25*length,0]))
-        z = TextVisual('z', font_size=12, pos=origin + np.array([0,0,1.25*length]))
-
-        CompoundVisual.__init__(self, [line, x, y, z])
-        
-
-MyXYZAxis = create_visual_node(MyXYZAxisVisual)        
+        # Save 
+        f.savefig(filename, dpi=500)

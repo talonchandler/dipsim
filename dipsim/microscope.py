@@ -18,7 +18,7 @@ class Microscope:
     def calc_induced_dipoles(self, fluorophores):
         for f in fluorophores:
             f.mu_ind = f.mu_em*np.dot(f.mu_abs, self.illuminator.E_eff)
-        
+
     def calc_total_intensity(self, fluorophores):
         self.calc_induced_dipoles(fluorophores)
         # TODO Green's tensor integrated over area
@@ -45,10 +45,10 @@ class Microscope:
         return I
 
     
-    def plot_intensities_from_single_fluorophore(self, filename, title, n=50, display='save', random_colors=False, show_edges=False):
+    def plot_intensities_from_single_fluorophore(self, filename, title, n=50, **kwargs):
         directions = util.fibonacci_sphere(n)
         print('Generating data for microscope: '+filename)
         I = np.apply_along_axis(self.calc_total_intensity_from_single_fluorophore,
                                       1, directions)
         print('Plotting data for microscope: '+filename)
-        util.plot_sphere(filename, title, directions, I, display=display, random_colors=random_colors, show_edges=show_edges)
+        util.plot_sphere(filename, title, directions, I, **kwargs)

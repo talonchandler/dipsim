@@ -65,44 +65,28 @@ def tp2xyz(tp):
             np.sin(tp[0])*np.sin(tp[1]),
             np.cos(tp[0])]
 
-def plot_sphere(filename, title, directions, data,
-                interact=False, color_norm='linear'):
-    
+def plot_sphere(filename, directions=None, data=None,
+                interact=False, color_norm='linear', my_ax=None, my_cax=None,
+                dpi=500, vis_px=1000):
+
     # Setup viewing window
     vispy.use('glfw')
     canvas = vispy.scene.SceneCanvas(keys='interactive', bgcolor='white',
-                               size=(1000, 1000), show=interact)
+                               size=(vis_px, vis_px), show=interact)
     my_cam = vispy.scene.cameras.turntable.TurntableCamera(fov=0, azimuth=135,
                                                            scale_factor=2.05)
     view = canvas.central_widget.add_view(camera=my_cam)
-    
-    # Convert spherical to cartesian
-    points = np.apply_along_axis(tp2xyz, 1, directions)
 
-    # Create mesh
-    import scipy.spatial
-    ch = scipy.spatial.ConvexHull(points)
-    mesh = vispy.geometry.MeshData(vertices=ch.points, faces=ch.simplices)
-
-    # Find colors
-    cmap = matplotlib.cm.get_cmap('coolwarm')
-    data_ = np.expand_dims(data, 1)
-    if color_norm=='linear':
-        norm_data = data_/data_.max()
-        color = np.apply_along_axis(cmap, 1, norm_data)
-    elif color_norm=='log':
-        norm_data = np.log(data_)/np.log(data_).max()        
-        color = np.apply_along_axis(cmap, 1, norm_data)
-        
     # Plot dots
     dots = vispy.scene.visuals.Markers(parent=view.scene)
-    dots.antialias = 0
+    dots.antialias = False
     dots.set_data(pos=np.array([[1.01,0,0],[0,1.01,0],[0,0,1.01]]),
-                  edge_color='black', face_color='black')
-    
+                  edge_color='black', face_color='black', size=vis_px/50)
+
     # Plot sphere
     sphere = visuals.MySphere(parent=view.scene, radius=1.0,
-                              vertex_colors=color, mesh=mesh)
+                              directions=directions, data=data,
+                              color_norm=color_norm)
     
     # Display or save
     if interact:
@@ -111,32 +95,41 @@ def plot_sphere(filename, title, directions, data,
     else:
         im = canvas.render()
         f = plt.figure(figsize=(5,5))
-        ax = plt.axes([0.0, 0, 0.9, 0.9]) # x, y, width, height
-        ax.axis('off')
-        ax.set_title(title, y=1.0)        
+        local_ax = plt.axes([0.0, 0, 0.9, 0.9]) # x, y, width, height
+        local_cax = plt.axes([0.95, 0.01, 0.025, 0.86])
+
+        if my_ax == None:
+            my_ax = local_ax
+        if my_cax == None:
+            my_cax = local_cax
         
-        # Colorbar
-        cax = plt.axes([0.95, 0.01, 0.025, 0.86])
-        if color_norm == 'linear':
-            norm = matplotlib.colors.Normalize(vmin=data.min(), vmax=data.max())
-            cmap = ax.imshow(im, interpolation='none', cmap='coolwarm', norm=norm)# vmin=0, vmax=data.max())
-            f.colorbar(cmap, cax=cax, orientation='vertical')
-        elif color_norm == 'log':
-            norm = matplotlib.colors.LogNorm(vmin=data.min(), vmax=data.max())
-            cmap = ax.imshow(im, interpolation='none', cmap='coolwarm', norm=norm)# vmin=0, vmax=data.max())
-            cb = f.colorbar(cmap, cax=cax, orientation='vertical')
-            cb.set_ticks([10**x for x in range(int(np.ceil(np.log10(data).min())), int(np.ceil(np.log10(data).max())))])
-
-        # Axis
-        length=0.1
-        center=np.array((0.925, 0.1))
-        angles = np.pi/2 + np.array((0, 2*np.pi/3, 4*np.pi/3))
-        labels = ('$z$', '$x$', '$y$')
-        for angle, label in zip(angles, labels):
-            end = center + np.array((length*np.cos(angle), length*np.sin(angle)))
-            ax.annotate(label,ha='center', va='center', xy=center, xytext=end,
-                        xycoords='axes fraction', 
-                        arrowprops=dict(arrowstyle="<-", shrinkA=0, shrinkB=0))
-
+        for (ax, cax) in [(local_ax, local_cax), (my_ax, my_cax)]:
+            ax.axis('off')
+            draw_axis(ax)
+            
+            # Colorbar
+            if color_norm == 'linear':
+                norm = matplotlib.colors.Normalize(vmin=data.min(), vmax=data.max())
+                cmap = ax.imshow(im, interpolation='none', cmap='coolwarm', norm=norm)
+                f.colorbar(cmap, cax=cax, orientation='vertical')
+            elif color_norm == 'log':
+                norm = matplotlib.colors.LogNorm(vmin=data.min(), vmax=data.max())
+                cmap = ax.imshow(im, interpolation='none', cmap='coolwarm', norm=norm)
+                cb = f.colorbar(cmap, cax=cax, orientation='vertical')
+                cb.set_ticks([10**x for x in range(int(np.ceil(np.log10(data).min())), int(np.ceil(np.log10(data).max())))])
+                
         # Save 
-        f.savefig(filename, dpi=500)
+        f.savefig(filename, dpi=dpi)
+
+def draw_axis(ax):
+    length=0.1
+    center=np.array((0.925, 0.1))
+    angles = np.pi/2 + np.array((0, 2*np.pi/3, 4*np.pi/3))
+    labels = ('$z$', '$x$', '$y$')
+    for angle, label in zip(angles, labels):
+        end = center + np.array((length*np.cos(angle), length*np.sin(angle)))
+        ax.annotate(label,ha='center', va='center', xy=center, xytext=end,
+                    xycoords='axes fraction', 
+                    arrowprops=dict(arrowstyle="<-", shrinkA=0, shrinkB=0),
+                    fontsize=14)
+        

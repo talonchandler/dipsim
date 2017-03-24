@@ -1,7 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import functools
-from dipsim import util, fluorophore
+import vispy
+from dipsim import util, fluorophore, visuals
+from vispy.visuals.transforms import (STTransform, LogTransform,
+                                      MatrixTransform, PolarTransform)
 
 class Microscope:
     """
@@ -45,10 +48,79 @@ class Microscope:
         return I
 
     
-    def plot_intensities_from_single_fluorophore(self, filename, title, n=50, **kwargs):
+    def plot_intensities_from_single_fluorophore(self, filename, n=50, **kwargs):
         directions = util.fibonacci_sphere(n)
         print('Generating data for microscope: '+filename)
         I = np.apply_along_axis(self.calc_total_intensity_from_single_fluorophore,
                                       1, directions)
         print('Plotting data for microscope: '+filename)
-        util.plot_sphere(filename, title, directions, I, **kwargs)
+        util.plot_sphere(filename, directions=directions, data=I/I.max(), **kwargs)
+
+    def draw_scene(self, filename, interact=False, my_ax=None, dpi=500, vis_px=1000):
+        vispy.use('glfw')
+        vis = vispy.scene.visuals
+        
+        # Setup viewing window
+        canvas = vispy.scene.SceneCanvas(keys='interactive', bgcolor='white',
+                                         size=(vis_px, vis_px), show=interact)
+        cam = vispy.scene.cameras.turntable.TurntableCamera
+        my_cam = cam(fov=0, azimuth=135, scale_factor=23,
+                     center=(0, 0, self.illuminator.f))
+        view = canvas.central_widget.add_view(camera=my_cam)
+
+        # Plot dipole
+        dip = visuals.MyArrow(parent=view.scene, length=2)
+        m = MatrixTransform()
+        m.rotate(angle=-45, axis=(1,1,0))
+        dip.transform = m
+        
+        # Plot illuminator
+        i = self.illuminator
+        pol = visuals.MyArrow(parent=view.scene, length=1.5)
+        m = MatrixTransform()
+        m.rotate(angle=90, axis=(0,1,0))
+        m.translate((0,0,2*i.f+0.1))
+        pol.transform = m
+        
+        circ = vis.Ellipse(parent=view.scene, center=(0,0), radius=i.bfp_rad,
+                           color='yellow', border_color='black', border_width=vis_px/150)
+        circ.transform = STTransform(translate=(0, 0, 2*i.f))
+        
+        # Plot lens
+        lens2 = visuals.MyLens(parent=view.scene)
+        lens2.transform = STTransform(scale=(10, 10, 10),
+                                      translate=(0, 0, i.f))
+        lens_out = vis.Ellipse(parent=view.scene, center=(0,0), radius=0.5,
+                               color=None, border_color='black', border_width=vis_px/150)
+        lens_out.transform = STTransform(scale=(10, 10, 10),
+                                         translate=(0, 0, i.f))
+        
+        # Display or save
+        if interact:
+            canvas.app.run()
+        else:
+            # Setup figure
+            im = canvas.render()
+            f = plt.figure(figsize=(5, 5), frameon=False)
+            local_ax = plt.axes([0, 0, 1, 1]) # x, y, width, height
+            if my_ax == None:
+                my_ax = local_ax
+
+            for ax in [local_ax, my_ax]:
+                util.draw_axis(ax)
+                ax.spines['right'].set_color('none')
+                ax.spines['left'].set_color('none')
+                ax.spines['top'].set_color('none')
+                ax.spines['bottom'].set_color('none')
+                ax.xaxis.set_ticks_position('none')
+                ax.yaxis.set_ticks_position('none')
+                ax.xaxis.set_ticklabels([])
+                ax.yaxis.set_ticklabels([])
+
+                # Plot
+                ax.imshow(im, interpolation='none')
+
+            # Save
+            f.savefig(filename, dpi=dpi)
+            return ax
+

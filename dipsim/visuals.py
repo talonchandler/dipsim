@@ -1,18 +1,41 @@
 # Custom vispy classes
-
-from vispy.geometry import create_sphere
+from dipsim import util
+import numpy as np
+from vispy.geometry import create_sphere, MeshData
 from vispy.visuals.mesh import MeshVisual
 from vispy.visuals import CompoundVisual
 from vispy.scene.visuals import create_visual_node
+import matplotlib
+import matplotlib.pyplot as plt
+from vispy.visuals.transforms import (STTransform, LogTransform,
+                                      MatrixTransform, PolarTransform)
+
 
 class MySphereVisual(CompoundVisual):
     
     def __init__(self, radius=1.0, directions=None,
-                 vertex_colors=None, mesh=None):
-        
+                 points=None, data=None, color_norm=None):
+        # Convert spherical to cartesian
+        points = np.apply_along_axis(util.tp2xyz, 1, directions)
+
+        # Create mesh
+        import scipy.spatial
+        ch = scipy.spatial.ConvexHull(points)
+        mesh = MeshData(vertices=ch.points, faces=ch.simplices)
+
+        # Find colors
+        cmap = matplotlib.cm.get_cmap('coolwarm')
+        data_ = np.expand_dims(data, 1)
+        if color_norm=='linear':
+            norm_data = data_/data_.max()
+            color = np.apply_along_axis(cmap, 1, norm_data)
+        elif color_norm=='log':
+            norm_data = np.log(data_)/np.log(data_).max()        
+            color = np.apply_along_axis(cmap, 1, norm_data)
+
         self._mesh = MeshVisual(vertices=mesh.get_vertices(),
                                 faces=mesh.get_faces(),
-                                vertex_colors=vertex_colors)
+                                vertex_colors=color)
 
         CompoundVisual.__init__(self, [self._mesh])
         self.mesh.set_gl_state(depth_test=True)
@@ -24,6 +47,63 @@ class MySphereVisual(CompoundVisual):
         return self._mesh
 
 MySphere = create_visual_node(MySphereVisual)
+
+class MyLensVisual(CompoundVisual):
+    
+    def __init__(self, radius=1, max_theta=np.pi/6, n_theta=16, n_phi=64, color=(0.5,0.5,0.5,0.5)):
+        # Create lens points based on inputs
+        phi = np.linspace(0, 2*np.pi, n_phi, endpoint=False)
+        theta = np.linspace(max_theta, 0, n_theta, endpoint=False)        
+        directions = np.array(np.meshgrid(theta, phi)).T.reshape(-1, 2)
+        t_points = np.apply_along_axis(util.tp2xyz, 1, directions)
+        t_points[:,2] -= np.cos(max_theta)
+        b_points = np.copy(t_points)
+        b_points[:,2] = -t_points[:,2]
+        points = np.concatenate((t_points, b_points))
+        
+        # Create mesh
+        import scipy.spatial
+        ch = scipy.spatial.ConvexHull(points)
+        mesh = MeshData(vertices=ch.points, faces=ch.simplices)
+        
+        self._mesh = MeshVisual(vertices=mesh.get_vertices(),
+                                faces=mesh.get_faces(),
+                                color=color)
+
+        CompoundVisual.__init__(self, [self._mesh])
+        self.mesh.set_gl_state(depth_test=False)
+
+    @property
+    def mesh(self):
+        """The vispy.visuals.MeshVisual that used to fil in.
+        """
+        return self._mesh
+
+MyLens = create_visual_node(MyLensVisual)
+
+
+class MyArrowVisual(CompoundVisual):
+    
+    def __init__(self, rows=30, cols=30, radius=0.1, length=1, color='black'):
+
+        import vispy.geometry.generation as gen
+        mesh = gen.create_arrow(rows=rows, cols=cols, radius=radius, length=length, cone_length=0.5)
+        
+        self._mesh = MeshVisual(vertices=mesh.get_vertices(),
+                                faces=mesh.get_faces(),
+                                color=color)
+
+        CompoundVisual.__init__(self, [self._mesh])
+        self.mesh.set_gl_state(depth_test=True)
+
+    @property
+    def mesh(self):
+        """The vispy.visuals.MeshVisual that used to fil in.
+        """
+        return self._mesh
+
+MyArrow = create_visual_node(MyArrowVisual)
+
 
 from vispy.visuals.line import LineVisual
 from vispy.visuals.text import TextVisual

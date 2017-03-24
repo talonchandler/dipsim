@@ -19,10 +19,6 @@ class Microscope:
         self.detector = detector
 
     def calc_induced_dipoles(self, fluorophores):
-        for f in fluorophores:
-            f.mu_ind = f.mu_em*np.dot(f.mu_abs, self.illuminator.E_eff)
-
-    def calc_induced_dipoles_new(self, fluorophores):
         ill = self.illuminator
         for f in fluorophores:
             if ill.illum_type == 'kohler':
@@ -72,16 +68,6 @@ class Microscope:
             I += np.linalg.norm(f.mu_ind)**2
         
         return I
-
-    def calc_total_intensity_new(self, fluorophores):
-        self.calc_induced_dipoles_new(fluorophores)
-        # TODO Green's tensor integrated over area
-        # For now sum over entire volume
-        I = 0
-        for f in fluorophores:
-            I += np.linalg.norm(f.mu_ind)**2
-        
-        return I
     
     def calc_total_intensity_from_single_fluorophore(self, args):
         theta = args[0]
@@ -97,21 +83,6 @@ class Microscope:
 
         I = self.calc_total_intensity([flu])
         return I
-
-    def calc_total_intensity_from_single_fluorophore_new(self, args):
-        theta = args[0]
-        phi = args[1]
-
-        flu_dir = np.array([np.sin(theta)*np.cos(phi),
-                           np.sin(theta)*np.sin(phi),
-                           np.cos(theta)])
-
-        flu = fluorophore.Fluorophore(position=np.array([0, 0, 0]),
-                                      mu_abs=flu_dir,
-                                      mu_em=flu_dir)
-
-        I = self.calc_total_intensity_new([flu])
-        return I
     
     def plot_intensities_from_single_fluorophore(self, filename, n=50, **kwargs):
         directions = util.fibonacci_sphere(n)
@@ -120,15 +91,6 @@ class Microscope:
                                       1, directions)
         print('Plotting data for microscope: '+filename)
         util.plot_sphere(filename, directions=directions, data=I, **kwargs)
-
-    def plot_intensities_from_single_fluorophore_new(self, filename, n=50, **kwargs):
-        directions = util.fibonacci_sphere(n)
-        print('Generating data for microscope: '+filename)
-        I = np.apply_along_axis(self.calc_total_intensity_from_single_fluorophore_new,
-                                      1, directions)
-        print('Plotting data for microscope: '+filename)
-        util.plot_sphere(filename, directions=directions, data=I, **kwargs)
-
         
     def draw_scene(self, filename, interact=False, my_ax=None, dpi=500, vis_px=1000):
         vispy.use('glfw')

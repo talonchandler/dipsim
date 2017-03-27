@@ -22,9 +22,9 @@ class MultiFrameMicroscope:
 
     def calc_solid_angle_min_std(self, args):
         
-        def ev_function(self, args):
-            theta = args[0]
-            phi = args[1]
+        def ev_function(self, ev_args):
+            theta = ev_args[0]
+            phi = ev_args[1]
         
             flu_dir = np.array([np.sin(theta)*np.cos(phi),
                                np.sin(theta)*np.sin(phi),
@@ -39,7 +39,7 @@ class MultiFrameMicroscope:
         
         ev_function = functools.partial(ev_function, self)
         rv = stats.RandomVariable(ev_function, dist='poisson')
-        crlb = rv.crlb(args, [0.00001, 0.00001])
+        crlb = rv.crlb(args, [1e-5, 1e-5])
         solid_angle_std = np.sin(args[0])*np.sqrt(crlb[0])*np.sqrt(crlb[1])
         
         return solid_angle_std
@@ -76,7 +76,7 @@ class NFramePolScope(MultiFrameMicroscope):
                                           f=10,
                                           bfp_rad=3,
                                           bfp_pol=bfp_pol,
-                                          bfp_n=16)
+                                          bfp_n=4)
             m.append(microscope.Microscope(illuminator=ill, detector=det))
                      
         self.microscopes = m

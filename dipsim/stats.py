@@ -24,19 +24,25 @@ class RandomVariable:
         The length of x0 and dx must match the number of arguments of 
         self.ev_func.
         """
-        # Populate fisher information matrix
         if self.dist == 'poisson':
             f = self.ev_func
             n = len(x0)
-            xx, yy = np.meshgrid(np.arange(n), np.arange(n))
-            f_ind = np.stack((xx, yy))
 
-            def calc_fisher_ij(ind, self):
-                dx0 = np.eye(1, n, k=ind[0]).flatten()*dx
-                dx1 = np.eye(1, n, k=ind[1]).flatten()*dx
-                deriv0 = (f(x0+0.5*dx0) - f(x0-0.5*dx0))/np.sum(dx0)
-                deriv1 = (f(x0+0.5*dx1) - f(x0-0.5*dx1))/np.sum(dx1)
-                return np.sum(deriv0*deriv1/f(x0))
-            
-            f_inf = np.apply_along_axis(calc_fisher_ij, 0, f_ind, self)
-            return np.diag(np.linalg.pinv(f_inf))
+            # Evaluate function at all points (2n total evaluations)
+            # fpm (n x 2) contains the function at +/- points along each param
+            fpm = np.zeros((n, 2))
+            for i in range(n):
+                v_dx = np.eye(1, n, k=i).flatten()*dx # ith unit vector
+                fpm[i, 0] = f(x0 + 0.5*v_dx)
+                fpm[i, 1] = f(x0 - 0.5*v_dx)
+
+            # Calculate derivatives
+            derivs = (fpm[:,0] - fpm[:,1])/dx
+
+            # Calculate fisher information matrix
+            f_inf = np.outer(derivs, derivs)/f(x0)
+
+            # Invert and return diagonal
+            crlb =  np.diag(np.linalg.pinv(f_inf))
+
+            return crlb

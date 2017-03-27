@@ -5,6 +5,6 @@ import time; start = time.time(); print('Running...')
 
 for i in np.arange(1, 5):
     m = multiframe.NFramePolScope(n_frames=i)
-    m.plot_solid_angle_min_std('solid'+str(i)+'.png', 'N='+str(i), n=20000, display='save')
+    m.plot_solid_angle_min_std('solid'+str(i)+'.png', n=25)
 
 print('Total time:', np.round(time.time() - start, 2), 's')

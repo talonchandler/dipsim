@@ -67,7 +67,8 @@ def tp2xyz(tp):
 
 def plot_sphere(filename, directions=None, data=None, interact=False,
                 color_norm='linear', gamma=0.25, color_map='coolwarm',
-                my_ax=None, my_cax=None, dpi=500, vis_px=1000):
+                my_ax=None, my_cax=None, dpi=500, vis_px=1000,
+                save_file=True):
 
     # Setup viewing window
     vispy.use('glfw')
@@ -121,8 +122,9 @@ def plot_sphere(filename, directions=None, data=None, interact=False,
             cmap = ax.imshow(im, interpolation='none', cmap=color_map, norm=norm)
             f.colorbar(cmap, cax=cax, orientation='vertical')
             
-        # Save 
-        f.savefig(filename, dpi=dpi)
+        # Save
+        if save_file:
+            f.savefig(filename, dpi=dpi)
 
 def draw_axis(ax):
     length=0.1

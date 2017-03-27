@@ -32,9 +32,10 @@ for i, nf in enumerate(n_frames):
     m = multiframe.NFramePolScope(n_frames=nf)
     m.plot_solid_angle_min_std('solid'+str(i), n=n, interact=False,
                                color_norm='power',
-                               my_axs=axs[1:,i], my_caxs=caxs[1:,i])
+                               my_axs=axs[1:,i], my_caxs=caxs[1:,i],
+                               save_file=False)
     
-    m.microscopes[0].draw_scene('scene'+str(i)+'.png', interact=False, my_ax=axs[0,i], dpi=dpi, vis_px=vis_px)
+    m.microscopes[0].draw_scene('scene'+str(i)+'.png', interact=False, my_ax=axs[0,i], dpi=dpi, vis_px=vis_px, save_file=False)
     caxs[0,i].axis('off')
 
 row_labels = ['Scene', r'$\sigma_{\phi}$', r'$\sigma_{\theta}$', r'$\sigma_{\Omega} = \sigma_{\phi}\sigma_{\theta}\sin\theta$']

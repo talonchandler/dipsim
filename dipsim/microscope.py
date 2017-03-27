@@ -92,7 +92,7 @@ class Microscope:
         print('Plotting data for microscope: '+filename)
         util.plot_sphere(filename, directions=directions, data=I, **kwargs)
         
-    def draw_scene(self, filename, interact=False, my_ax=None, dpi=500, vis_px=1000):
+    def draw_scene(self, filename, interact=False, my_ax=None, dpi=500, vis_px=1000, save_file=True):
         vispy.use('glfw')
         vis = vispy.scene.visuals
         
@@ -160,6 +160,7 @@ class Microscope:
                 ax.imshow(im, interpolation='none')
 
             # Save
-            f.savefig(filename, dpi=dpi)
+            if save_file:
+                f.savefig(filename, dpi=dpi)
             return ax
 

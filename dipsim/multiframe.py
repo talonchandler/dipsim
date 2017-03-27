@@ -47,7 +47,7 @@ class MultiFrameMicroscope:
         
         return theta_std, phi_std, solid_angle_std
 
-    def plot_solid_angle_min_std(self, filename, n=50, **kwargs):
+    def plot_solid_angle_min_std(self, filename, n=50, my_axs=None, my_caxs=None, **kwargs):
         directions = util.fibonacci_sphere(n)
         print('Generating data for microscope: '+filename)
         std_out = np.apply_along_axis(self.calc_solid_angle_min_std, 1, directions)
@@ -56,9 +56,9 @@ class MultiFrameMicroscope:
         omega_std = std_out[:,2]
         
         print('Plotting data for microscope: '+filename)
-        util.plot_sphere(filename+'_theta.png', directions=directions, data=theta_std, **kwargs)
-        util.plot_sphere(filename+'_phi.png', directions=directions, data=phi_std, **kwargs)
-        util.plot_sphere(filename+'_omega.png', directions=directions, data=omega_std, **kwargs)
+        util.plot_sphere(filename+'_theta.png', directions=directions, data=theta_std, my_ax=my_axs[0], my_cax=my_caxs[0], **kwargs)
+        util.plot_sphere(filename+'_phi.png', directions=directions, data=phi_std, my_ax=my_axs[1], my_cax=my_caxs[1], **kwargs)
+        util.plot_sphere(filename+'_omega.png', directions=directions, data=omega_std, my_ax=my_axs[2], my_cax=my_caxs[2], **kwargs)
 
 class NFramePolScope(MultiFrameMicroscope):
     """

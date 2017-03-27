@@ -65,9 +65,9 @@ def tp2xyz(tp):
             np.sin(tp[0])*np.sin(tp[1]),
             np.cos(tp[0])]
 
-def plot_sphere(filename, directions=None, data=None,
-                interact=False, color_norm='linear', gamma=0.25, color_map='coolwarm', my_ax=None, my_cax=None,
-                dpi=500, vis_px=1000):
+def plot_sphere(filename, directions=None, data=None, interact=False,
+                color_norm='linear', gamma=0.25, color_map='coolwarm',
+                my_ax=None, my_cax=None, dpi=500, vis_px=1000):
 
     # Setup viewing window
     vispy.use('glfw')

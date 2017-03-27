@@ -134,7 +134,6 @@ class Microscope:
         lens_out.transform = STTransform(scale=(10, 10, 10),
                                          translate=(0, 0, i.f))
 
-        
         # Display or save
         if interact:
             canvas.app.run()

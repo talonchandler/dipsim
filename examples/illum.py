@@ -1,4 +1,4 @@
-from dipsim import fluorophore, illuminator, detector, microscope, stats, util
+from dipsim import fluorophore, illuminator, detector, microscope, stats, util, multiframe
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
@@ -6,12 +6,12 @@ import time; start = time.time(); print('Running...')
 
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-n = 200#2000
+n = 200 #2000
 dpi = 250
 vis_px = 2000
-bfp_rads = [1, 2, 3, 4]
-n_cols = len(bfp_rads)
-n_rows = 5
+n_frames = [1, 1, 1, 1]
+n_cols = len(n_frames)
+n_rows = 4
 inch_fig = 5
 
 fig, axs = plt.subplots(n_rows, n_cols,
@@ -23,35 +23,21 @@ for ax in axs.flatten():
     caxs.append(divider.append_axes("right", size="5%", pad=0.15))
 caxs = np.array(caxs).reshape(axs.shape)
     
-if len(bfp_rads) == 1:
+if len(n_frames) == 1:
     axs = np.expand_dims(axs, 1)
 
 plt.subplots_adjust(wspace=0.2, hspace=0)
 
-for i, bfp_rad in enumerate(bfp_rads):
-    f = 10
-    bfp_n = 8
-
-    illx = illuminator.Illuminator(illum_type='kohler',
-                                   optical_axis=np.array([0., 0., 1.]),
-                                   f=f,
-                                   bfp_rad=bfp_rad,
-                                   bfp_pol=np.array([1., 0., 0.]),
-                                   bfp_n=bfp_n)
-
-    det = detector.Detector(optical_axis=np.array([0, 0, 1]),
-                            na=1.5,
-                            n=1.5)
-
-    m = microscope.Microscope(illuminator=illx, detector=det)
-
-    m.plot_intensities_from_single_fluorophore('intensity'+str(bfp_rad)+'.png',
-                                                n=n, interact=False, color_norm='linear', my_ax=axs[1][i], my_cax=caxs[1][i], dpi=dpi, vis_px=vis_px)
+for i, nf in enumerate(n_frames):
+    m = multiframe.NFramePolScope(n_frames=nf)
+    m.plot_solid_angle_min_std('solid'+str(i), n=n, interact=False,
+                               color_norm='power',
+                               my_axs=axs[1:,i], my_caxs=caxs[1:,i])
     
-    m.draw_scene('scene'+str(bfp_rad)+'.png', interact=False, my_ax=axs[0][i], dpi=dpi, vis_px=vis_px)
-    caxs[0][i].axis('off')
+    m.microscopes[0].draw_scene('scene'+str(i)+'.png', interact=False, my_ax=axs[0,i], dpi=dpi, vis_px=vis_px)
+    caxs[0,i].axis('off')
 
-row_labels = ['Scene', 'Emitted Power', r'$\sigma_{\phi}$', r'$\sigma_{\theta}$', r'$\sigma_{\Omega} = \sigma_{\phi}\sigma_{\theta}\sin\theta$']
+row_labels = ['Scene', r'$\sigma_{\phi}$', r'$\sigma_{\theta}$', r'$\sigma_{\Omega} = \sigma_{\phi}\sigma_{\theta}\sin\theta$']
 for i, label in enumerate(row_labels):
     axs[i][0].annotate(label, xy=(0,0), xytext=(-0.1, 0.5), textcoords='axes fraction',
                        va='center', ha='center', rotation=90, fontsize=18)

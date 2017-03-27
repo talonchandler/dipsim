@@ -13,8 +13,8 @@ from vispy.visuals.transforms import (STTransform, LogTransform,
 
 class MySphereVisual(CompoundVisual):
     
-    def __init__(self, radius=1.0, directions=None,
-                 points=None, data=None, color_norm=None):
+    def __init__(self, radius=1.0, directions=None, colors=None):
+                 
         # Convert spherical to cartesian
         points = np.apply_along_axis(util.tp2xyz, 1, directions)
 
@@ -23,19 +23,9 @@ class MySphereVisual(CompoundVisual):
         ch = scipy.spatial.ConvexHull(points)
         mesh = MeshData(vertices=ch.points, faces=ch.simplices)
 
-        # Find colors
-        cmap = matplotlib.cm.get_cmap('coolwarm')
-        data_ = np.expand_dims(data, 1)
-        if color_norm=='linear':
-            norm_data = data_/data_.max()
-            color = np.apply_along_axis(cmap, 1, norm_data)
-        elif color_norm=='log':
-            norm_data = np.log(data_)/np.log(data_).max()        
-            color = np.apply_along_axis(cmap, 1, norm_data)
-
         self._mesh = MeshVisual(vertices=mesh.get_vertices(),
                                 faces=mesh.get_faces(),
-                                vertex_colors=color)
+                                vertex_colors=colors)
 
         CompoundVisual.__init__(self, [self._mesh])
         self.mesh.set_gl_state(depth_test=True)

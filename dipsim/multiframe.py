@@ -40,17 +40,25 @@ class MultiFrameMicroscope:
         ev_function = functools.partial(ev_function, self)
         rv = stats.RandomVariable(ev_function, dist='poisson')
         crlb = rv.crlb(args, [1e-5, 1e-5])
-        solid_angle_std = np.sin(args[0])*np.sqrt(crlb[0])*np.sqrt(crlb[1])
+        theta = args[0]
+        theta_std = crlb[0]
+        phi_std = crlb[1]
+        solid_angle_std = np.sin(theta)*np.sqrt(theta_std)*np.sqrt(phi_std)
         
-        return solid_angle_std
+        return theta_std, phi_std, solid_angle_std
 
     def plot_solid_angle_min_std(self, filename, n=50, **kwargs):
         directions = util.fibonacci_sphere(n)
         print('Generating data for microscope: '+filename)
-        min_std = np.apply_along_axis(self.calc_solid_angle_min_std,
-                                      1, directions)
+        std_out = np.apply_along_axis(self.calc_solid_angle_min_std, 1, directions)
+        theta_std = std_out[:,0]
+        phi_std = std_out[:,1]
+        omega_std = std_out[:,2]
+        
         print('Plotting data for microscope: '+filename)
-        util.plot_sphere(filename, directions=directions, data=min_std, **kwargs)
+        util.plot_sphere(filename+'_theta.png', directions=directions, data=theta_std, **kwargs)
+        util.plot_sphere(filename+'_phi.png', directions=directions, data=phi_std, **kwargs)
+        util.plot_sphere(filename+'_omega.png', directions=directions, data=omega_std, **kwargs)
 
 class NFramePolScope(MultiFrameMicroscope):
     """

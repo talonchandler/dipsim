@@ -66,7 +66,7 @@ def tp2xyz(tp):
             np.cos(tp[0])]
 
 def plot_sphere(filename, directions=None, data=None,
-                interact=False, color_norm='linear', my_ax=None, my_cax=None,
+                interact=False, color_norm='linear', gamma=0.25, color_map='coolwarm', my_ax=None, my_cax=None,
                 dpi=500, vis_px=1000):
 
     # Setup viewing window
@@ -83,10 +83,22 @@ def plot_sphere(filename, directions=None, data=None,
     dots.set_data(pos=np.array([[1.01,0,0],[0,1.01,0],[0,0,1.01]]),
                   edge_color='black', face_color='black', size=vis_px/50)
 
+    # Calculate colors
+    if color_norm == 'linear':
+        norm = matplotlib.colors.Normalize(vmin=data.min(), vmax=data.max())
+    elif color_norm == 'log':
+        norm = matplotlib.colors.LogNorm(vmin=data.min(), vmax=data.max())
+    elif color_norm == 'power':
+        norm = matplotlib.colors.PowerNorm(gamma=gamma, vmin=data.min(), vmax=data.max())
+
+    norm_data = norm(data).data
+    norm_data = np.expand_dims(norm_data, 1)    
+    cmap = matplotlib.cm.get_cmap(color_map)
+    colors = np.apply_along_axis(cmap, 1, norm_data)
+    
     # Plot sphere
     sphere = visuals.MySphere(parent=view.scene, radius=1.0,
-                              directions=directions, data=data,
-                              color_norm=color_norm)
+                              directions=directions, colors=colors)
     
     # Display or save
     if interact:
@@ -106,18 +118,9 @@ def plot_sphere(filename, directions=None, data=None,
         for (ax, cax) in [(local_ax, local_cax), (my_ax, my_cax)]:
             ax.axis('off')
             draw_axis(ax)
+            cmap = ax.imshow(im, interpolation='none', cmap=color_map, norm=norm)
+            f.colorbar(cmap, cax=cax, orientation='vertical')
             
-            # Colorbar
-            if color_norm == 'linear':
-                norm = matplotlib.colors.Normalize(vmin=data.min(), vmax=data.max())
-                cmap = ax.imshow(im, interpolation='none', cmap='coolwarm', norm=norm)
-                f.colorbar(cmap, cax=cax, orientation='vertical')
-            elif color_norm == 'log':
-                norm = matplotlib.colors.LogNorm(vmin=data.min(), vmax=data.max())
-                cmap = ax.imshow(im, interpolation='none', cmap='coolwarm', norm=norm)
-                cb = f.colorbar(cmap, cax=cax, orientation='vertical')
-                cb.set_ticks([10**x for x in range(int(np.ceil(np.log10(data).min())), int(np.ceil(np.log10(data).max())))])
-                
         # Save 
         f.savefig(filename, dpi=dpi)
 

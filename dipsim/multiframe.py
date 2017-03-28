@@ -20,27 +20,16 @@ class MultiFrameMicroscope:
             I.append(m.calc_total_intensity(fluorophores))
         return np.array(I)
 
-    def calc_solid_angle_min_std(self, args):
-        
-        def ev_function(self, ev_args):
-            theta = ev_args[0]
-            phi = ev_args[1]
-        
-            flu_dir = np.array([np.sin(theta)*np.cos(phi),
-                               np.sin(theta)*np.sin(phi),
-                               np.cos(theta)])
-            
-            flu = fluorophore.Fluorophore(position=np.array([0, 0, 0]),
-                                          mu_abs=flu_dir,
-                                          mu_em=flu_dir)
-            
-            I = self.calc_total_intensities([flu])
-            return I
-        
-        ev_function = functools.partial(ev_function, self)
-        rv = stats.RandomVariable(ev_function, dist='poisson')
-        crlb = rv.crlb(args, [1e-5, 1e-5])
-        theta = args[0]
+    def calc_total_intensities_from_single_fluorophore(self, arguments):
+        I = []
+        for m in self.microscopes:
+            I.append(m.calc_total_intensity_from_single_fluorophore(arguments))
+        return np.array(I)
+    
+    def calc_solid_angle_min_std(self, arguments):
+        rv = stats.RandomVariable(self.calc_total_intensities_from_single_fluorophore, dist='poisson')
+        crlb = rv.crlb(arguments, [1e-2, 1e-2])
+        theta = arguments[0]
         theta_std = crlb[0]
         phi_std = crlb[1]
         solid_angle_std = np.sin(theta)*np.sqrt(theta_std)*np.sqrt(phi_std)

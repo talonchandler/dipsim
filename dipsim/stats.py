@@ -26,23 +26,26 @@ class RandomVariable:
         """
         if self.dist == 'poisson':
             f = self.ev_func
-            n = len(x0)
+            f0 = f(x0) 
+            n = len(x0) # number of params
+            m = len(f0) # number of frames (f returns an m x 1 array)
 
-            # Evaluate function at all points (2n total evaluations)
-            # fpm (n x 2) contains the function at +/- points along each param
-            fpm = np.zeros((n, 2))
+            # Calculate the derivative along each direction
+            derivs = np.zeros((m, n), )
             for i in range(n):
-                v_dx = np.eye(1, n, k=i).flatten()*dx # ith unit vector
-                fpm[i, 0] = f(x0 + 0.5*v_dx)
-                fpm[i, 1] = f(x0 - 0.5*v_dx)
-
-            # Calculate derivatives
-            derivs = (fpm[:,0] - fpm[:,1])/dx
+                h = np.eye(1, n, k=i).flatten()*dx # ith h vector
+                derivs[:, i] = (f(x0 + h) - f0)/h[i]
 
             # Calculate fisher information matrix
-            f_inf = np.outer(derivs, derivs)/f(x0)
+            f_derivs = np.einsum('ij,ik->ijk', derivs, derivs) # Outer product of each frame
+            f_infs = f_derivs/f0[:, np.newaxis, np.newaxis] # Divide each entry by the mean
+            f_inf = np.sum(f_infs, axis=0) # Sum over frames
 
             # Invert and return diagonal
-            crlb =  np.diag(np.linalg.pinv(f_inf))
+            crlb = np.diag(np.linalg.pinv(f_inf))
 
+            # if crlb[0] == 0 or crlb[1] == 0:
+            #     import pdb; pdb.set_trace()
+            #     print("WARNING: CRLB == 0")
+            #     print(crlb, x0, f0[0], f(x0+h)[0])
             return crlb

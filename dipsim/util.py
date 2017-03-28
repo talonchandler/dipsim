@@ -39,26 +39,12 @@ def orthonormal_basis(v0):
     return v1, v2
 
 def fibonacci_sphere(n):
-    # Returns "equally" spaced points on a unit sphere in spherical coordinates. 
-    pts = []
-    offset = 2./n
-    increment = np.pi * (3. - np.sqrt(5.));
-
-    # TODO: Optimize this
-    for i in range(n):
-        y = ((i * offset) - 1) + (offset / 2);
-        r = np.sqrt(1 - pow(y,2))
-
-        phi = ((i) % n) * increment
-
-        x = np.cos(phi) * r
-        z = np.sin(phi) * r
-
-        theta_out = np.arccos(z)        
-        phi_out = np.arctan2(y, x)
-        pts.append([theta_out, phi_out])
-
-    return np.array(pts)
+    # Returns "equally" spaced points on a unit sphere in spherical coordinates.
+    # http://stackoverflow.com/a/26127012/5854689
+    z = np.linspace(1, -1 + 1/n, num=n) 
+    theta = np.arccos(z)
+    phi = np.mod((np.pi*(3.0 - np.sqrt(5.0)))*np.arange(n), 2*np.pi)
+    return np.vstack((theta, phi)).T
 
 def tp2xyz(tp):
     return [np.sin(tp[0])*np.cos(tp[1]),
@@ -89,6 +75,8 @@ def plot_sphere(filename, directions=None, data=None, interact=False,
         norm = matplotlib.colors.Normalize(vmin=data.min(), vmax=data.max())
     elif color_norm == 'log':
         norm = matplotlib.colors.LogNorm(vmin=data.min(), vmax=data.max())
+    elif color_norm == 'linlog':
+        norm = matplotlib.colors.SymLogNorm(linthresh=1e-2, vmin=data.min(), vmax=data.max())
     elif color_norm == 'power':
         norm = matplotlib.colors.PowerNorm(gamma=gamma, vmin=data.min(), vmax=data.max())
 

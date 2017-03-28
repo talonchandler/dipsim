@@ -44,8 +44,4 @@ class RandomVariable:
             # Invert and return diagonal
             crlb = np.diag(np.linalg.pinv(f_inf))
 
-            # if crlb[0] == 0 or crlb[1] == 0:
-            #     import pdb; pdb.set_trace()
-            #     print("WARNING: CRLB == 0")
-            #     print(crlb, x0, f0[0], f(x0+h)[0])
             return crlb

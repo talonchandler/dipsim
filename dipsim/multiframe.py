@@ -26,7 +26,7 @@ class MultiFrameMicroscope:
             I.append(m.calc_total_intensity_from_single_fluorophore(arguments))
         return np.array(I)
     
-    def calc_solid_angle_min_std(self, arguments):
+    def calc_orientation_std(self, arguments):
         rv = stats.RandomVariable(self.calc_total_intensities_from_single_fluorophore, dist='poisson')
         crlb = rv.crlb(arguments, [1e-2, 1e-2])
         theta = arguments[0]
@@ -36,10 +36,10 @@ class MultiFrameMicroscope:
         
         return theta_std, phi_std, solid_angle_std
 
-    def plot_solid_angle_min_std(self, filename, n=50, my_axs=None, my_caxs=None, **kwargs):
+    def plot_orientation_std(self, filename, n=50, my_axs=None, my_caxs=None, **kwargs):
         directions = util.fibonacci_sphere(n)
         print('Generating data for microscope: '+filename)
-        std_out = np.apply_along_axis(self.calc_solid_angle_min_std, 1, directions)
+        std_out = np.apply_along_axis(self.calc_orientation_std, 1, directions)
         theta_std = std_out[:,0]
         phi_std = std_out[:,1]
         omega_std = std_out[:,2]

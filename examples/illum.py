@@ -6,7 +6,7 @@ import time; start = time.time(); print('Running...')
 
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-n = 4000
+n = 400
 dpi = 250
 vis_px = 2000
 n_frames = [1, 2, 3, 4]
@@ -30,10 +30,10 @@ plt.subplots_adjust(wspace=0.2, hspace=0)
 
 for i, nf in enumerate(n_frames):
     m = multiframe.NFramePolScope(n_frames=nf)
-    m.plot_solid_angle_min_std('solid'+str(i), n=n, interact=False,
-                               color_norm='linlog',
-                               my_axs=axs[1:,i], my_caxs=caxs[1:,i],
-                               save_file=True)
+    m.plot_orientation_std('solid'+str(i), n=n, interact=False,
+                           color_norm='linlog',
+                           my_axs=axs[1:,i], my_caxs=caxs[1:,i],
+                           save_file=True)
     
     m.microscopes[0].draw_scene('scene'+str(i)+'.png', interact=False, my_ax=axs[0,i], dpi=dpi, vis_px=vis_px, save_file=False)
     caxs[0,i].axis('off')

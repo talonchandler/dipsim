@@ -92,7 +92,8 @@ class Microscope:
         print('Plotting data for microscope: '+filename)
         util.plot_sphere(filename, directions=directions, data=I, **kwargs)
         
-    def draw_scene(self, filename, interact=False, my_ax=None, dpi=500, vis_px=1000, save_file=True):
+    def draw_scene(self, filename, interact=False, my_ax=None, dpi=500, vis_px=1000, save_file=True,
+                   pol_dirs=None):
         vispy.use('glfw')
         vis = vispy.scene.visuals
         
@@ -111,12 +112,21 @@ class Microscope:
         dip.transform = m
         
         # Plot illuminator
-        i = self.illuminator        
-        pol = visuals.MyArrow(parent=view.scene, length=1.5)
-        m = MatrixTransform()
-        m.rotate(angle=90, axis=(0,1,0))
-        m.translate((0,0,2*i.f+0.1))
-        pol.transform = m
+        i = self.illuminator
+        
+        # TODO: Generalize these transformations for oblique illuminations
+        # TODO: Clean this up
+        if pol_dirs == None:
+            pol_dirs = i.bfp_pol
+        for pol_dir in pol_dirs:
+            for direction in [-1, 1]:
+                pol = visuals.MyArrow(parent=view.scene, length=3)
+                m = MatrixTransform()
+                m.rotate(angle=direction*90, axis=(0,1,0))
+                phi_angle = np.degrees(np.arctan2(pol_dir[1], pol_dir[0]))
+                m.rotate(angle=phi_angle, axis=(0,0,1))
+                m.translate((0,0,2*i.f+0.1))
+                pol.transform = m
         
         circ = vis.Ellipse(parent=view.scene, center=(0,0), radius=i.bfp_rad,
                            color=(1, 1, 0, 0.2 + 0.8/i.bfp_rad))

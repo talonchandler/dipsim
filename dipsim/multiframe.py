@@ -77,3 +77,12 @@ class NFramePolScope(MultiFrameMicroscope):
             m.append(microscope.Microscope(illuminator=ill, detector=det))
                      
         self.microscopes = m
+
+    def draw_scene(self, filename, **kwargs):
+        pol_dirs = []
+        for m in self.microscopes:
+            pol_dirs.append(m.illuminator.bfp_pol)
+        self.microscopes[0].draw_scene(filename, pol_dirs=pol_dirs, **kwargs)
+        
+
+        

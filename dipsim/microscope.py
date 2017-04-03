@@ -66,7 +66,6 @@ class Microscope:
         I = 0
         for f in fluorophores:
             I += np.linalg.norm(f.mu_ind)**2
-        
         return I
     
     def calc_total_intensity_from_single_fluorophore(self, args):

@@ -38,10 +38,23 @@ def orthonormal_basis(v0):
     v2 = v2/np.linalg.norm(v2)
     return v1, v2
 
+def my_orthonormal_basis(v0):
+    """
+    Returns two orthonormal vectors that are orthogonal to v0.
+    """
+    if np.dot(v0, [0, 0, 1]) == 1:
+        v1 = np.array([1, 0, 0])                
+    else:
+        v1 = np.array([-v0[1], v0[0], 0])
+    v1 = v1/np.linalg.norm(v1)
+    v2 = np.cross(v0, v1)
+    v2 = v2/np.linalg.norm(v2)
+    return v1, v2
+
 def fibonacci_sphere(n):
     # Returns "equally" spaced points on a unit sphere in spherical coordinates.
     # http://stackoverflow.com/a/26127012/5854689
-    z = np.linspace(1, -1 + 1/n, num=n) 
+    z = np.linspace(1 - 1/n, -1 + 1/n, num=n) 
     theta = np.arccos(z)
     phi = np.mod((np.pi*(3.0 - np.sqrt(5.0)))*np.arange(n), 2*np.pi)
     return np.vstack((theta, phi)).T
@@ -50,6 +63,10 @@ def tp2xyz(tp):
     return [np.sin(tp[0])*np.cos(tp[1]),
             np.sin(tp[0])*np.sin(tp[1]),
             np.cos(tp[0])]
+
+def xyz2tp(xyz):
+    return [np.arccos(xyz[2]/np.linalg.norm(xyz)),
+            np.arctan2(xyz[1], xyz[0])]
 
 def plot_sphere(filename, directions=None, data=None, interact=False,
                 color_norm='linear', gamma=0.25, color_map='coolwarm',
@@ -76,7 +93,7 @@ def plot_sphere(filename, directions=None, data=None, interact=False,
     elif color_norm == 'log':
         norm = matplotlib.colors.LogNorm(vmin=data.min(), vmax=data.max())
     elif color_norm == 'linlog':
-        norm = matplotlib.colors.SymLogNorm(linthresh=1e-2, vmin=data.min(), vmax=data.max())
+        norm = matplotlib.colors.SymLogNorm(linthresh=1e-6, vmin=data.min(), vmax=data.max())
     elif color_norm == 'power':
         norm = matplotlib.colors.PowerNorm(gamma=gamma, vmin=data.min(), vmax=data.max())
 

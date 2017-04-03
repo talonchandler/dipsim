@@ -26,28 +26,38 @@ class MultiFrameMicroscope:
             I.append(m.calc_total_intensity_from_single_fluorophore(arguments))
         return np.array(I)
     
-    def calc_orientation_std(self, arguments):
+    def calc_orientation_std(self, arguments, n):
         rv = stats.RandomVariable(self.calc_total_intensities_from_single_fluorophore, dist='poisson')
-        crlb = rv.crlb(arguments, [1e-2, 1e-2])
-        theta = arguments[0]
+        sphere_dx = np.arccos(1 - 2/n) # avg. half angle betweeen n points on sphere
+        crlb = rv.crlb(arguments, [sphere_dx, sphere_dx], geometry='tp')
         theta_std = crlb[0]
         phi_std = crlb[1]
-        solid_angle_std = np.sin(theta)*np.sqrt(theta_std)*np.sqrt(phi_std)
+        theta_deriv = crlb[2]
+        phi_deriv = crlb[3]
+        intensity = crlb[4]
         
-        return theta_std, phi_std, solid_angle_std
+        solid_angle_std = np.sqrt(theta_std)*np.sqrt(phi_std)
+        
+        return theta_std, phi_std, solid_angle_std, theta_deriv, phi_deriv, intensity
 
     def plot_orientation_std(self, filename, n=50, my_axs=None, my_caxs=None, **kwargs):
         directions = util.fibonacci_sphere(n)
         print('Generating data for microscope: '+filename)
-        std_out = np.apply_along_axis(self.calc_orientation_std, 1, directions)
+        std_out = np.apply_along_axis(self.calc_orientation_std, 1, directions, n)
         theta_std = std_out[:,0]
         phi_std = std_out[:,1]
         omega_std = std_out[:,2]
+        theta_deriv = std_out[:,3]
+        phi_deriv = std_out[:,4]
+        intensity = std_out[:,5]        
         
         print('Plotting data for microscope: '+filename)
         util.plot_sphere(filename+'_theta.png', directions=directions, data=theta_std, my_ax=my_axs[0], my_cax=my_caxs[0], **kwargs)
         util.plot_sphere(filename+'_phi.png', directions=directions, data=phi_std, my_ax=my_axs[1], my_cax=my_caxs[1], **kwargs)
         util.plot_sphere(filename+'_omega.png', directions=directions, data=omega_std, my_ax=my_axs[2], my_cax=my_caxs[2], **kwargs)
+        util.plot_sphere(filename+'_theta_deriv.png', directions=directions, data=theta_deriv, my_ax=my_axs[3], my_cax=my_caxs[3], **kwargs)
+        util.plot_sphere(filename+'_phi_deriv.png', directions=directions, data=phi_deriv, my_ax=my_axs[4], my_cax=my_caxs[4], **kwargs)
+        util.plot_sphere(filename+'_intensity.png', directions=directions, data=intensity, my_ax=my_axs[5], my_cax=my_caxs[5], **kwargs)                
 
 class NFramePolScope(MultiFrameMicroscope):
     """
@@ -71,9 +81,9 @@ class NFramePolScope(MultiFrameMicroscope):
             ill = illuminator.Illuminator(illum_type='kohler',
                                           optical_axis=np.array([0., 0., 1.]),
                                           f=10,
-                                          bfp_rad=3,
+                                          bfp_rad=6,
                                           bfp_pol=bfp_pol,
-                                          bfp_n=4)
+                                          bfp_n=16)
             m.append(microscope.Microscope(illuminator=ill, detector=det))
                      
         self.microscopes = m

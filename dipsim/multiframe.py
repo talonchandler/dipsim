@@ -82,7 +82,7 @@ class NFramePolScope(MultiFrameMicroscope):
                                           f=10,
                                           bfp_rad=6,
                                           bfp_pol=bfp_pol,
-                                          bfp_n=4)
+                                          bfp_n=128)
             m.append(microscope.Microscope(illuminator=ill, detector=det))
                      
         self.microscopes = m

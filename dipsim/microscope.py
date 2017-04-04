@@ -58,14 +58,22 @@ class Microscope:
                 f.mu_ind = f.mu_em*np.sum(np.abs(mu_em_rp), axis=(0, 1)) # Sum over bfp
             else:
                 f.mu_ind = 0
+
+    def my_calc_induced_dipoles(self, fluorophores):
+
+        import pdb; pdb.set_trace()
+        for f in fluorophores:
+            f.mu_ind = np.dot(ill.illum_basis, util.vec3_2_vec6(f.mu_abs))
             
     def calc_total_intensity(self, fluorophores):
-        self.calc_induced_dipoles(fluorophores)
+        #self.calc_induced_dipoles(fluorophores)
         # TODO Green's tensor integrated over area
         # For now sum over entire volume
         I = 0
+        ill = self.illuminator        
         for f in fluorophores:
-            I += np.linalg.norm(f.mu_ind)**2
+            I += np.dot(ill.illum_basis, util.vec3_2_vec6(f.mu_abs))
+            #I += np.linalg.norm(f.mu_ind)**2
         return I
     
     def calc_total_intensity_from_single_fluorophore(self, args):

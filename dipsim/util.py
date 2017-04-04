@@ -94,7 +94,7 @@ def plot_sphere(filename, directions=None, data=None, interact=False,
     elif color_norm == 'log':
         norm = matplotlib.colors.LogNorm(vmin=data.min(), vmax=data.max())
     elif color_norm == 'linlog':
-        norm = matplotlib.colors.SymLogNorm(linthresh=1e-6, vmin=data.min(), vmax=data.max())
+        norm = matplotlib.colors.SymLogNorm(linthresh=1e-3, vmin=data.min(), vmax=data.max())
     elif color_norm == 'power':
         norm = matplotlib.colors.PowerNorm(gamma=gamma, vmin=data.min(), vmax=data.max())
 

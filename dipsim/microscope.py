@@ -91,8 +91,8 @@ class Microscope:
         print('Plotting data for microscope: '+filename)
         util.plot_sphere(filename, directions=directions, data=I, **kwargs)
         
-    def draw_scene(self, filename, interact=False, my_ax=None, dpi=500, vis_px=1000, save_file=True,
-                   pol_dirs=None):
+    def draw_scene(self, filename='out.png', interact=False, my_ax=None, dpi=500,
+                   vis_px=2000, save_file=False, pol_dirs=None):
         vispy.use('glfw')
         vis = vispy.scene.visuals
         

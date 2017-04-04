@@ -40,9 +40,9 @@ class MultiFrameMicroscope:
         
         return theta_std, phi_std, solid_angle_std, theta_deriv, phi_deriv, intensity
 
-    def plot_orientation_std(self, filename, n=50, my_axs=None, my_caxs=None, **kwargs):
+    def plot_orientation_std(self, filename='out.png', n=50, my_axs=None, my_caxs=None, **kwargs):
         directions = util.fibonacci_sphere(n)
-        print('Generating data for microscope: '+filename)
+
         std_out = np.apply_along_axis(self.calc_orientation_std, 1, directions, n)
         theta_std = std_out[:,0]
         phi_std = std_out[:,1]
@@ -50,8 +50,7 @@ class MultiFrameMicroscope:
         theta_deriv = std_out[:,3]
         phi_deriv = std_out[:,4]
         intensity = std_out[:,5]        
-        
-        print('Plotting data for microscope: '+filename)
+
         util.plot_sphere(filename+'_theta.png', directions=directions, data=theta_std, my_ax=my_axs[0], my_cax=my_caxs[0], **kwargs)
         util.plot_sphere(filename+'_phi.png', directions=directions, data=phi_std, my_ax=my_axs[1], my_cax=my_caxs[1], **kwargs)
         util.plot_sphere(filename+'_omega.png', directions=directions, data=omega_std, my_ax=my_axs[2], my_cax=my_caxs[2], **kwargs)
@@ -83,16 +82,16 @@ class NFramePolScope(MultiFrameMicroscope):
                                           f=10,
                                           bfp_rad=6,
                                           bfp_pol=bfp_pol,
-                                          bfp_n=16)
+                                          bfp_n=4)
             m.append(microscope.Microscope(illuminator=ill, detector=det))
                      
         self.microscopes = m
 
-    def draw_scene(self, filename, **kwargs):
+    def draw_scene(self, **kwargs):
         pol_dirs = []
         for m in self.microscopes:
             pol_dirs.append(m.illuminator.bfp_pol)
-        self.microscopes[0].draw_scene(filename, pol_dirs=pol_dirs, **kwargs)
+        self.microscopes[0].draw_scene(pol_dirs=pol_dirs, **kwargs)
         
 
         

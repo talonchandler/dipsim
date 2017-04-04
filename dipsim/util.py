@@ -2,6 +2,7 @@ from dipsim import visuals
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 import vispy
 
 def normalize(x):
@@ -71,7 +72,7 @@ def xyz2tp(xyz):
 def plot_sphere(filename, directions=None, data=None, interact=False,
                 color_norm='linear', gamma=0.25, color_map='coolwarm',
                 my_ax=None, my_cax=None, dpi=500, vis_px=1000,
-                save_file=True):
+                save_file=False):
 
     # Setup viewing window
     vispy.use('glfw')
@@ -143,3 +144,18 @@ def draw_axis(ax):
                     arrowprops=dict(arrowstyle="<-", shrinkA=0, shrinkB=0),
                     fontsize=14)
         
+def label_rows_and_cols(axs, row_labels, col_labels):
+    for i, label in enumerate(row_labels):
+        axs[i][0].annotate(label, xy=(0,0), xytext=(-0.1, 0.5), textcoords='axes fraction',
+                           va='center', ha='center', rotation=90, fontsize=18)
+    for i, label in enumerate(col_labels):
+        axs[0][i].annotate(label, xy=(0,0), xytext=(0.5, 1.1), textcoords='axes fraction',
+                           va='center', ha='center', fontsize=18)
+
+def generate_caxs(axs):
+    caxs = []
+    for ax in axs.flatten():
+        divider = make_axes_locatable(ax)
+        caxs.append(divider.append_axes("right", size="5%", pad=0.15))
+    return np.array(caxs).reshape(axs.shape)
+

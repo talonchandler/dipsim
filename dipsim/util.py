@@ -144,7 +144,7 @@ def draw_axis(ax):
                     arrowprops=dict(arrowstyle="<-", shrinkA=0, shrinkB=0),
                     fontsize=14)
         
-def label_rows_and_cols(axs, row_labels, col_labels):
+def label_rows_and_cols(axs, row_labels='', col_labels=''):
     for i, label in enumerate(row_labels):
         axs[i][0].annotate(label, xy=(0,0), xytext=(-0.1, 0.5), textcoords='axes fraction',
                            va='center', ha='center', rotation=90, fontsize=18)
@@ -159,3 +159,10 @@ def generate_caxs(axs):
         caxs.append(divider.append_axes("right", size="5%", pad=0.15))
     return np.array(caxs).reshape(axs.shape)
 
+def vec3_2_vec6(vec3):
+    return np.array([np.conj(vec3[0])*vec3[0],
+                     np.conj(vec3[1])*vec3[1],
+                     np.conj(vec3[2])*vec3[2],
+                     np.real(np.conj(vec3[0])*vec3[1]),
+                     np.real(np.conj(vec3[0])*vec3[2]),
+                     np.real(np.conj(vec3[1])*vec3[2])])

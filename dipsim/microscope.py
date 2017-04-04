@@ -116,7 +116,7 @@ class Microscope:
         # TODO: Generalize these transformations for oblique illuminations
         # TODO: Clean this up
         if pol_dirs == None:
-            pol_dirs = i.bfp_pol
+            pol_dirs = [i.bfp_pol]
         for pol_dir in pol_dirs:
             for direction in [-1, 1]:
                 pol = visuals.MyArrow(parent=view.scene, length=3)

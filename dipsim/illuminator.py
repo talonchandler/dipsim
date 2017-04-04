@@ -45,4 +45,47 @@ class Illuminator:
         if bfp_n <= 1:
             print("Warning: bfp_n should be larger than 1. bfp_n should be much\
                    larger than 1 for accurate results. ")
+            
         self.bfp_n = bfp_n
+        self.calc_illum_basis()
+        
+    def calc_illum_basis(self):
+        # Generate orthonormal basis with v0 along optical axis
+        v0 = self.optical_axis
+        v1, v2 = util.orthonormal_basis(v0)
+
+        # Create cartesian sampling of bfp (n x n x 3)
+        n = self.bfp_n
+        samp = np.linspace(-self.bfp_rad, self.bfp_rad, n)
+        xx, yy = np.meshgrid(samp, samp)
+        rp = np.einsum('ij,k->ijk', xx, v1) + np.einsum('ij,k->ijk', yy, v2)
+
+        # Find |mu_ind| for each point in bfp            
+        def ill_basis_from_bfp_point(rp, ill):
+            # Find plane wave normal in front focal plane
+            s = ill.optical_axis
+            sp = ill.f*s - rp 
+
+            # Find rotation matrix
+            len_rp = np.linalg.norm(rp)                
+            if len_rp == 0:
+                R = np.eye(3)
+            else:
+                # Find rotation angle                    
+                theta = np.arccos(np.dot(s, sp/np.linalg.norm(sp)))
+                # Find rotation axis
+                u = np.cross(rp, s)/len_rp 
+                R = util.rot_mat(theta, u) 
+
+            # Find apodization                    
+            apod = ill.bfp_apod(len_rp)
+
+            # Find the rotated GJV
+            gjv =  apod*np.dot(R, ill.bfp_pol)
+
+            return util.vec3_2_vec6(gjv)
+        
+        ill_basis_rp = np.apply_along_axis(ill_basis_from_bfp_point, 2, rp, self)
+        da = (2*self.bfp_rad/n)**2
+        a = np.pi*(self.bfp_rad**2)
+        self.illum_basis = np.sum(ill_basis_rp, axis=(0, 1))*da/a # Integrate over bfp

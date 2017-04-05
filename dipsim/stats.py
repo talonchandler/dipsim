@@ -88,9 +88,5 @@ class RandomVariable:
             # Invert and return diagonal
             crlb = np.diag(np.linalg.pinv(f_inf))
 
-            # if np.sqrt(crlb[0]*crlb[1]) > 1e2:
-            #     print(x0, dx)
-            #     print(derivs)
-            #     import pdb; pdb.set_trace()
-            return np.hstack((crlb, derivs[0,:], f0[0]))
+            return crlb
 

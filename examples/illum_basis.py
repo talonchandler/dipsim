@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import os; import time; start = time.time(); print('Running...')
 
 # Main input parameters
-thetas = [0., np.pi/4, np.pi/2]
+thetas = [x*np.pi/8 for x in range(8)]
 bfp_rads = np.hstack((np.arange(0.01, 0.2, 0.03), np.arange(0.2, 11, 0.5)))
 n_cols = len(thetas)
 n_rows = 3
@@ -31,7 +31,7 @@ for i, theta in enumerate(thetas):
                                       optical_axis=np.array([0., 0., 1.]),
                                       f=10, bfp_rad=bfp_rad,
                                       bfp_pol=bfp_pol,
-                                      bfp_n=128)
+                                      bfp_n=256) #>128 for good
         ill_basis.append(ill.illum_basis)
 
     ill_basis = np.array(ill_basis)
@@ -44,7 +44,7 @@ for i, theta in enumerate(thetas):
         axs[ax_i,i].set_xlim([0,1.0])
         if ax_i == 1:
             axs[ax_i,i].set_yscale('linear')
-            axs[ax_i,i].set_ylim([0,1.0])
+           # axs[ax_i,i].set_ylim([0,1.0])
         else:
             axs[ax_i,i].set_yscale('log')
             axs[ax_i,i].set_ylim([1e-5,1.0])

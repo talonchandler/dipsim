@@ -159,7 +159,15 @@ def generate_caxs(axs):
         caxs.append(divider.append_axes("right", size="5%", pad=0.15))
     return np.array(caxs).reshape(axs.shape)
 
-def vec3_2_vec6(vec3):
+def a_vec3_2_vec6(vec3):
+    return np.array([np.conj(vec3[0])*vec3[0],
+                     np.conj(vec3[1])*vec3[1],
+                     np.conj(vec3[2])*vec3[2],
+                     2*np.real(np.conj(vec3[0])*vec3[1]),
+                     2*np.real(np.conj(vec3[0])*vec3[2]),
+                     2*np.real(np.conj(vec3[1])*vec3[2])])
+
+def mu_vec3_2_vec6(vec3):
     return np.array([np.conj(vec3[0])*vec3[0],
                      np.conj(vec3[1])*vec3[1],
                      np.conj(vec3[2])*vec3[2],

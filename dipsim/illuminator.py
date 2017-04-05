@@ -83,7 +83,7 @@ class Illuminator:
             # Find the rotated GJV
             gjv =  apod*np.dot(R, ill.bfp_pol)
 
-            return util.vec3_2_vec6(gjv)
+            return util.a_vec3_2_vec6(gjv)
         
         ill_basis_rp = np.apply_along_axis(ill_basis_from_bfp_point, 2, rp, self)
         da = (2*self.bfp_rad/n)**2

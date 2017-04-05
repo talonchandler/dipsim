@@ -29,16 +29,12 @@ class MultiFrameMicroscope:
     def calc_orientation_std(self, arguments, n):
         rv = stats.RandomVariable(self.calc_total_intensities_from_single_fluorophore, dist='poisson')
         sphere_dx = np.arccos(1 - 2/n) # avg. half angle betweeen n points on sphere
-        crlb = rv.crlb(arguments, [sphere_dx, sphere_dx], geometry='tp')
+        crlb = rv.crlb(arguments, [sphere_dx, sphere_dx], geometry='rr')
         theta_std = crlb[0]
         phi_std = crlb[1]
-        theta_deriv = crlb[2]
-        phi_deriv = crlb[3]
-        intensity = crlb[4]
+        solid_angle_std = np.sqrt(theta_std)*np.sqrt(phi_std)*np.sin(arguments[0])
         
-        solid_angle_std = np.sqrt(theta_std)*np.sqrt(phi_std)
-        
-        return theta_std, phi_std, solid_angle_std, theta_deriv, phi_deriv, intensity
+        return theta_std, phi_std, solid_angle_std
 
     def plot_orientation_std(self, filename='out.png', n=50, my_axs=None, my_caxs=None, **kwargs):
         directions = util.fibonacci_sphere(n)
@@ -47,16 +43,13 @@ class MultiFrameMicroscope:
         theta_std = std_out[:,0]
         phi_std = std_out[:,1]
         omega_std = std_out[:,2]
-        theta_deriv = std_out[:,3]
-        phi_deriv = std_out[:,4]
-        intensity = std_out[:,5]        
 
         util.plot_sphere(filename+'_theta.png', directions=directions, data=theta_std, my_ax=my_axs[0], my_cax=my_caxs[0], **kwargs)
         util.plot_sphere(filename+'_phi.png', directions=directions, data=phi_std, my_ax=my_axs[1], my_cax=my_caxs[1], **kwargs)
         util.plot_sphere(filename+'_omega.png', directions=directions, data=omega_std, my_ax=my_axs[2], my_cax=my_caxs[2], **kwargs)
-        util.plot_sphere(filename+'_theta_deriv.png', directions=directions, data=theta_deriv, my_ax=my_axs[3], my_cax=my_caxs[3], **kwargs)
-        util.plot_sphere(filename+'_phi_deriv.png', directions=directions, data=phi_deriv, my_ax=my_axs[4], my_cax=my_caxs[4], **kwargs)
-        util.plot_sphere(filename+'_intensity.png', directions=directions, data=intensity, my_ax=my_axs[5], my_cax=my_caxs[5], **kwargs)                
+        
+        # for i, m in enumerate(self.microscopes):
+        #     m.plot_intensities_from_single_fluorophore(str(i)+filename, n, save_file=True)
 
 class NFramePolScope(MultiFrameMicroscope):
     """
@@ -82,7 +75,7 @@ class NFramePolScope(MultiFrameMicroscope):
                                           f=10,
                                           bfp_rad=6,
                                           bfp_pol=bfp_pol,
-                                          bfp_n=128)
+                                          bfp_n=256)
             m.append(microscope.Microscope(illuminator=ill, detector=det))
                      
         self.microscopes = m

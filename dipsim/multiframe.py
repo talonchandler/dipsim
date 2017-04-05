@@ -44,12 +44,14 @@ class MultiFrameMicroscope:
         phi_std = std_out[:,1]
         omega_std = std_out[:,2]
 
-        util.plot_sphere(filename+'_theta.png', directions=directions, data=theta_std, my_ax=my_axs[0], my_cax=my_caxs[0], **kwargs)
-        util.plot_sphere(filename+'_phi.png', directions=directions, data=phi_std, my_ax=my_axs[1], my_cax=my_caxs[1], **kwargs)
-        util.plot_sphere(filename+'_omega.png', directions=directions, data=omega_std, my_ax=my_axs[2], my_cax=my_caxs[2], **kwargs)
-        
+        util.plot_sphere(filename+'_omega.png', directions=directions, data=omega_std, my_ax=my_axs[0], my_cax=my_caxs[0], **kwargs)
+
+        # Potentially useful for plotting later
         # for i, m in enumerate(self.microscopes):
         #     m.plot_intensities_from_single_fluorophore(str(i)+filename, n, save_file=True)
+        # util.plot_sphere(filename+'_theta.png', directions=directions, data=theta_std, my_ax=my_axs[0], my_cax=my_caxs[0], **kwargs)
+        # util.plot_sphere(filename+'_phi.png', directions=directions, data=phi_std, my_ax=my_axs[1], my_cax=my_caxs[1], **kwargs)
+        
 
 class NFramePolScope(MultiFrameMicroscope):
     """
@@ -85,6 +87,3 @@ class NFramePolScope(MultiFrameMicroscope):
         for m in self.microscopes:
             pol_dirs.append(m.illuminator.bfp_pol)
         self.microscopes[0].draw_scene(pol_dirs=pol_dirs, **kwargs)
-        
-
-        

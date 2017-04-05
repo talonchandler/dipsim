@@ -18,53 +18,10 @@ class Microscope:
         self.illuminator = illuminator
         self.detector = detector
 
-    def calc_induced_dipoles(self, fluorophores):
-        ill = self.illuminator
-        for f in fluorophores:
-            if ill.illum_type == 'kohler':
-                # Generate orthonormal basis with v0 along optical axis
-                v0 = ill.optical_axis
-                v1, v2 = util.orthonormal_basis(v0)
-
-                # Create cartesian sampling of bfp (n x n x 3)
-                n = ill.bfp_n
-                samp = np.linspace(-ill.bfp_rad, ill.bfp_rad, n)
-                xx, yy = np.meshgrid(samp, samp)
-                rp = np.einsum('ij,k->ijk', xx, v1) + np.einsum('ij,k->ijk', yy, v2)
-
-                # Find |mu_ind| for each point in bfp            
-                def mu_em_from_bfp_point(rp, ill):
-                    # Find plane wave normal in front focal plane
-                    s = ill.optical_axis
-                    sp = ill.f*s - rp 
-
-                    # Find rotation matrix
-                    len_rp = np.linalg.norm(rp)                
-                    if len_rp == 0:
-                        R = np.eye(3)
-                    else:
-                        # Find rotation angle                    
-                        theta = np.arccos(np.dot(s, sp/np.linalg.norm(sp)))
-                        # Find rotation axis
-                        u = np.cross(rp, s)/len_rp 
-                        R = util.rot_mat(theta, u) 
-
-                    # Find apodization                    
-                    apod = ill.bfp_apod(len_rp)
-                    power = np.abs(np.dot(f.mu_abs, apod*np.dot(R, ill.bfp_pol)))
-                    return power
-
-                mu_em_rp = np.apply_along_axis(mu_em_from_bfp_point, 2, rp, ill)
-                f.mu_ind = f.mu_em*np.sum(np.abs(mu_em_rp), axis=(0, 1)) # Sum over bfp
-            else:
-                f.mu_ind = 0
-
     def my_calc_induced_dipoles(self, fluorophores):
         ill = self.illuminator        
         for f in fluorophores:
-            abs_power = np.dot(ill.illum_basis, util.mu_vec3_2_vec6(f.mu_abs))
-            # if abs_power < 0:
-            #     import pdb; pdb.set_trace()
+            abs_power = np.dot(ill.illum_basis, util.mu3to6(f.mu_abs))
             f.mu_ind = np.lib.scimath.sqrt(abs_power)*f.mu_em
             
     def calc_total_intensity(self, fluorophores):
@@ -73,7 +30,6 @@ class Microscope:
         # For now sum over entire volume
         I = 0
         for f in fluorophores:
-            #I += np.dot(ill.illum_basis, util.vec3_2_vec6(f.mu_abs))
             I += np.linalg.norm(f.mu_ind)**2
         return I
     
@@ -181,4 +137,3 @@ class Microscope:
             if save_file:
                 f.savefig(filename, dpi=dpi)
             return ax
-

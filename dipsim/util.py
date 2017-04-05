@@ -70,7 +70,8 @@ def xyz2tp(xyz):
             np.arctan2(xyz[1], xyz[0])]
 
 def plot_sphere(filename, directions=None, data=None, interact=False,
-                color_norm='linear', gamma=0.25, color_map='coolwarm',
+                color_norm='linear', color_min=0, color_max=4*np.pi,
+                gamma=0.25, color_map='coolwarm',
                 my_ax=None, my_cax=None, dpi=500, vis_px=1000,
                 save_file=False):
 
@@ -90,9 +91,9 @@ def plot_sphere(filename, directions=None, data=None, interact=False,
 
     # Calculate colors
     if color_norm == 'linear':
-        norm = matplotlib.colors.Normalize(vmin=data.min(), vmax=data.max())
+        norm = matplotlib.colors.Normalize(vmin=color_min, vmax=color_max)
     elif color_norm == 'log':
-        norm = matplotlib.colors.LogNorm(vmin=data.min(), vmax=data.max())
+        norm = matplotlib.colors.LogNorm(vmin=color_min, vmax=color_max)
     elif color_norm == 'linlog':
         norm = matplotlib.colors.SymLogNorm(linthresh=1e-3, vmin=data.min(), vmax=data.max())
     elif color_norm == 'power':
@@ -159,7 +160,8 @@ def generate_caxs(axs):
         caxs.append(divider.append_axes("right", size="5%", pad=0.15))
     return np.array(caxs).reshape(axs.shape)
 
-def a_vec3_2_vec6(vec3):
+def a3to6(vec3):
+    # Converts a gjv from three components to six components.
     return np.array([np.conj(vec3[0])*vec3[0],
                      np.conj(vec3[1])*vec3[1],
                      np.conj(vec3[2])*vec3[2],
@@ -167,7 +169,8 @@ def a_vec3_2_vec6(vec3):
                      2*np.real(np.conj(vec3[0])*vec3[2]),
                      2*np.real(np.conj(vec3[1])*vec3[2])])
 
-def mu_vec3_2_vec6(vec3):
+def mu3to6(vec3):
+    # Converts a dipole vector from three components to six components.
     return np.array([np.conj(vec3[0])*vec3[0],
                      np.conj(vec3[1])*vec3[1],
                      np.conj(vec3[2])*vec3[2],

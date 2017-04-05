@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import os; import time; start = time.time(); print('Running...')
 
 # Main input parameters
-thetas = [x*np.pi/8 for x in range(8)]
+thetas = [x*np.pi/4 for x in range(4)]
 bfp_rads = np.hstack((np.arange(0.01, 0.2, 0.03), np.arange(0.2, 11, 0.5)))
 n_cols = len(thetas)
 n_rows = 3
@@ -16,7 +16,7 @@ row_labels = ['Scene']
 # Generate axes
 size = (inch_fig*n_cols, inch_fig*n_rows)
 fig, axs = plt.subplots(n_rows, n_cols, figsize=size)
-plt.subplots_adjust(wspace=0.2, hspace=0.2)
+plt.subplots_adjust(wspace=0.2, hspace=0.4)
 if len(thetas) == 1:
     axs = np.expand_dims(axs, 1)
 
@@ -31,7 +31,7 @@ for i, theta in enumerate(thetas):
                                       optical_axis=np.array([0., 0., 1.]),
                                       f=10, bfp_rad=bfp_rad,
                                       bfp_pol=bfp_pol,
-                                      bfp_n=256) #>128 for good
+                                      bfp_n=128) #>128 for good
         ill_basis.append(ill.illum_basis)
 
     ill_basis = np.array(ill_basis)
@@ -39,12 +39,13 @@ for i, theta in enumerate(thetas):
     for ax_i in [1, 2]:
         axs[ax_i,i].plot(bfp_rads/f, ill_basis, '-')
         labels = [r'$A_x^2$', r'$A_y^2$', r'$A_z^2$', r'$A_xA_y$', r'$A_xA_z$', r'$A_yA_z']
-        axs[ax_i,i].legend(labels)
+        axs[ax_i,i].legend(labels, bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
+           ncol=3, mode="expand", borderaxespad=0.)
         axs[ax_i,i].set_xlabel(r'\rho/f')
         axs[ax_i,i].set_xlim([0,1.0])
         if ax_i == 1:
             axs[ax_i,i].set_yscale('linear')
-           # axs[ax_i,i].set_ylim([0,1.0])
+            axs[ax_i,i].set_ylim([0,1.0])
         else:
             axs[ax_i,i].set_yscale('log')
             axs[ax_i,i].set_ylim([1e-5,1.0])

@@ -17,6 +17,7 @@ class Microscope:
     def __init__(self, illuminator, detector):
         self.illuminator = illuminator
         self.detector = detector
+        self.max_photons = 10
 
     def my_calc_induced_dipoles(self, fluorophores):
         ill = self.illuminator        
@@ -31,7 +32,7 @@ class Microscope:
         I = 0
         for f in fluorophores:
             I += np.linalg.norm(f.mu_ind)**2
-        return I
+        return I*self.max_photons
     
     def calc_total_intensity_from_single_fluorophore(self, args):
         theta = args[0]

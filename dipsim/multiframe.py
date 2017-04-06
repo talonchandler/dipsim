@@ -1,4 +1,4 @@
-from dipsim import fluorophore, illuminator, detector, microscope, stats, util
+from dipsim import fluorophore, illuminator, detector, microscope, stats, util, multiframe
 import numpy as np
 import matplotlib.pyplot as plt
 import functools
@@ -11,9 +11,10 @@ class MultiFrameMicroscope:
 
     A MultiFrameMicroscope is specified by a list of Microscopes. 
     """
-    def __init__(self, microscopes, ):
+    def __init__(self, microscopes, **kwargs):
         self.microscopes = microscopes
-
+        self.noise_model = stats.NoiseModel(self.calc_total_intensities_from_single_fluorophore, **kwargs)
+        
     def calc_total_intensities(self, fluorophores):
         I = []
         for m in self.microscopes:
@@ -27,16 +28,15 @@ class MultiFrameMicroscope:
         return np.array(I)
     
     def calc_orientation_std(self, arguments, n):
-        rv = stats.RandomVariable(self.calc_total_intensities_from_single_fluorophore, dist='poisson')
         sphere_dx = np.arccos(1 - 2/n) # avg. half angle betweeen n points on sphere
-        crlb = rv.crlb(arguments, [sphere_dx, sphere_dx], geometry='rr')
+        crlb = self.noise_model.crlb(arguments, [sphere_dx, sphere_dx], geometry='rr')
         theta_std = crlb[0]
         phi_std = crlb[1]
         solid_angle_std = np.sqrt(theta_std)*np.sqrt(phi_std)*np.sin(arguments[0])
         
         return theta_std, phi_std, solid_angle_std
 
-    def plot_orientation_std(self, filename='out.png', n=50, my_axs=None, my_caxs=None, **kwargs):
+    def plot_orientation_std(self, filename='out.png', n=50, my_ax=None, my_cax=None, **kwargs):
         directions = util.fibonacci_sphere(n)
 
         std_out = np.apply_along_axis(self.calc_orientation_std, 1, directions, n)
@@ -44,7 +44,7 @@ class MultiFrameMicroscope:
         phi_std = std_out[:,1]
         omega_std = std_out[:,2]
 
-        util.plot_sphere(filename+'_omega.png', directions=directions, data=omega_std, my_ax=my_axs[0], my_cax=my_caxs[0], **kwargs)
+        util.plot_sphere(filename+'_omega.png', directions=directions, data=omega_std, my_ax=my_ax, my_cax=my_cax, **kwargs)
 
         # Potentially useful for plotting later
         # for i, m in enumerate(self.microscopes):
@@ -52,7 +52,6 @@ class MultiFrameMicroscope:
         # util.plot_sphere(filename+'_theta.png', directions=directions, data=theta_std, my_ax=my_axs[0], my_cax=my_caxs[0], **kwargs)
         # util.plot_sphere(filename+'_phi.png', directions=directions, data=phi_std, my_ax=my_axs[1], my_cax=my_caxs[1], **kwargs)
         
-
 class NFramePolScope(MultiFrameMicroscope):
     """
     An NFramePolScope represents an experiment with the polscope where the
@@ -60,7 +59,8 @@ class NFramePolScope(MultiFrameMicroscope):
 
     An NFramePolScope is specified by the number of frames. 
     """
-    def __init__(self, n_frames=4):
+    def __init__(self, n_frames=4, bfp_n=256, **kwargs):
+               
         self.n_frames = n_frames
 
         # Constant detection path.
@@ -75,12 +75,12 @@ class NFramePolScope(MultiFrameMicroscope):
             ill = illuminator.Illuminator(illum_type='kohler',
                                           optical_axis=np.array([0., 0., 1.]),
                                           f=10,
-                                          bfp_rad=6,
+                                          bfp_rad=3,
                                           bfp_pol=bfp_pol,
-                                          bfp_n=256)
+                                          bfp_n=bfp_n)
             m.append(microscope.Microscope(illuminator=ill, detector=det))
                      
-        self.microscopes = m
+        MultiFrameMicroscope.__init__(self, m, **kwargs)
 
     def draw_scene(self, **kwargs):
         pol_dirs = []

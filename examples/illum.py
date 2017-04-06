@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import os; import time; start = time.time(); print('Running...')
 
 # Main input parameters
-n_pts = 50000
+n_pts = 5000
 n_frames = [1, 2, 3, 4]
 n_cols = len(n_frames) 
 n_rows = 4

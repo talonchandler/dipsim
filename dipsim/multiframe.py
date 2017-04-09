@@ -59,7 +59,7 @@ class NFramePolScope(MultiFrameMicroscope):
 
     An NFramePolScope is specified by the number of frames. 
     """
-    def __init__(self, n_frames=4, bfp_n=256, **kwargs):
+    def __init__(self, n_frames=4, bfp_n=256, max_photons=100, **kwargs):
                
         self.n_frames = n_frames
 
@@ -78,7 +78,7 @@ class NFramePolScope(MultiFrameMicroscope):
                                           bfp_rad=3,
                                           bfp_pol=bfp_pol,
                                           bfp_n=bfp_n)
-            m.append(microscope.Microscope(illuminator=ill, detector=det))
+            m.append(microscope.Microscope(illuminator=ill, detector=det, max_photons=max_photons))
                      
         MultiFrameMicroscope.__init__(self, m, **kwargs)
 

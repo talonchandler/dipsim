@@ -14,10 +14,10 @@ class Microscope:
     A Microscope is specified by its illumination path (an Illuminator object),
     and its detection path (a Detector object).
     """
-    def __init__(self, illuminator, detector):
+    def __init__(self, illuminator, detector, max_photons):
         self.illuminator = illuminator
         self.detector = detector
-        self.max_photons = 10
+        self.max_photons = max_photons
 
     def my_calc_induced_dipoles(self, fluorophores):
         ill = self.illuminator        

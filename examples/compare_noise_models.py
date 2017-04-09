@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import os; import time; start = time.time(); print('Running...')
 
 # Main input parameters
-n_pts = 5000 # 50000
-bfp_n = 64
+n_pts = 50000 # 50000
+bfp_n = 256
 n_frames = [3, 4]
 noise_type = ['poisson', 'gaussian', 'gaussian', 'gaussian']
 gauss_stds = [0, 0.5, 1, 3]
@@ -30,10 +30,13 @@ caxs = util.generate_caxs(axs)
 for j, nf in enumerate(n_frames):
     for i, std in enumerate(gauss_stds):
         print('Computing microscope: ' + str(std))    
-        m = multiframe.NFramePolScope(n_frames=nf, bfp_n=bfp_n, dist_type=noise_type[i], gauss_mean=0, gauss_std=std)
+        m = multiframe.NFramePolScope(n_frames=nf, bfp_n=bfp_n,
+                                      dist_type=noise_type[i],
+                                      gauss_mean=0, gauss_std=std,
+                                      max_photons=1)
         m.plot_orientation_std(filename=str(i)+'frame.png', n=n_pts, color_norm='log',
                                my_ax=axs[j,i+1], my_cax=caxs[j,i+1],
-                               color_min=1e-3, color_max=4*np.pi)
+                               color_min=1e-1, color_max=4*np.pi)
         m.draw_scene(my_ax=axs[j,0], dpi=dpi, vis_px=vis_px)
         caxs[j,0].axis('off')
 

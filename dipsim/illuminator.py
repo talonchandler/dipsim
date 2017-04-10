@@ -89,3 +89,7 @@ class Illuminator:
         da = (2*self.bfp_rad/n)**2
         a = np.pi*(self.bfp_rad**2)
         self.illum_basis = np.sum(ill_basis_rp, axis=(0, 1))*da/a # Integrate over bfp
+
+    def calc_excitation_efficiency(self, fluorophore):
+        return np.dot(self.illum_basis, util.mu3to6(fluorophore.mu_abs))
+        

@@ -19,16 +19,39 @@ class Microscope:
         self.detector = detector
         self.max_photons = max_photons
 
-    def calc_total_intensity(self, fluorophores):
+    def calc_intensity(self, fluorophores):
         ill = self.illuminator
         det = self.detector
         I = 0
         for f in fluorophores:
-            abs_power = np.dot(ill.illum_basis, util.mu3to6(f.mu_abs))
-            f.mu_ind = np.lib.scimath.sqrt(abs_power)*f.mu_em
-            I += np.linalg.norm(f.mu_ind)**2
+            excite = self.illuminator.calc_excitation_efficiency(flu)
+            collect = self.detector.calc_collection_efficiency(flu)
+            I += excite*collect
         return I*self.max_photons
-    
+
+    def calc_sensitivity(self, args):
+        theta = args[0]
+        phi = args[1]
+
+        flu_dir = np.array([np.sin(theta)*np.cos(phi),
+                           np.sin(theta)*np.sin(phi),
+                           np.cos(theta)])
+
+        flu = fluorophore.Fluorophore(position=np.array([0, 0, 0]),
+                                      mu_abs=flu_dir,
+                                      mu_em=flu_dir)
+
+        excite = self.illuminator.calc_excitation_efficiency(flu)
+        collect = self.detector.calc_collection_efficiency(flu)        
+        return excite*collect
+
+    def plot_sensitivity(self, filename='out.png', n=50, **kwargs):
+        directions = util.fibonacci_sphere(n)
+        print('Generating data for microscope: '+filename)
+        I = np.apply_along_axis(self.calc_sensitivity, 1, directions)
+        print('Plotting data for microscope: '+filename)
+        util.plot_sphere(filename, directions=directions, data=I, **kwargs)
+
     def calc_excitation_efficiency(self, args):
         theta = args[0]
         phi = args[1]
@@ -41,7 +64,7 @@ class Microscope:
                                       mu_abs=flu_dir,
                                       mu_em=flu_dir)
 
-        I = self.calc_total_intensity([flu])
+        I = self.illuminator.calc_excitation_efficiency(flu)
         return I
     
     def plot_excitation_efficiency(self, filename='out.png',

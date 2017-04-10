@@ -147,10 +147,10 @@ def draw_axis(ax):
         
 def label_rows_and_cols(axs, row_labels='', col_labels=''):
     for i, label in enumerate(row_labels):
-        axs[i][0].annotate(label, xy=(0,0), xytext=(-0.1, 0.5), textcoords='axes fraction',
+        axs[0][i].annotate(label, xy=(0,0), xytext=(-0.1, 0.5), textcoords='axes fraction',
                            va='center', ha='center', rotation=90, fontsize=18)
     for i, label in enumerate(col_labels):
-        axs[0][i].annotate(label, xy=(0,0), xytext=(0.5, 1.1), textcoords='axes fraction',
+        axs[i][0].annotate(label, xy=(0,0), xytext=(0.5, 1.1), textcoords='axes fraction',
                            va='center', ha='center', fontsize=18)
 
 def generate_caxs(axs):

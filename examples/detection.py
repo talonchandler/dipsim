@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import os; import time; start = time.time(); print('Running...')
 
 # Main input parameters
-n_pts = 5000 # 50000
-bfp_n = 64
+n_pts = 10000 # 50000
+bfp_n = 256
 pols = [np.array([1,0,0]),np.array([0,1,0]),np.array([1,0,0]),np.array([0,1,0])]
 det_axes = [np.array([0,0,1]),np.array([0,0,1]),np.array([-1,0,0]),np.array([-1,0,0])]
 n_cols = 4

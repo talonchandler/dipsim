@@ -5,6 +5,7 @@ import vispy
 from dipsim import util, fluorophore, visuals
 from vispy.visuals.transforms import (STTransform, LogTransform,
                                       MatrixTransform, PolarTransform)
+from vispy import gloo
 
 class Microscope:
     """
@@ -104,12 +105,13 @@ class Microscope:
                    vis_px=2000, save_file=False, pol_dirs=None):
         vispy.use('glfw')
         vis = vispy.scene.visuals
+        i = self.illuminator
         
         # Setup viewing window
         canvas = vispy.scene.SceneCanvas(keys='interactive', bgcolor='white',
                                          size=(vis_px, vis_px), show=interact)
         cam = vispy.scene.cameras.turntable.TurntableCamera
-        my_cam = cam(fov=0, azimuth=135, scale_factor=23,
+        my_cam = cam(fov=0, azimuth=135, scale_factor=25,
                      center=(0, 0, self.illuminator.f+3))
         view = canvas.central_widget.add_view(camera=my_cam)
 
@@ -118,12 +120,26 @@ class Microscope:
         m = MatrixTransform()
         m.rotate(angle=-45, axis=(1,1,0))
         dip.transform = m
-        
-        # Plot illuminator
-        i = self.illuminator
-        
-        # TODO: Generalize these transformations for oblique illuminations
-        # TODO: Clean this up
+
+        # Plot axis
+        dip = visuals.MyLine(parent=view.scene, length=10, radius=0.025)
+
+
+        # Plot illumination lens
+        lens = vis.Ellipse(parent=view.scene, center=(0,0), radius=4,
+                           color=(.8,.8,.8,1.0))
+        lens.transform = STTransform(translate=(0, 0, i.f))
+
+        # Plot upper axis
+        dip2 = visuals.MyLine(parent=view.scene, length=10, radius=0.025)
+        dip2.transform = STTransform(translate=(0,0,10))
+
+        # Plot illumination circle
+        circ = vis.Ellipse(parent=view.scene, center=(0,0), radius=i.bfp_rad,
+                           color=(1, 1, 0, 1))
+        circ.transform = STTransform(translate=(0, 0, 2*i.f))
+
+        # Plot polarizations
         if pol_dirs == None:
             pol_dirs = [i.bfp_pol]
         for pol_dir in pol_dirs:
@@ -135,23 +151,33 @@ class Microscope:
                 m.rotate(angle=phi_angle, axis=(0,0,1))
                 m.translate((0,0,2*i.f+0.1))
                 pol.transform = m
-        
-        circ = vis.Ellipse(parent=view.scene, center=(0,0), radius=i.bfp_rad,
-                           color=(1, 1, 0, 0.2 + 0.8/i.bfp_rad))
-        line = vis.Ellipse(parent=view.scene, radius=3.0,
-                           color=(1, 1, 0, 0.2 + 0.8/i.bfp_rad))
-        
-        circ.transform = STTransform(translate=(0, 0, 2*i.f))
-        
-        # Plot lens
-        lens2 = visuals.MyLens(parent=view.scene)
-        lens2.transform = STTransform(scale=(10, 10, 10),
-                                      translate=(0, 0, i.f))
-        lens_out = vis.Ellipse(parent=view.scene, center=(0,0), radius=0.5,
-                               color=None)
-        lens_out.transform = STTransform(scale=(10, 10, 10),
-                                         translate=(0, 0, i.f))
+                
 
+        # Plot collection lens
+        if np.array_equal(self.illuminator.optical_axis, self.detector.optical_axis):
+            print('SKIP')
+        else:
+            lens2 = vis.Ellipse(parent=view.scene, center=(0,0), radius=4,
+                               color=(.8,.8,.8,1.0))
+            axis = visuals.MyLine(parent=view.scene, length=10, radius=0.025)
+            my_transform = MatrixTransform()
+            my_transform.rotate(90, np.array([0,1,0]))
+            my_transform.translate([-i.f,0,0])                                            
+            lens2.transform = my_transform
+            axis.transform = my_transform
+
+        # Plot detector
+        det = vis.Plane(parent=view.scene, width=8, height=8, color=(0.9,0.9,0.9,0.3))
+        my_transform = MatrixTransform()
+        if np.array_equal(self.illuminator.optical_axis, self.detector.optical_axis):
+            my_transform.translate([0,0,1.1*i.f])                                            
+        else:
+            axis = visuals.MyLine(parent=view.scene, length=10, radius=0.025)            
+            my_transform.rotate(90, np.array([0,1,0]))            
+            my_transform.translate([-1.1*i.f,0,0])
+            axis.transform=my_transform            
+        det.transform=my_transform
+        
         # Display or save
         if interact:
             canvas.app.run()
@@ -164,7 +190,7 @@ class Microscope:
                 my_ax = local_ax
 
             for ax in [local_ax, my_ax]:
-                util.draw_axis(ax)
+                util.draw_axis(ax, x=1.1, y=0.1)
                 ax.spines['right'].set_color('none')
                 ax.spines['left'].set_color('none')
                 ax.spines['top'].set_color('none')

@@ -133,9 +133,9 @@ def plot_sphere(filename, directions=None, data=None, interact=False,
         if save_file:
             f.savefig(filename, dpi=dpi)
 
-def draw_axis(ax):
+def draw_axis(ax, x=0.925, y=0.1):
     length=0.1
-    center=np.array((0.925, 0.1))
+    center=np.array((x, y))
     angles = np.pi/2 + np.array((0, 2*np.pi/3, 4*np.pi/3))
     labels = ('$z$', '$x$', '$y$')
     for angle, label in zip(angles, labels):

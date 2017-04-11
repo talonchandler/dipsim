@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import os; import time; start = time.time(); print('Running...')
 
 # Main input parameters
-n_pts = 50000 # 50000
+n_pts = 5000 # 50000
 bfp_n = 256
 n_frames = [3, 4]
 n_cols = len(n_frames) 
@@ -30,7 +30,7 @@ for i, nf in enumerate(n_frames):
     m = multiframe.NFramePolScope(n_frames=nf, bfp_n=bfp_n, dist_type='poisson', gauss_mean=0, gauss_std=1)
     m.plot_orientation_std(filename=str(i)+'frame.png', n=n_pts, color_norm='log',
                            my_ax=axs[1,i], my_cax=caxs[1,i],
-                           color_min=1e-1, color_max=4*np.pi)
+                           color_min=1e-3, color_max=4*np.pi)
     m.draw_scene(my_ax=axs[0,i], dpi=dpi, vis_px=vis_px)
     caxs[0,i].axis('off')
 

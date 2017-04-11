@@ -20,16 +20,9 @@ class Microscope:
         self.detector = detector
         self.max_photons = max_photons
 
-    def calc_intensity(self, fluorophores):
-        ill = self.illuminator
-        det = self.detector
-        I = 0
-        for f in fluorophores:
-            excite = self.illuminator.calc_excitation_efficiency(flu)
-            collect = self.detector.calc_collection_efficiency(flu)
-            I += excite*collect
-        return I*self.max_photons
-
+    def calc_intensity(self, args):
+        return self.max_photons*self.calc_sensitivity(args)
+    
     def calc_sensitivity(self, args):
         theta = args[0]
         phi = args[1]
@@ -112,7 +105,7 @@ class Microscope:
                                          size=(vis_px, vis_px), show=interact)
         cam = vispy.scene.cameras.turntable.TurntableCamera
         my_cam = cam(fov=0, azimuth=135, scale_factor=25,
-                     center=(0, 0, self.illuminator.f+3))
+                     center=(0, 0, self.illuminator.f))
         view = canvas.central_widget.add_view(camera=my_cam)
 
         # Plot dipole
@@ -154,9 +147,7 @@ class Microscope:
                 
 
         # Plot collection lens
-        if np.array_equal(self.illuminator.optical_axis, self.detector.optical_axis):
-            print('SKIP')
-        else:
+        if not np.array_equal(self.illuminator.optical_axis, self.detector.optical_axis):
             lens2 = vis.Ellipse(parent=view.scene, center=(0,0), radius=4,
                                color=(.8,.8,.8,1.0))
             axis = visuals.MyLine(parent=view.scene, length=10, radius=0.025)
@@ -167,16 +158,21 @@ class Microscope:
             axis.transform = my_transform
 
         # Plot detector
-        det = vis.Plane(parent=view.scene, width=8, height=8, color=(0.9,0.9,0.9,0.3))
-        my_transform = MatrixTransform()
-        if np.array_equal(self.illuminator.optical_axis, self.detector.optical_axis):
-            my_transform.translate([0,0,1.1*i.f])                                            
+        if self.detector.det_type == '4pi':
+            det = vis.Sphere(parent=view.scene, radius=3, color=(0.9,0.9,0.9,0.3))
+        elif np.array_equal(self.illuminator.optical_axis, self.detector.optical_axis):
+            det = vis.Plane(parent=view.scene, width=8, height=8, color=(0.9,0.9,0.9,0.3))
+            my_transform = MatrixTransform()
+            my_transform.translate([0,0,1.1*i.f])
+            det.transform=my_transform            
         else:
+            det = vis.Plane(parent=view.scene, width=8, height=8, color=(0.9,0.9,0.9,0.3))
+            my_transform = MatrixTransform()
             axis = visuals.MyLine(parent=view.scene, length=10, radius=0.025)            
             my_transform.rotate(90, np.array([0,1,0]))            
             my_transform.translate([-1.1*i.f,0,0])
             axis.transform=my_transform            
-        det.transform=my_transform
+            det.transform=my_transform
         
         # Display or save
         if interact:

@@ -13,18 +13,12 @@ class MultiFrameMicroscope:
     """
     def __init__(self, microscopes, **kwargs):
         self.microscopes = microscopes
-        self.noise_model = stats.NoiseModel(self.calc_total_intensities_from_single_fluorophore, **kwargs)
+        self.noise_model = stats.NoiseModel(self.calc_total_intensities, **kwargs)
         
-    def calc_total_intensities(self, fluorophores):
+    def calc_total_intensities(self, arguments):
         I = []
         for m in self.microscopes:
-            I.append(m.calc_total_intensity(fluorophores))
-        return np.array(I)
-
-    def calc_total_intensities_from_single_fluorophore(self, arguments):
-        I = []
-        for m in self.microscopes:
-            I.append(m.calc_total_intensity_from_single_fluorophore(arguments))
+            I.append(m.calc_intensity(arguments))
         return np.array(I)
     
     def calc_orientation_std(self, arguments, n):
@@ -59,14 +53,14 @@ class NFramePolScope(MultiFrameMicroscope):
 
     An NFramePolScope is specified by the number of frames. 
     """
-    def __init__(self, n_frames=4, bfp_n=256, max_photons=100, **kwargs):
+    def __init__(self, n_frames=4, bfp_n=256, max_photons=100,
+                 det_type='lens', det_axis=np.array([0, 0, 1]), **kwargs):
                
         self.n_frames = n_frames
 
         # Constant detection path.
-        det = detector.Detector(optical_axis=np.array([0, 0, 1]),
-                                        na=1.5,
-                                        n=1.5)
+        det = detector.Detector(optical_axis=det_axis, det_type=det_type, na=1.3, n=1.5)
+        
         # Changing illumination.
         m = []
         for n in range(self.n_frames):

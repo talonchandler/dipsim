@@ -60,15 +60,22 @@ def fibonacci_sphere(n):
     phi = np.mod((np.pi*(3.0 - np.sqrt(5.0)))*np.arange(n), 2*np.pi)
     return np.vstack((theta, phi)).T
 
-def tp2xyz(tp):
-    return [np.sin(tp[0])*np.cos(tp[1]),
-            np.sin(tp[0])*np.sin(tp[1]),
-            np.cos(tp[0])]
+# Three coordinate conversion functions. Use R to use theta-phi coordinates that
+# are measured from axes other than the typical z and x axes.
+def tp2xyz(tp, R=np.eye(3,3)):
+    xyz = [np.sin(tp[0])*np.cos(tp[1]), np.sin(tp[0])*np.sin(tp[1]), np.cos(tp[0])]
+    return np.dot(R, xyz)
 
-def xyz2tp(xyz):
-    return [np.arccos(xyz[2]/np.linalg.norm(xyz)),
-            np.arctan2(xyz[1], xyz[0])]
+def xyz2tp(xyz, R=np.eye(3,3)):
+    xyz_prime = np.dot(np.linalg.inv(R), xyz)
+    return np.array([np.arccos(xyz_prime[2]/np.linalg.norm(xyz_prime)),
+                     np.arctan2(xyz_prime[1], xyz_prime[0])])
 
+def tp2tp_prime(tp, R=np.eye(3,3)):
+    xyz = tp2xyz(tp)
+    return xyz2tp(xyz, R)
+
+# Plotting functions
 def plot_sphere(filename, directions=None, data=None, interact=False,
                 color_norm='linear', color_min=0, color_max=4*np.pi,
                 gamma=0.25, color_map='coolwarm',

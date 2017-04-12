@@ -24,27 +24,12 @@ class MultiFrameMicroscope:
     def calc_orientation_std(self, arguments, n):
         sphere_dx = np.arccos(1 - 2/n) # avg. half angle betweeen n points on sphere
         crlb = self.noise_model.crlb(arguments, [sphere_dx, sphere_dx], geometry='rr')
-        theta_std = crlb[0]
-        phi_std = crlb[1]
-        solid_angle_std = np.sqrt(theta_std)*np.sqrt(phi_std)*np.sin(arguments[0])
-        
-        return theta_std, phi_std, solid_angle_std
+        return self.noise_model.solid_angle_std(crlb, arguments)
 
     def plot_orientation_std(self, filename='out.png', n=50, my_ax=None, my_cax=None, **kwargs):
         directions = util.fibonacci_sphere(n)
-
-        std_out = np.apply_along_axis(self.calc_orientation_std, 1, directions, n)
-        theta_std = std_out[:,0]
-        phi_std = std_out[:,1]
-        omega_std = std_out[:,2]
-
+        omega_std = np.apply_along_axis(self.calc_orientation_std, 1, directions, n)
         util.plot_sphere(filename+'_omega.png', directions=directions, data=omega_std, my_ax=my_ax, my_cax=my_cax, **kwargs)
-
-        # Potentially useful for plotting later
-        # for i, m in enumerate(self.microscopes):
-        #     m.plot_intensities_from_single_fluorophore(str(i)+filename, n, save_file=True)
-        # util.plot_sphere(filename+'_theta.png', directions=directions, data=theta_std, my_ax=my_axs[0], my_cax=my_caxs[0], **kwargs)
-        # util.plot_sphere(filename+'_phi.png', directions=directions, data=phi_std, my_ax=my_axs[1], my_cax=my_caxs[1], **kwargs)
         
 class NFramePolScope(MultiFrameMicroscope):
     """

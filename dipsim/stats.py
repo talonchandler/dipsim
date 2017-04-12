@@ -11,7 +11,8 @@ class NoiseModel:
     The functions in this class assume that the noise properties are only a
     function of the expected value.
     """
-    def __init__(self, ev_func, dist_type='poisson', gauss_mean=0, gauss_std=1):
+    def __init__(self, ev_func, dist_type='poisson', gauss_mean=0, gauss_std=1,
+                 crlb_frame=np.eye(3)):
         self.ev_func = ev_func
         self.dist_type = dist_type
 
@@ -22,6 +23,7 @@ class NoiseModel:
             self.gauss_mean = 0
             self.gauss_std = 0
 
+        self.crlb_frame = crlb_frame
         self.crlb_detector_term_func = self.precompute_detector_term()
 
     def precompute_detector_term(self):
@@ -163,7 +165,10 @@ class NoiseModel:
             elif g == 'p':
                 break
             elif g == 'r':
-                h[i, :] = np.eye(1, n, k=i).flatten()*dx # ith h vector
+                tp_prime = util.tp2tp_prime(x0, self.crlb_frame)
+                delta = np.eye(1, n, k=i).flatten()*dx # ith h vector
+                tp_shifted = util.tp2tp_prime(tp_prime + delta, np.linalg.inv(self.crlb_frame))
+                h[i, :] = tp_shifted - x0
             else:
                 print("Warning: geometry must be 't', 'p', or 'r'.")
                 h[i, :] = np.zeros(1, n)
@@ -183,4 +188,17 @@ class NoiseModel:
         crlb = np.diag(np.linalg.pinv(f_inf))
 
         return crlb
+
+    def solid_angle_std(self, crlb, x0):
+        ''' 
+        Takes the output of the crlb function (the individual parameter variances), 
+        and the position in tp coordinates and returns the solid angle std taking 
+        into account the rotated coordinate frame. 
+        '''
+        theta_prime = util.tp2tp_prime(x0, R=self.crlb_frame)[0]
+        theta_std = crlb[0]
+        phi_std = crlb[1]
+        return np.sqrt(theta_std)*np.sqrt(phi_std)*np.sin(theta_prime)
+
+    
 

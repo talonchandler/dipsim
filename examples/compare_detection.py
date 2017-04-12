@@ -5,19 +5,19 @@ import matplotlib.pyplot as plt
 import os; import time; start = time.time(); print('Running...')
 
 # Main input parameters
-n_pts = 50000 # 50000
+n_pts = 50000
 bfp_n = 256
-det_axes = [np.array([0,0,1]), np.array([0,0,1]), np.array([-1,0,0])]
-det_types = ['4pi', 'lens', 'lens']
+det_axes = [np.array([0,0,1]), np.array([0,0,1]), np.array([-1,0,0]), np.array([-1.0/np.sqrt(2),0,-1.0/np.sqrt(2)])]
+det_types = ['4pi', 'lens', 'lens', 'lens']
 noise_types = ['poisson', 'gaussian', 'gaussian']
 gauss_stds = [0,1,3]
 n_cols = len(det_axes)
 n_rows = len(noise_types) + 1
 inch_fig = 5
 vis_px = 2000
-dpi = 500
+dpi = 250
 row_labels = ['Scene', r'Poisson', r'Poisson + Gaussian: $\sigma = 0.5$', r'Poisson + Gaussian: $\sigma = 3$']
-col_labels = ['4$\pi$ detection', 'Epi-detection', 'Ortho-detection']
+col_labels = ['4$\pi$ detection', 'Epi-detection', 'Ortho-detection', r'$135^{\circ}$-detection']
 
 # Generate axes
 size = (inch_fig*n_cols, inch_fig*n_rows)
@@ -34,7 +34,9 @@ for i, (det_axis, det_type) in enumerate(zip(det_axes, det_types)):
         m = multiframe.NFramePolScope(n_frames=4, det_axis=det_axis,
                                       det_type=det_type, bfp_n=bfp_n,
                                       dist_type=noise_type, gauss_mean=0,
-                                      gauss_std=gauss_std)
+                                      gauss_std=gauss_std,
+                                      crlb_frame=util.rot_mat(np.pi/4, np.array([0,1,0])),
+                                      max_photons=1000)
         m.plot_orientation_std(filename=str(i)+'frame.png', n=n_pts, color_norm='log',
                                my_ax=axs[j+1,i], my_cax=caxs[j+1,i],
                                color_min=1e-3, color_max=4*np.pi)

@@ -24,17 +24,8 @@ class Microscope:
         return self.max_photons*self.calc_sensitivity(args)
     
     def calc_sensitivity(self, args):
-        theta = args[0]
-        phi = args[1]
-
-        flu_dir = np.array([np.sin(theta)*np.cos(phi),
-                           np.sin(theta)*np.sin(phi),
-                           np.cos(theta)])
-
-        flu = fluorophore.Fluorophore(position=np.array([0, 0, 0]),
-                                      mu_abs=flu_dir,
-                                      mu_em=flu_dir)
-
+        flu_dir = util.tp2xyz(args)
+        flu = fluorophore.Fluorophore(mu_abs=flu_dir, mu_em=flu_dir)
         excite = self.illuminator.calc_excitation_efficiency(flu)
         collect = self.detector.calc_collection_efficiency(flu)        
         return excite*collect
@@ -47,17 +38,8 @@ class Microscope:
         util.plot_sphere(filename, directions=directions, data=I, **kwargs)
 
     def calc_excitation_efficiency(self, args):
-        theta = args[0]
-        phi = args[1]
-
-        flu_dir = np.array([np.sin(theta)*np.cos(phi),
-                           np.sin(theta)*np.sin(phi),
-                           np.cos(theta)])
-
-        flu = fluorophore.Fluorophore(position=np.array([0, 0, 0]),
-                                      mu_abs=flu_dir,
-                                      mu_em=flu_dir)
-
+        flu_dir = util.tp2xyz(args)
+        flu = fluorophore.Fluorophore(mu_abs=flu_dir, mu_em=flu_dir)        
         I = self.illuminator.calc_excitation_efficiency(flu)
         return I
     
@@ -71,22 +53,12 @@ class Microscope:
         util.plot_sphere(filename, directions=directions, data=I, **kwargs)
 
     def calc_collection_efficiency(self, args):
-        theta = args[0]
-        phi = args[1]
-
-        flu_dir = np.array([np.sin(theta)*np.cos(phi),
-                           np.sin(theta)*np.sin(phi),
-                           np.cos(theta)])
-
-        flu = fluorophore.Fluorophore(position=np.array([0, 0, 0]),
-                                      mu_abs=flu_dir,
-                                      mu_em=flu_dir)
-
+        flu_dir = util.tp2xyz(args)
+        flu = fluorophore.Fluorophore(mu_abs=flu_dir, mu_em=flu_dir)        
         I = self.detector.calc_collection_efficiency(flu)
         return I
     
-    def plot_collection_efficiency(self, filename='out.png',
-                                                 n=50, **kwargs):
+    def plot_collection_efficiency(self, filename='out.png', n=50, **kwargs):
         directions = util.fibonacci_sphere(n)
         print('Generating data for microscope: '+filename)
         I = np.apply_along_axis(self.calc_collection_efficiency,
@@ -104,8 +76,8 @@ class Microscope:
         canvas = vispy.scene.SceneCanvas(keys='interactive', bgcolor='white',
                                          size=(vis_px, vis_px), show=interact)
         cam = vispy.scene.cameras.turntable.TurntableCamera
-        my_cam = cam(fov=0, azimuth=135, scale_factor=25,
-                     center=(0, 0, self.illuminator.f))
+        my_cam = cam(fov=0, azimuth=135, scale_factor=28,
+                     center=(0, 0, self.illuminator.f-3))
         view = canvas.central_widget.add_view(camera=my_cam)
 
         # Plot dipole
@@ -148,14 +120,21 @@ class Microscope:
 
         # Plot collection lens
         if not np.array_equal(self.illuminator.optical_axis, self.detector.optical_axis):
+            # Lens
             lens2 = vis.Ellipse(parent=view.scene, center=(0,0), radius=4,
                                color=(.8,.8,.8,1.0))
-            axis = visuals.MyLine(parent=view.scene, length=10, radius=0.025)
             my_transform = MatrixTransform()
-            my_transform.rotate(90, np.array([0,1,0]))
-            my_transform.translate([-i.f,0,0])                                            
+            rotate_angle = np.rad2deg(np.arccos(np.dot(self.illuminator.optical_axis, self.detector.optical_axis)))            
+            my_transform.rotate(-rotate_angle, np.array([0,1,0]))
+            my_transform.translate(i.f*self.detector.optical_axis)
             lens2.transform = my_transform
-            axis.transform = my_transform
+
+            # Axis
+            axis = visuals.MyLine(parent=view.scene, length=i.f, radius=0.025)
+            my_transform = MatrixTransform()                        
+            my_transform.rotate(-rotate_angle, np.array([0,1,0]))
+            axis.transform = my_transform            
+            
 
         # Plot detector
         if self.detector.det_type == '4pi':
@@ -168,10 +147,9 @@ class Microscope:
         else:
             det = vis.Plane(parent=view.scene, width=8, height=8, color=(0.9,0.9,0.9,0.3))
             my_transform = MatrixTransform()
-            axis = visuals.MyLine(parent=view.scene, length=10, radius=0.025)            
-            my_transform.rotate(90, np.array([0,1,0]))            
-            my_transform.translate([-1.1*i.f,0,0])
-            axis.transform=my_transform            
+            rotate_angle = np.rad2deg(np.arccos(np.dot(self.illuminator.optical_axis, self.detector.optical_axis)))
+            my_transform.rotate(-rotate_angle, np.array([0,1,0]))            
+            my_transform.translate(1.1*i.f*self.detector.optical_axis)
             det.transform=my_transform
         
         # Display or save

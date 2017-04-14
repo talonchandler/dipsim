@@ -7,8 +7,8 @@ import os; import time; start = time.time(); print('Running...')
 # Main input parameters
 n_pts = 10000 # 50000
 bfp_n = 256
-pols = [np.array([1,0,0]),np.array([0,1,0]),np.array([1,0,0]),np.array([0,1,0])]
-det_axes = [np.array([0,0,1]),np.array([0,0,1]),np.array([-1,0,0]),np.array([-1,0,0])]
+pols = [np.array([1,0,0]),np.array([0,1,0]),np.array([0.1,1,0]),np.array([-0.1,1,0])]
+det_axes = [np.array([0,0,1]),np.array([0,0,1]),np.array([-1.0/np.sqrt(2),0,1.0/np.sqrt(2)]),np.array([-1.0/np.sqrt(2),0,-1.0/np.sqrt(2)])]
 n_cols = 4
 n_rows = len(pols)
 inch_fig = 5

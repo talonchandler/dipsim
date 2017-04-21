@@ -14,8 +14,8 @@ class Detector:
     def calc_collection_efficiency(self, fluorophore):
         if self.det_type=='lens':
             alpha = np.arcsin(self.na/self.n)
-            A = (1.0/6.0) - (1.0/4.0)*np.cos(alpha) + (1.0/12.0)*(np.cos(alpha)**3)
-            B = (1.0/8.0)*np.cos(alpha) - (1.0/8.0)*(np.cos(alpha)**3)
+            A = (1.0/4.0) - (3.0/8.0)*np.cos(alpha) + (1.0/8.0)*(np.cos(alpha)**3)
+            B = (3.0/16.0)*np.cos(alpha) - (3.0/16.0)*(np.cos(alpha)**3)
             theta = np.arccos(np.dot(fluorophore.mu_em, self.optical_axis))
             return A + B*(np.sin(theta)**2)
         elif self.det_type=='4pi':

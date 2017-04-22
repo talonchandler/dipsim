@@ -72,8 +72,11 @@ def xyz2tp(xyz, R=np.eye(3,3)):
                      np.arctan2(xyz_prime[1], xyz_prime[0])])
 
 def tp2tp_prime(tp, R=np.eye(3,3)):
-    xyz = tp2xyz(tp)
-    return xyz2tp(xyz, R)
+    if np.array_equal(R, np.eye(3,3)):
+        return tp
+    else:
+        xyz = tp2xyz(tp)
+        return xyz2tp(xyz, R)
 
 # Plotting functions
 def plot_sphere(filename, directions=None, data=None, interact=False,

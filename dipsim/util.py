@@ -31,7 +31,7 @@ def rot_map(u, v=np.array([0,0,1])):
     Returns the rotation matrix that aligns v with u.
     """
     if np.array_equal(u, v):
-        return eye(3)
+        return np.eye(3)
     else:
         return rot_mat(np.arccos(np.dot(v, u)), np.cross(v, u))
 

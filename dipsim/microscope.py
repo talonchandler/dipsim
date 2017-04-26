@@ -78,7 +78,7 @@ class Microscope:
                                          size=(vis_px, vis_px), show=interact)
         cam = vispy.scene.cameras.turntable.TurntableCamera
         my_cam = cam(fov=0, azimuth=135, scale_factor=28,
-                     center=(0, 0, self.illuminator.f-3))
+                     center=(-3, 3, self.illuminator.f-3))
         view = canvas.central_widget.add_view(camera=my_cam)
 
         # Plot dipole
@@ -117,14 +117,16 @@ class Microscope:
 
         # Plot polarizations
         if pol_dirs == None:
-            pol_dirs = [i.bfp_pol]
+            pol_dirs = [i.bfp_pol_dir]
         for pol_dir in pol_dirs:
             for direction in [-1, 1]:
-                pol = visuals.MyArrow(parent=circ, length=3)
+                pol = visuals.MyArrow(parent=view.scene, length=3)
                 m = MatrixTransform()
                 m.rotate(angle=direction*90, axis=(0,1,0))
                 phi_angle = np.degrees(np.arctan2(pol_dir[1], pol_dir[0]))
                 m.rotate(angle=phi_angle, axis=(0,0,1))
+                m.translate((0, 0, 2*i.f))
+                m.rotate(angle=angle, axis=axis)
                 pol.transform = m
 
         # Detection arm

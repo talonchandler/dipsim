@@ -36,13 +36,13 @@ for i, (pol, det_axis) in enumerate(zip(pols, det_axes)):
                             na=1.3,
                             n=1.5)
     ill = illuminator.Illuminator(illum_type='kohler',
-                                  optical_axis=np.array([-1., 0., 0.]),                                  
+                                  optical_axis=np.array([-1, 0, 0.]),
                                   f=10,
                                   bfp_rad=2,
-                                  bfp_pol=pol,
+                                  bfp_pol_dir=pol,
                                   bfp_n=bfp_n)
     m = microscope.Microscope(illuminator=ill, detector=det, max_photons=1)
-
+    
     # Plot scene and efficiencies
     m.plot_excitation_efficiency(n=n_pts, my_ax=axs[i,1], my_cax=caxs[i,1],
                                  color_min=0, color_max=1.0)

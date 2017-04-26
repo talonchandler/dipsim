@@ -6,8 +6,11 @@ class Illuminator:
     scanned), optical axis, back focal plane source radius, back
     focal plane polarization, and back focal plane apodization function.
 
+    *** Back focal plane polarization is specified in the x-y plane then 
+    rotated. Be careful with oblique illumination. ***
+
     """
-    def __init__(self, illum_type, optical_axis, f, bfp_rad, bfp_pol,
+    def __init__(self, illum_type, optical_axis, f, bfp_rad, bfp_pol_dir,
                  bfp_apod=None, bfp_n=64):
         
         self.illum_type = illum_type
@@ -24,11 +27,14 @@ class Illuminator:
             print("Warning: bfp_rad should be positive.")            
         self.bfp_rad = bfp_rad
 
-        if np.dot(bfp_pol, optical_axis) != 0:
-            print("Warning: polarization must be orthogonal to optical axis")
-        elif np.linalg.norm(bfp_pol) - 1 >= 1e-10:
-            print("Warning: bfp_pol is not a unit vector. Normalizing.")
-        self.bfp_pol = bfp_pol/np.linalg.norm(bfp_pol)
+        if np.dot(bfp_pol_dir, np.array([0, 0, 1])) != 0:
+            print("Warning: polarization must be specified in x-y plane.")
+        elif np.linalg.norm(bfp_pol_dir) - 1 >= 1e-10:
+            print("Warning: bfp_pol_dir is not a unit vector. Normalizing.")
+        self.bfp_pol_dir = bfp_pol_dir/np.linalg.norm(bfp_pol_dir)
+
+        # Rotate polarization state so that it is perp to optical axis
+        self.bfp_pol = np.dot(util.rot_map(self.optical_axis), self.bfp_pol_dir)
 
         # bfp_apod is an apodization function. If no argument is supplied, there
         # is a sharp cutoff at bfp_rad.

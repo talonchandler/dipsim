@@ -71,6 +71,7 @@ class Microscope:
         vispy.use('glfw')
         vis = vispy.scene.visuals
         i = self.illuminator
+        k = np.array([0, 0, 1])
         
         # Setup viewing window
         canvas = vispy.scene.SceneCanvas(keys='interactive', bgcolor='white',
@@ -86,71 +87,73 @@ class Microscope:
         m.rotate(angle=-45, axis=(1,1,0))
         dip.transform = m
 
-        # Plot axis
-        dip = visuals.MyLine(parent=view.scene, length=10, radius=0.025)
-
-
-        # Plot illumination lens
+        # Plot illumination arm
+        angle = -np.rad2deg(np.arccos(np.dot(i.optical_axis, k))),
+        axis = np.cross(i.optical_axis, k)
+        if np.linalg.norm(axis) == 0:
+            axis = k
+        
+         # Plot illumination lens
         lens = vis.Ellipse(parent=view.scene, center=(0,0), radius=4,
                            color=(.8,.8,.8,1.0))
-        lens.transform = STTransform(translate=(0, 0, i.f))
+        m = MatrixTransform()
+        m.translate((0, 0, i.f))
+        m.rotate(angle=angle, axis=axis)
+        lens.transform = m
 
-        # Plot upper axis
-        dip2 = visuals.MyLine(parent=view.scene, length=10, radius=0.025)
-        dip2.transform = STTransform(translate=(0,0,10))
-
+        # Plot axis
+        ax = visuals.MyLine(parent=view.scene, length=i.f, radius=0.025)
+        m = MatrixTransform()
+        m.rotate(angle=angle, axis=axis)
+        ax.transform = m
+        
         # Plot illumination circle
         circ = vis.Ellipse(parent=view.scene, center=(0,0), radius=i.bfp_rad,
                            color=(1, 1, 0, 1))
-        circ.transform = STTransform(translate=(0, 0, 2*i.f))
+        m = MatrixTransform()
+        m.translate((0, 0, 2*i.f))
+        m.rotate(angle=angle, axis=axis)
+        circ.transform = m
 
         # Plot polarizations
         if pol_dirs == None:
             pol_dirs = [i.bfp_pol]
         for pol_dir in pol_dirs:
             for direction in [-1, 1]:
-                pol = visuals.MyArrow(parent=view.scene, length=3)
+                pol = visuals.MyArrow(parent=circ, length=3)
                 m = MatrixTransform()
                 m.rotate(angle=direction*90, axis=(0,1,0))
                 phi_angle = np.degrees(np.arctan2(pol_dir[1], pol_dir[0]))
                 m.rotate(angle=phi_angle, axis=(0,0,1))
-                m.translate((0,0,2*i.f+0.1))
                 pol.transform = m
+
+        # Detection arm
+        angle = -np.rad2deg(np.arccos(np.dot(self.detector.optical_axis, k)))
+        axis = np.cross(self.detector.optical_axis, k)            
                 
+        # Collection lens
+        lens2 = vis.Ellipse(parent=view.scene, center=(0,0), radius=4,
+                           color=(.8,.8,.8,1.0))
+        m = MatrixTransform()
+        m.translate((0, 0, i.f))        
+        m.rotate(angle, axis)
+        lens2.transform = m
 
-        # Plot collection lens
-        if not np.array_equal(self.illuminator.optical_axis, self.detector.optical_axis):
-            # Lens
-            lens2 = vis.Ellipse(parent=view.scene, center=(0,0), radius=4,
-                               color=(.8,.8,.8,1.0))
-            my_transform = MatrixTransform()
-            rotate_angle = np.rad2deg(np.arccos(np.dot(self.illuminator.optical_axis, self.detector.optical_axis)))            
-            my_transform.rotate(-rotate_angle, np.array([0,1,0]))
-            my_transform.translate(i.f*self.detector.optical_axis)
-            lens2.transform = my_transform
-
-            # Axis
-            axis = visuals.MyLine(parent=view.scene, length=i.f, radius=0.025)
-            my_transform = MatrixTransform()                        
-            my_transform.rotate(-rotate_angle, np.array([0,1,0]))
-            axis.transform = my_transform            
-            
-
+        # Axis
+        ax = visuals.MyLine(parent=view.scene, length=i.f, radius=0.025)
+        m = MatrixTransform()                        
+        m.rotate(angle, axis)
+        ax.transform = m
+        
         # Plot detector
         if self.detector.det_type == '4pi':
             det = vis.Sphere(parent=view.scene, radius=3, color=(0.9,0.9,0.9,0.3))
-        elif np.array_equal(self.illuminator.optical_axis, self.detector.optical_axis):
-            det = vis.Plane(parent=view.scene, width=8, height=8, color=(0.9,0.9,0.9,0.3))
-            my_transform = MatrixTransform()
-            my_transform.translate([0,0,1.1*i.f])
-            det.transform=my_transform            
         else:
             det = vis.Plane(parent=view.scene, width=8, height=8, color=(0.9,0.9,0.9,0.3))
-            my_transform = MatrixTransform()
-            rotate_angle = np.rad2deg(np.arccos(np.dot(self.illuminator.optical_axis, self.detector.optical_axis)))
-            my_transform.rotate(-rotate_angle, np.array([0,1,0]))            
-            my_transform.translate(1.1*i.f*self.detector.optical_axis)
-            det.transform=my_transform
+            m = MatrixTransform()
+            m.translate((0, 0, 1.1*i.f))                    
+            m.rotate(angle, axis)            
+            det.transform = m
         
         # Display or save
         if interact:

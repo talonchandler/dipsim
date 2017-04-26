@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 import os; import time; start = time.time(); print('Running...')
 
 # Main input parameters
-n_pts = 10000 # 50000
-bfp_n = 256
-pols = [np.array([1,0,0]),np.array([1,1,0]),np.array([0,1,0]),np.array([-1,1,0])]
+n_pts = 1000 # 50000
+bfp_n = 25
+pols = [np.array([1,0,0]), np.array([1,1,0])]#,np.array([0,1,0]),np.array([-1,1,0])]
 det_axes = 4*[np.array([-1.0/np.sqrt(2),0,1.0/np.sqrt(2)])]
 n_cols = 4
 n_rows = len(pols)
@@ -15,7 +15,7 @@ inch_fig = 5
 vis_px = 2000
 dpi = 250
 #row_labels = [r'$x$-polarized, epi-detection', r'$y$-polarized, 45-detection', r'$x$-polarized, ortho-detection', r'$y$-polarized, 135-detection', ]
-row_labels = [r'$0$-polarized, 45-detection', r'$45$-polarized, 45-detection', r'$90$-polarized, 45-detection', r'$135$-polarized, 45-detection']
+row_labels = [r'$0$-polarized, 45-detection', r'$45$-polarized, 45-detection']#, r'$90$-polarized, 45-detection', r'$135$-polarized, 45-detection']
 col_labels = ['Scene', 'Excitation Efficiency', 'Collection Efficiency', 'Sensitivity']
 
 # Generate axes
@@ -36,7 +36,7 @@ for i, (pol, det_axis) in enumerate(zip(pols, det_axes)):
                             na=1.3,
                             n=1.5)
     ill = illuminator.Illuminator(illum_type='kohler',
-                                  optical_axis=np.array([0., 0., 1.]),
+                                  optical_axis=np.array([-1., 0., 0.]),                                  
                                   f=10,
                                   bfp_rad=2,
                                   bfp_pol=pol,

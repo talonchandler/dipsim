@@ -26,6 +26,15 @@ def rot_mat(theta, u):
     K = np.array([[0, -u[2], u[1]], [u[2], 0, -u[0]], [-u[1], u[0], 0]])
     return np.identity(3) + K*np.sin(theta) + np.dot(K, K)*(1 - np.cos(theta))
 
+def rot_map(u, v=np.array([0,0,1])):
+    """
+    Returns the rotation matrix that aligns v with u.
+    """
+    if np.array_equal(u, v):
+        return eye(3)
+    else:
+        return rot_mat(np.arccos(np.dot(v, u)), np.cross(v, u))
+
 def orthonormal_basis(v0):
     """
     Returns two orthonormal vectors that are orthogonal to v0.

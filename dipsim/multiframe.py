@@ -86,10 +86,9 @@ class TwoArmPolScope(MultiFrameMicroscope):
                
         self.n_frames = n_frames
 
-
         # Constant detection path.
-        ill_axis = np.array([-np.sin(illum_det_angle), 0, np.cos(illum_det_angle)])
-        det_axis = np.array([0., 0., 1.])
+        ill_axis = np.array([0., 0., 1.])
+        det_axis = np.array([-np.sin(illum_det_angle), 0, np.cos(illum_det_angle)])
         
         det = detector.Detector(optical_axis=det_axis, det_type=det_type,
                                 na=1.3, n=1.5)

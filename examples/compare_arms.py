@@ -8,8 +8,6 @@ import os; import time; start = time.time(); print('Running...')
 n_pts = 1000
 bfp_n = 25
 illum_det_angles = np.deg2rad([0, 0, 30, 60, 85, 89, 90])
-#det_angles = det_angles + [x*np.pi/6 for x in range(5)]
-#det_axes = [np.array([0,0,1]), np.array([0,0,1]), np.array([-1,0,0]), np.array([-1.0/np.sqrt(2),0,1.0/np.sqrt(2)])]
 det_types = ['4pi', 'lens', 'lens', 'lens', 'lens', 'lens', 'lens']
 noise_types = ['poisson']#, 'gaussian', 'gaussian']
 gauss_stds = [0]#,1,3]
@@ -32,8 +30,8 @@ caxs = util.generate_caxs(axs)
 # Compute and plot on axes
 for i, (illum_det_angle, det_type) in enumerate(zip(illum_det_angles, det_types)):
     for j, (noise_type, gauss_std) in enumerate(zip(noise_types, gauss_stds)):    
-        print('Computing microscope: ' + str(illum_det_angle))    
-        m = multiframe.OneArmPolScope(n_frames=4, illum_det_angle=illum_det_angle,
+        print('Computing microscope: ' + str(illum_det_angle))
+        m = multiframe.TwoArmPolScope(n_frames=4, illum_det_angle=illum_det_angle,
                                       det_type=det_type, bfp_n=bfp_n,
                                       dist_type=noise_type, gauss_mean=0,
                                       gauss_std=gauss_std,
@@ -49,7 +47,7 @@ for i, (illum_det_angle, det_type) in enumerate(zip(illum_det_angles, det_types)
 # Label axes and save
 util.label_rows_and_cols(axs, row_labels, col_labels)
 print('Saving final figure.')    
-fig.savefig('compare_detection.png', dpi=dpi)
+fig.savefig('compare_arms.png', dpi=dpi)
 
 print('Total time: '+str(np.round(time.time() - start, 2)))
 os.system('say "done"')

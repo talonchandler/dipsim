@@ -31,20 +31,24 @@ class MultiFrameMicroscope:
         omega_std = np.apply_along_axis(self.calc_orientation_std, 1, directions, n)
         util.plot_sphere(filename+'_omega.png', directions=directions, data=omega_std, my_ax=my_ax, my_cax=my_cax, **kwargs)
         
-class NFramePolScope(MultiFrameMicroscope):
+class OneArmPolScope(MultiFrameMicroscope):
     """
-    An NFramePolScope represents an experiment with the polscope where the
-    intensity is collected from N illumination polarizations. 
+    An OneArmPolScope represents an experiment with the polscope where the
+    intensity is collected from N illumination polarizations along a single
+    illumination and detection arm. 
 
-    An NFramePolScope is specified by the number of frames. 
+    An OneArmPolScope is specified by the number of frames. 
     """
     def __init__(self, n_frames=4, bfp_n=256, max_photons=100,
-                 det_type='lens', det_axis=np.array([0, 0, 1]), **kwargs):
+                 det_type='lens', illum_det_angle=0,
+                 f=10, bfp_rad=3, **kwargs):
                
         self.n_frames = n_frames
 
         # Constant detection path.
-        det = detector.Detector(optical_axis=det_axis, det_type=det_type, na=1.3, n=1.5)
+        optical_axis = np.array([-np.sin(illum_det_angle), 0, np.cos(illum_det_angle)])
+        det = detector.Detector(optical_axis=optical_axis, det_type=det_type,
+                                na=1.3, n=1.5)
         
         # Changing illumination.
         m = []
@@ -53,8 +57,8 @@ class NFramePolScope(MultiFrameMicroscope):
             bfp_pol = np.array([np.cos(theta), np.sin(theta), 0])
             ill = illuminator.Illuminator(illum_type='kohler',
                                           optical_axis=np.array([0., 0., 1.]),
-                                          f=10,
-                                          bfp_rad=3,
+                                          f=f,
+                                          bfp_rad=bfp_rad,
                                           bfp_pol=bfp_pol,
                                           bfp_n=bfp_n)
             m.append(microscope.Microscope(illuminator=ill, detector=det, max_photons=max_photons))
@@ -66,3 +70,48 @@ class NFramePolScope(MultiFrameMicroscope):
         for m in self.microscopes:
             pol_dirs.append(m.illuminator.bfp_pol)
         self.microscopes[0].draw_scene(pol_dirs=pol_dirs, **kwargs)
+
+class TwoArmPolScope(MultiFrameMicroscope):
+    """
+    A TwoArmPolScope represents an experiment with the polscope where the
+    intensity is collected from N illumination polarizations along an
+    illumination and detection arm then the illumination and detection arms 
+    are swapped.
+
+    A TwoArmPolScope is specified by the number of frames. 
+    """
+    def __init__(self, n_frames=4, bfp_n=256, max_photons=100,
+                 det_type='lens', illum_det_angle=0,
+                 f=10, bfp_rad=3, **kwargs):
+               
+        self.n_frames = n_frames
+
+
+        # Constant detection path.
+        ill_axis = np.array([-np.sin(illum_det_angle), 0, np.cos(illum_det_angle)])
+        det_axis = np.array([0., 0., 1.])
+        
+        det = detector.Detector(optical_axis=det_axis, det_type=det_type,
+                                na=1.3, n=1.5)
+        
+        # Changing illumination.
+        m = []
+        for n in range(self.n_frames):
+            theta = np.pi*n/self.n_frames
+            bfp_pol = np.array([np.cos(theta), np.sin(theta), 0])
+            ill = illuminator.Illuminator(illum_type='kohler',
+                                          optical_axis=ill_axis,
+                                          f=f,
+                                          bfp_rad=bfp_rad,
+                                          bfp_pol=bfp_pol,
+                                          bfp_n=bfp_n)
+            m.append(microscope.Microscope(illuminator=ill, detector=det, max_photons=max_photons))
+                     
+        MultiFrameMicroscope.__init__(self, m, **kwargs)
+
+    def draw_scene(self, **kwargs):
+        pol_dirs = []
+        for m in self.microscopes:
+            pol_dirs.append(m.illuminator.bfp_pol)
+        self.microscopes[0].draw_scene(pol_dirs=pol_dirs, **kwargs)
+        

@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import os; import time; start = time.time(); print('Running...')
 
 # Main input parameters
-n_pts = 1000
-bfp_n = 25
+n_pts = 10000
+bfp_n = 256
 illum_det_angles = np.deg2rad([0, 0, 30, 60, 85, 89, 90])
 det_types = ['4pi', 'lens', 'lens', 'lens', 'lens', 'lens', 'lens']
 noise_types = ['poisson']#, 'gaussian', 'gaussian']
@@ -35,8 +35,7 @@ for i, (illum_det_angle, det_type) in enumerate(zip(illum_det_angles, det_types)
                                       det_type=det_type, bfp_n=bfp_n,
                                       dist_type=noise_type, gauss_mean=0,
                                       gauss_std=gauss_std,
-                                      max_photons=1000)                                      
-                                      # crlb_frame=util.rot_mat(np.pi/4, np.array([0,1,0])),
+                                      max_photons=500)                                      
 
         m.plot_orientation_std(filename=str(i)+'frame.png', n=n_pts, color_norm='log',
                                my_ax=axs[j+1,i], my_cax=caxs[j+1,i],

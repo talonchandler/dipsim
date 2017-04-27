@@ -74,17 +74,17 @@ MyLens = create_visual_node(MyLensVisual)
 
 class MyArrowVisual(CompoundVisual):
     
-    def __init__(self, rows=30, cols=30, radius=0.1, length=1, color='black'):
+    def __init__(self, rows=30, cols=30, radius=0.1, length=1, color='black', cone_length=0.5, cone_radius=None):
 
         import vispy.geometry.generation as gen
-        mesh = gen.create_arrow(rows=rows, cols=cols, radius=radius, length=length, cone_length=0.5)
+        mesh = gen.create_arrow(rows=rows, cols=cols, radius=radius, length=length, cone_length=cone_length, cone_radius=cone_radius)
         
         self._mesh = MeshVisual(vertices=mesh.get_vertices(),
                                 faces=mesh.get_faces(),
                                 color=color)
 
         CompoundVisual.__init__(self, [self._mesh])
-        self.mesh.set_gl_state(depth_test=True)
+        self.mesh.set_gl_state(depth_test=False)
 
     @property
     def mesh(self):
@@ -106,7 +106,7 @@ class MyLineVisual(CompoundVisual):
                                 color=color)
 
         CompoundVisual.__init__(self, [self._mesh])
-        self.mesh.set_gl_state(depth_test=False)
+        self.mesh.set_gl_state(depth_test=True)
 
     @property
     def mesh(self):

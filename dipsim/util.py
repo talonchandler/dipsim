@@ -66,7 +66,7 @@ def fibonacci_sphere(n):
     # http://stackoverflow.com/a/26127012/5854689
     z = np.linspace(1 - 1/n, -1 + 1/n, num=n) 
     theta = np.arccos(z)
-    phi = np.mod((np.pi*(3.0 - np.sqrt(5.0)))*np.arange(n), 2*np.pi)
+    phi = np.mod((np.pi*(3.0 - np.sqrt(5.0)))*np.arange(n), 2*np.pi) - np.pi
     return np.vstack((theta, phi)).T
 
 # Three coordinate conversion functions. Use R to use theta-phi coordinates that
@@ -77,8 +77,11 @@ def tp2xyz(tp, R=np.eye(3,3)):
 
 def xyz2tp(xyz, R=np.eye(3,3)):
     xyz_prime = np.dot(np.linalg.inv(R), xyz)
-    return np.array([np.arccos(xyz_prime[2]/np.linalg.norm(xyz_prime)),
-                     np.arctan2(xyz_prime[1], xyz_prime[0])])
+    theta = np.arccos(xyz_prime[2]/np.linalg.norm(xyz_prime)),
+    phi = np.arctan2(xyz_prime[1], xyz_prime[0])
+    # if phi < 0:
+    #     phi += 2*np.pi
+    return np.array([theta, phi])
 
 def tp2tp_prime(tp, R=np.eye(3,3)):
     if np.array_equal(R, np.eye(3,3)):

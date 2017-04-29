@@ -82,8 +82,8 @@ class Microscope:
         view = canvas.central_widget.add_view(camera=my_cam)
 
         if dual_arm:
-            det_axes = [self.detector.optical_axis, self.illuminator.optical_axis]
-            ill_axes = [self.illuminator.optical_axis, self.detector.optical_axis]
+            det_axes = [self.illuminator.optical_axis, self.detector.optical_axis]
+            ill_axes = [self.detector.optical_axis, self.illuminator.optical_axis]
         else:
             det_axes = [self.detector.optical_axis]
             ill_axes = [self.illuminator.optical_axis]
@@ -126,6 +126,12 @@ class Microscope:
             if np.linalg.norm(axis) == 0:
                 axis = k
 
+            # Plot axis
+            ax = visuals.MyLine(parent=view.scene, length=i.f, radius=0.025)
+            m = MatrixTransform()
+            m.rotate(angle=angle, axis=axis)
+            ax.transform = m
+
             # Plot illumination lens
             lens = visuals.MyArrow(parent=view.scene, radius=2, length=0.1,
                                    rows=1, cols=100, cone_length=0.01,
@@ -134,12 +140,6 @@ class Microscope:
             m.translate((0, 0, i.f))
             m.rotate(angle=angle, axis=axis)
             lens.transform = m
-
-            # Plot axis
-            ax = visuals.MyLine(parent=view.scene, length=i.f, radius=0.025)
-            m = MatrixTransform()
-            m.rotate(angle=angle, axis=axis)
-            ax.transform = m
 
             # Plot illumination circle
             circ = visuals.MyArrow(parent=view.scene, radius=i.bfp_rad/2, length=0.1,
@@ -182,7 +182,7 @@ class Microscope:
                 my_ax = local_ax
 
             for ax in [local_ax, my_ax]:
-                util.draw_axis(ax, x=1.1, y=0.1)
+                util.draw_axis(ax)
                 ax.spines['right'].set_color('none')
                 ax.spines['left'].set_color('none')
                 ax.spines['top'].set_color('none')

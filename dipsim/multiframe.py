@@ -70,7 +70,7 @@ class OneArmPolScope(MultiFrameMicroscope):
     def draw_scene(self, **kwargs):
         pol_dirs = []
         for m in self.microscopes:
-            pol_dirs.append(m.illuminator.bfp_pol)
+            pol_dirs.append(m.illuminator.bfp_pol_dir)
         self.microscopes[0].draw_scene(pol_dirs=pol_dirs, **kwargs)
 
 class TwoArmPolScope(MultiFrameMicroscope):

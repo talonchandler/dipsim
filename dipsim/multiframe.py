@@ -11,9 +11,10 @@ class MultiFrameMicroscope:
 
     A MultiFrameMicroscope is specified by a list of Microscopes. 
     """
-    def __init__(self, microscopes, **kwargs):
+    def __init__(self, microscopes, n=1000, **kwargs):
         self.microscopes = microscopes
         self.noise_model = stats.NoiseModel(self.calc_total_intensities, **kwargs)
+        self.calc_estimation_stats(n)
         
     def calc_total_intensities(self, arguments):
         I = []
@@ -21,15 +22,14 @@ class MultiFrameMicroscope:
             I.append(m.calc_intensity(arguments))
         return np.array(I)
     
-    def calc_orientation_std(self, arguments, n):
-        sphere_dx = np.arccos(1 - 2/n) # avg. half angle betweeen n points on sphere
-        crlb = self.noise_model.crlb(arguments, [sphere_dx, sphere_dx], geometry='rr')
-        return self.noise_model.solid_angle_std(crlb, arguments)
+    def calc_estimation_stats(self, n):
+        def calc_single_fi_inv(arguments, self, n):
+            sphere_dx = np.arccos(1 - 2/n) # avg. half angle betweeen n points on sphere
+            return self.noise_model.fi_inv(arguments, [sphere_dx, sphere_dx], geometry='rr')
 
-    def plot_orientation_std(self, filename='out.png', n=50, my_ax=None, my_cax=None, **kwargs):
-        directions = util.fibonacci_sphere(n)
-        omega_std = np.apply_along_axis(self.calc_orientation_std, 1, directions, n)
-        util.plot_sphere(filename+'_omega.png', directions=directions, data=omega_std, my_ax=my_ax, my_cax=my_cax, **kwargs)
+        self.directions = util.fibonacci_sphere(n)
+        self.fi_inv = np.apply_along_axis(calc_single_fi_inv, 1, self.directions, self, n)
+        self.sa_uncert = np.sqrt(self.fi_inv[:,0])*np.sqrt(self.fi_inv[:,3])*np.sin(self.directions[:,0])
         
 class OneArmPolScope(MultiFrameMicroscope):
     """

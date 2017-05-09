@@ -91,9 +91,9 @@ def tp2tp_prime(tp, R=np.eye(3,3)):
         return xyz2tp(xyz, R)
 
 # Plotting functions
-def plot_sphere(filename, directions=None, data=None, interact=False,
+def plot_sphere(filename=None, directions=None, data=None, interact=False,
                 color_norm='linear', color_min=0, color_max=4*np.pi,
-                gamma=0.25, color_map='coolwarm',
+                gamma=0.25, color_map='coolwarm', linthresh=1e-3,
                 my_ax=None, my_cax=None, dpi=500, vis_px=1000,
                 save_file=False):
 
@@ -117,7 +117,7 @@ def plot_sphere(filename, directions=None, data=None, interact=False,
     elif color_norm == 'log':
         norm = matplotlib.colors.LogNorm(vmin=color_min, vmax=color_max)
     elif color_norm == 'linlog':
-        norm = matplotlib.colors.SymLogNorm(linthresh=1e-3, vmin=data.min(), vmax=data.max())
+        norm = matplotlib.colors.SymLogNorm(linthresh=linthresh, vmin=-color_max, vmax=color_max)
     elif color_norm == 'power':
         norm = matplotlib.colors.PowerNorm(gamma=gamma, vmin=data.min(), vmax=data.max())
 

@@ -109,10 +109,10 @@ class NoiseModel:
 
         my_ax.legend()
         
-    def crlb(self, x0, dx, geometry=None):
+    def fi_inv(self, x0, dx, geometry=None):
         """
-        Calculates the Cramer-Rao lower bound at the point x0 using a one sided
-        difference with width dx. 
+        Calculates the inverse fisher information matrix at the point x0 using 
+        a one sided difference with width dx.
 
         Given the measurement function self.ev_func with noise properties
         self.dist, the CRLB is the minimum variance of an unbiased estimator 
@@ -138,6 +138,7 @@ class NoiseModel:
         x0 = [0.1, 0.2, 0, 0, 0]
         dx = [1e-2, 1e-2, 1e-2, 1e-2, 1e-2]
         geometry = 'tprrr'
+
         """
         f = self.ev_func
         f0 = f(x0) 
@@ -184,21 +185,5 @@ class NoiseModel:
         f_infs = f_derivs*self.crlb_detector_term_func(f0)[:, np.newaxis, np.newaxis] # Multiply by detector term
         f_inf = np.sum(f_infs, axis=0) # Sum over frames
 
-        # Invert and return diagonal
-        crlb = np.diag(np.linalg.pinv(f_inf))
-
-        return crlb
-
-    def solid_angle_std(self, crlb, x0):
-        ''' 
-        Takes the output of the crlb function (the individual parameter variances), 
-        and the position in tp coordinates and returns the solid angle std taking 
-        into account the rotated coordinate frame. 
-        '''
-        theta_prime = util.tp2tp_prime(x0, R=self.crlb_frame)[0]
-        theta_std = crlb[0]
-        phi_std = crlb[1]
-        return np.sqrt(theta_std)*np.sqrt(phi_std)*np.sin(theta_prime)
-
-    
-
+        # Invert and return
+        return np.linalg.pinv(f_inf).flatten()

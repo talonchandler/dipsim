@@ -5,7 +5,8 @@ import os; import time; start = time.time(); print('Running...')
 
 # Main input parameters
 thetas = [x*np.pi/4 for x in range(4)]
-bfp_rads = np.hstack((np.arange(0.01, 0.1, 0.01), np.arange(0.2, 11, 0.5)))
+#bfp_rads = np.hstack((np.arange(0.01, 0.1, 0.01), np.arange(0.2, 11, 0.5)))
+bfp_rads = np.arange(1, 11, 1)
 n_cols = len(thetas)
 n_rows = 3
 inch_fig = 5
@@ -25,13 +26,14 @@ for i, theta in enumerate(thetas):
     print('Computing microscope: ' + str(theta))
     ill_basis = []
     for bfp_rad in bfp_rads:
+        print(bfp_rad)
         bfp_pol = np.array([np.cos(theta), np.sin(theta), 0])
         f = 10
         ill = illuminator.Illuminator(illum_type='kohler',
                                       optical_axis=np.array([0., 0., 1.]),
                                       f=10, bfp_rad=bfp_rad,
-                                      bfp_pol=bfp_pol,
-                                      bfp_n=256) #>128 for good
+                                      bfp_pol_dir=bfp_pol,
+                                      bfp_n=64) #>128 for good
         ill_basis.append(ill.illum_basis)
 
     ill_basis = np.array(ill_basis)
@@ -59,7 +61,7 @@ for i, theta in enumerate(thetas):
 # Label axes and save
 util.label_rows_and_cols(axs, row_labels)
 print('Saving final figure.')    
-fig.savefig('illum_basis.png', dpi=dpi)
+fig.savefig('illum_basis.pdf')
 
 print('Total time: '+str(np.round(time.time() - start, 2)))
 os.system('say "done"')

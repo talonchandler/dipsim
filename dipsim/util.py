@@ -155,6 +155,20 @@ def plot_sphere(filename=None, directions=None, data=None, interact=False,
         if save_file:
             f.savefig(filename, dpi=dpi)
 
+def plot_histogram(data, ax):
+    bins = np.array([10**x for x in np.arange(-4, np.log10(4*np.pi), 0.1)])
+    hist, bin_edges = np.histogram(data, bins=bins)
+    ax.step(bin_edges[:-1], hist/len(data), '-k')
+    ax.set_xscale('log')
+    ax.set_yscale('log')    
+    ax.set_xlim([np.min(data/10), 4*np.pi])
+    ax.set_ylim([1/(2*len(data)), 1])
+    ax.set_xlabel(r'$\sigma_{\Omega}$', fontsize=18)
+    std = np.std(data)
+    ax.annotate(r'$\sigma$ = '+str(np.round(std, 2)), xy=(0,0), xytext=(0.95, 0.95), textcoords='axes fraction',
+                           va='center', ha='right', fontsize=18, annotation_clip=False)
+    return std
+            
 def draw_axis(ax, x=0.925, y=0.1):
     length=0.1
     center=np.array((x, y))
@@ -166,14 +180,15 @@ def draw_axis(ax, x=0.925, y=0.1):
                     xycoords='axes fraction', 
                     arrowprops=dict(arrowstyle="<-", shrinkA=0, shrinkB=0),
                     fontsize=14)
-        
-def label_rows_and_cols(axs, row_labels='', col_labels=''):
+
+def label_rows_and_cols(axs, row_labels='', col_labels='',
+                        row_pos=(-0.1, 0.5), col_pos=(0.5, 1.1)):
     for i, label in enumerate(row_labels):
-        axs[i][0].annotate(label, xy=(0,0), xytext=(-0.1, 0.5), textcoords='axes fraction',
-                           va='center', ha='center', rotation=90, fontsize=18)
+        axs[i][0].annotate(label, xy=(0,0), xytext=row_pos, textcoords='axes fraction',
+                           va='center', ha='center', rotation=90, fontsize=18, annotation_clip=False)
     for i, label in enumerate(col_labels):
-        axs[0][i].annotate(label, xy=(0,0), xytext=(0.5, 1.1), textcoords='axes fraction',
-                           va='center', ha='center', fontsize=18)
+        axs[0][i].annotate(label, xy=(0,0), xytext=col_pos, textcoords='axes fraction',
+                           va='center', ha='center', fontsize=18, annotation_clip=False)
 
 def generate_caxs(axs):
     caxs = []

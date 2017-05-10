@@ -9,7 +9,7 @@ class MultiFrameMicroscope:
     frames of intensity data under different conditions (different polarization 
     states or illumination schemes). 
 
-    A MultiFrameMicroscope is specified by a list of Microscopes. 
+    A MultiFrameMicroscope consists of a list of Microscopes. 
     """
     def __init__(self, microscopes, n_pts=1000, **kwargs):
         self.microscopes = microscopes
@@ -31,17 +31,17 @@ class MultiFrameMicroscope:
         self.fi_inv = np.apply_along_axis(calc_single_fi_inv, 1, self.directions, self, n)
         self.sa_uncert = np.sqrt(self.fi_inv[:,0])*np.sqrt(self.fi_inv[:,3])*np.sin(self.directions[:,0])
         
-class OneArmPolScope(MultiFrameMicroscope):
+class OneViewPolScope(MultiFrameMicroscope):
     """
-    An OneArmPolScope represents an experiment with the polscope where the
+    An OneViewPolScope represents an experiment with the polscope where the
     intensity is collected from N illumination polarizations along a single
     illumination and detection arm. 
 
-    An OneArmPolScope is specified by the number of frames. 
+    An OneViewPolScope is specified by the number of frames. 
     """
-    def __init__(self, n_frames=4, bfp_n=256, max_photons=100,
+    def __init__(self, n_frames=4, bfp_n=256, max_photons=1000,
                  det_type='lens', illum_det_angle=0,
-                 na_ill=0.8, na_det=0.8, n_samp=1.33, **kwargs):
+                 na1=0.8, na2=0.8, n_samp=1.33, **kwargs):
                
         self.n_frames = n_frames
 
@@ -50,7 +50,7 @@ class OneArmPolScope(MultiFrameMicroscope):
         det_axis = np.array([-np.sin(illum_det_angle/2), 0, np.cos(illum_det_angle/2)])
         
         det = detector.Detector(optical_axis=det_axis, det_type=det_type,
-                                na=na_det, n=n_samp)
+                                na=na1, n=n_samp)
         
         # Changing illumination.
         m = []
@@ -59,7 +59,7 @@ class OneArmPolScope(MultiFrameMicroscope):
             bfp_pol = np.array([np.cos(theta), np.sin(theta), 0])
             ill = illuminator.Illuminator(illum_type='kohler',
                                           optical_axis=ill_axis,
-                                          na=na_ill, n=n_samp,
+                                          na=na2, n=n_samp,
                                           bfp_pol_dir=bfp_pol, bfp_n=bfp_n)
                                           
             m.append(microscope.Microscope(illuminator=ill, detector=det, max_photons=max_photons))
@@ -72,16 +72,14 @@ class OneArmPolScope(MultiFrameMicroscope):
             pol_dirs.append(m.illuminator.bfp_pol_dir)
         self.microscopes[0].draw_scene(pol_dirs=pol_dirs, **kwargs)
 
-class TwoArmPolScope(MultiFrameMicroscope):
+class TwoViewPolScope(MultiFrameMicroscope):
     """
-    A TwoArmPolScope represents an experiment with the polscope where the
+    A TwoViewPolScope represents an experiment with the polscope where the
     intensity is collected from N illumination polarizations along an
     illumination and detection arm then the illumination and detection arms 
     are swapped.
-
-    A TwoArmPolScope is specified by the number of frames. 
     """
-    def __init__(self, n_frames=4, bfp_n=256, max_photons=100,
+    def __init__(self, n_frames=4, bfp_n=256, max_photons=500,
                  det_type='lens', illum_det_angle=0,
                  na1=0.8, na2=0.8, n_samp=1.33, **kwargs):
                

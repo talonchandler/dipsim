@@ -10,7 +10,6 @@ class Detector:
         self.det_type = det_type
         self.na = na # Numerical aperture
         self.n = n
-
         self.f = 10 # Arbitrary
         self.alpha = np.arcsin(self.na/self.n)        
         self.det_rad = self.f*np.tan(self.alpha)

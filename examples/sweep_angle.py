@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import os; import time; start = time.time(); print('Running...')
 
 # Main input parameters
-n_pts = 1000
-bfp_n = 25
+n_pts = 10000
+bfp_n = 256
 illum_det_angles = np.deg2rad([0, 45, 90])
 n_cols = len(illum_det_angles)
 n_rows = 3
@@ -28,11 +28,11 @@ caxs = util.generate_caxs(axs)
 for i, (illum_det_angle) in enumerate(illum_det_angles):
     print('Computing microscope: ' + str(illum_det_angle))
     m = multiframe.TwoViewPolScope(n_pts=n_pts, n_frames=4, 
-                                  illum_det_angle=illum_det_angle,
-                                  #na_ill=0.8, na_det=0.8, n_samp=1.33,
-                                  na1=0.8, na2=0.8, n_samp=1.33,
-                                  det_type='lens', bfp_n=bfp_n,
-                                  dist_type='poisson', max_photons=500)
+                                   illum_det_angle=illum_det_angle,
+                                   #na_ill=0.8, na_det=0.8, n_samp=1.33,
+                                   na1=0.8, na2=0.8, n_samp=1.33,
+                                   det_type='lens', bfp_n=bfp_n,
+                                   dist_type='poisson', max_photons=500)
 
     m.draw_scene(my_ax=axs[0,i], dpi=dpi, vis_px=vis_px)
     

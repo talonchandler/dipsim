@@ -2,9 +2,9 @@ import numpy as np
 import dipsim.util as util
 
 class Illuminator:
-    """An illumination path is specified by its illumination type (Kohler, laser,
-    scanned), optical axis, back focal plane source radius, back
-    focal plane polarization, and back focal plane apodization function.
+    """An illumination path is specified by its illumination type (Kohler, 
+    laser, scanned), optical axis, back focal plane source radius, back focal 
+    plane polarization, and back focal plane apodization function.
 
     *** Back focal plane polarization is specified in the x-y plane then 
     rotated. Be careful with oblique illumination. ***
@@ -45,10 +45,6 @@ class Illuminator:
             self.bfp_apod = default_apod
         else:
             self.bfp_apod = bfp_apod
-
-        if bfp_n <= 1:
-            print("Warning: bfp_n should be larger than 1. bfp_n should be much\
-                   larger than 1 for accurate results. ")
             
         self.bfp_n = bfp_n
         self.calc_illum_basis()
@@ -96,4 +92,3 @@ class Illuminator:
 
     def calc_excitation_efficiency(self, fluorophore):
         return np.dot(self.illum_basis, util.mu3to6(fluorophore.mu_abs))
-        

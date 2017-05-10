@@ -43,8 +43,7 @@ class Microscope:
         I = self.illuminator.calc_excitation_efficiency(flu)
         return I
     
-    def plot_excitation_efficiency(self, filename='out.png',
-                                                 n=50, **kwargs):
+    def plot_excitation_efficiency(self, filename='out.png', n=50, **kwargs):
         directions = util.fibonacci_sphere(n)
         print('Generating data for microscope: '+filename)
         I = np.apply_along_axis(self.calc_excitation_efficiency,
@@ -149,16 +148,6 @@ class Microscope:
             m = MatrixTransform()
             m.rotate(angle=angle, axis=axis)
             ax.transform = m
-
-            # # Plot illumination lens
-            # if idx == 0:
-            #     lens = visuals.MyArrow(parent=view.scene, radius=i.bfp_rad, length=0.1,
-            #                            rows=1, cols=100, cone_length=0.01,
-            #                            color=(.8,.8,.8,1.0))
-            #     m = MatrixTransform()
-            #     m.translate((0, 0, i.f))
-            #     m.rotate(angle=angle, axis=axis)
-            #     lens.transform = m
 
             # Plot illumination circle
             circ = visuals.MyArrow(parent=view.scene, radius=i.bfp_rad, length=0.1,

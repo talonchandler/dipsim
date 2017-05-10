@@ -8,7 +8,6 @@ import os; import time; start = time.time(); print('Running...')
 n_pts = 100000
 bfp_n = 256
 illum_det_angles = np.deg2rad([0, 45, 90])
-gauss_stds = [0]#,1,3]
 n_cols = len(illum_det_angles)
 n_rows = 3
 inch_fig = 5
@@ -28,10 +27,12 @@ caxs = util.generate_caxs(axs)
 # Compute and plot on axes
 for i, (illum_det_angle) in enumerate(illum_det_angles):
     print('Computing microscope: ' + str(illum_det_angle))
-    m = multiframe.OneArmPolScope(n=n_pts, n_frames=4, 
+    m = multiframe.TwoArmPolScope(n_pts=n_pts, n_frames=4, 
                                   illum_det_angle=illum_det_angle,
+                                  #na_ill=0.8, na_det=0.8, n_samp=1.33,
+                                  na1=0.8, na2=0.8, n_samp=1.33,
                                   det_type='lens', bfp_n=bfp_n,
-                                  dist_type='poisson', max_photons=1000)
+                                  dist_type='poisson', max_photons=500)
 
     m.draw_scene(my_ax=axs[0,i], dpi=dpi, vis_px=vis_px)
     

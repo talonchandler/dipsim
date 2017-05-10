@@ -10,8 +10,8 @@ class Illuminator:
     rotated. Be careful with oblique illumination. ***
 
     """
-    def __init__(self, illum_type, optical_axis, f, bfp_rad, bfp_pol_dir,
-                 bfp_apod=None, bfp_n=64):
+    def __init__(self, illum_type, optical_axis, na=0.8, n=1.33,
+                 bfp_pol_dir=None, bfp_apod=None, bfp_n=64):
         
         self.illum_type = illum_type
         
@@ -19,13 +19,11 @@ class Illuminator:
             print("Warning: optical axis is not a unit vector. Normalizing.")
         self.optical_axis = optical_axis/np.linalg.norm(optical_axis)
 
-        if f <= 0:
-            print("Warning: f should be positive.")            
-        self.f = f
-
-        if bfp_rad <= 0:
-            print("Warning: bfp_rad should be positive.")            
-        self.bfp_rad = bfp_rad
+        self.na = na
+        self.n = n
+        self.alpha = np.arcsin(self.na/self.n)
+        self.f = 10 # Arbitrary
+        self.bfp_rad = self.f*np.tan(self.alpha)
 
         if np.dot(bfp_pol_dir, np.array([0, 0, 1])) != 0:
             print("Warning: polarization must be specified in x-y plane.")

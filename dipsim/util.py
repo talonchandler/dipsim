@@ -156,7 +156,7 @@ def plot_sphere(filename=None, directions=None, data=None, interact=False,
             f.savefig(filename, dpi=dpi)
 
 def plot_histogram(data, ax):
-    bins = np.array([10**x for x in np.arange(-4, np.log10(4*np.pi), 0.1)])
+    bins = np.array([10**x for x in np.arange(-4, 2, 0.1)])
     hist, bin_edges = np.histogram(data, bins=bins)
     ax.step(bin_edges[:-1], hist/len(data), '-k')
     ax.set_xscale('log')
@@ -164,10 +164,11 @@ def plot_histogram(data, ax):
     ax.set_xlim([np.min(data/10), 4*np.pi])
     ax.set_ylim([1/(2*len(data)), 1])
     ax.set_xlabel(r'$\sigma_{\Omega}$', fontsize=18)
-    std = np.std(data)
-    ax.annotate(r'$\sigma$ = '+str(np.round(std, 2)), xy=(0,0), xytext=(0.95, 0.95), textcoords='axes fraction',
-                           va='center', ha='right', fontsize=18, annotation_clip=False)
-    return std
+    d = np.var(data)/np.mean(data)
+    d_str = '$D =' + '{:.1e}'.format(d).replace('e', '\\times 10^{') + '}$'
+    ax.annotate(d_str, xy=(0,0), xytext=(0.95, 0.95), textcoords='axes fraction',
+                           va='center', ha='right', fontsize=16, annotation_clip=False)
+    return d
             
 def draw_axis(ax, x=0.925, y=0.1):
     length=0.1

@@ -11,10 +11,10 @@ class MultiFrameMicroscope:
 
     A MultiFrameMicroscope is specified by a list of Microscopes. 
     """
-    def __init__(self, microscopes, n=1000, **kwargs):
+    def __init__(self, microscopes, n_pts=1000, **kwargs):
         self.microscopes = microscopes
         self.noise_model = stats.NoiseModel(self.calc_total_intensities, **kwargs)
-        self.calc_estimation_stats(n)
+        self.calc_estimation_stats(n_pts)
         
     def calc_total_intensities(self, arguments):
         I = []
@@ -41,7 +41,7 @@ class OneArmPolScope(MultiFrameMicroscope):
     """
     def __init__(self, n_frames=4, bfp_n=256, max_photons=100,
                  det_type='lens', illum_det_angle=0,
-                 f=10, bfp_rad=3, **kwargs):
+                 na_ill=0.8, na_det=0.8, n_samp=1.33, **kwargs):
                
         self.n_frames = n_frames
 
@@ -50,7 +50,7 @@ class OneArmPolScope(MultiFrameMicroscope):
         det_axis = np.array([-np.sin(illum_det_angle/2), 0, np.cos(illum_det_angle/2)])
         
         det = detector.Detector(optical_axis=det_axis, det_type=det_type,
-                                na=1.3, n=1.5)
+                                na=na_det, n=n_samp)
         
         # Changing illumination.
         m = []
@@ -59,10 +59,9 @@ class OneArmPolScope(MultiFrameMicroscope):
             bfp_pol = np.array([np.cos(theta), np.sin(theta), 0])
             ill = illuminator.Illuminator(illum_type='kohler',
                                           optical_axis=ill_axis,
-                                          f=f,
-                                          bfp_rad=bfp_rad,
-                                          bfp_pol_dir=bfp_pol,
-                                          bfp_n=bfp_n)
+                                          na=na_ill, n=n_samp,
+                                          bfp_pol_dir=bfp_pol, bfp_n=bfp_n)
+                                          
             m.append(microscope.Microscope(illuminator=ill, detector=det, max_photons=max_photons))
                      
         MultiFrameMicroscope.__init__(self, m, **kwargs)
@@ -84,7 +83,7 @@ class TwoArmPolScope(MultiFrameMicroscope):
     """
     def __init__(self, n_frames=4, bfp_n=256, max_photons=100,
                  det_type='lens', illum_det_angle=0,
-                 f=10, bfp_rad=3, **kwargs):
+                 na1=0.8, na2=0.8, n_samp=1.33, **kwargs):
                
         self.n_frames = n_frames
 
@@ -97,12 +96,14 @@ class TwoArmPolScope(MultiFrameMicroscope):
 
         # Cycle through detection and illumination orientations
         det_axes = [axis1, axis2]
+        det_nas = [na1, na2]
         ill_axes = [axis2, axis1]
-
-        for det_axis, ill_axis in zip(det_axes, ill_axes):
+        ill_nas = [na2, na1]
+        
+        for det_axis, det_na, ill_axis, ill_na in zip(det_axes, det_nas, ill_axes, ill_nas):
             # Specify detection
             det = detector.Detector(optical_axis=det_axis, det_type=det_type,
-                                    na=1.3, n=1.5)
+                                    na=det_na, n=n_samp)
 
             # Cycle through polarizations
             for n in range(self.n_frames):
@@ -110,10 +111,10 @@ class TwoArmPolScope(MultiFrameMicroscope):
                 bfp_pol = np.array([np.cos(theta), np.sin(theta), 0])
                 ill = illuminator.Illuminator(illum_type='kohler',
                                               optical_axis=ill_axis,
-                                              f=f,
-                                              bfp_rad=bfp_rad,
+                                              na=ill_na, n=n_samp,
                                               bfp_pol_dir=bfp_pol,
                                               bfp_n=bfp_n)
+                
                 m.append(microscope.Microscope(illuminator=ill, detector=det, max_photons=max_photons))
 
         MultiFrameMicroscope.__init__(self, m, **kwargs)

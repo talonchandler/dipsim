@@ -77,7 +77,7 @@ class MyArrowVisual(CompoundVisual):
     def __init__(self, rows=30, cols=30, radius=0.1, length=1, color='black', cone_length=0.5, cone_radius=None):
 
         import vispy.geometry.generation as gen
-        mesh = gen.create_arrow(rows=rows, cols=cols, radius=radius, length=length, cone_length=cone_length, cone_radius=cone_radius)
+        mesh = gen.create_arrow(rows=rows, cols=cols, radius=radius/2, length=length, cone_length=cone_length, cone_radius=cone_radius)
         
         self._mesh = MeshVisual(vertices=mesh.get_vertices(),
                                 faces=mesh.get_faces(),

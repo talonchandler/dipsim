@@ -30,6 +30,7 @@ class MultiFrameMicroscope:
         self.directions = util.fibonacci_sphere(n)
         self.fi_inv = np.apply_along_axis(calc_single_fi_inv, 1, self.directions, self, n)
         self.sa_uncert = np.sqrt(self.fi_inv[:,0])*np.sqrt(self.fi_inv[:,3])*np.sin(self.directions[:,0])
+        self.root_det_sin = np.sqrt((self.fi_inv[:,0]*self.fi_inv[:,3] - self.fi_inv[:,1]*self.fi_inv[:,2]))*np.sin(self.directions[:,0])
         
 class OneViewPolScope(MultiFrameMicroscope):
     """

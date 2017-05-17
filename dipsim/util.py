@@ -157,7 +157,7 @@ def plot_sphere(filename=None, directions=None, data=None, interact=False,
 
 def dispersion_index(data):
     return np.var(data)/np.mean(data)
-            
+
 def plot_histogram(data, ax):
     bins = np.array([10**x for x in np.arange(-4, 2, 0.1)])
     hist, bin_edges = np.histogram(data, bins=bins)

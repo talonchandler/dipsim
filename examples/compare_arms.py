@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import os; import time; start = time.time(); print('Running...')
 
 # Main input parameters
-n_pts = 1000
-bfp_n = 25
+n_pts = 100000
+bfp_n = 256
 illum_det_angles = np.deg2rad([0, 45, 90])
 gauss_stds = [0]#,1,3]
 n_cols = len(illum_det_angles)
@@ -14,7 +14,7 @@ n_rows = 5
 inch_fig = 5
 vis_px = 2000
 dpi = 250
-row_labels = ['Scene', r'$F^{-1}_{0,0} = \mathrm{Var}(\Theta) = \sigma_{\Theta}^2$', r'$F^{-1}_{1,1} = \mathrm{Var}(\Phi) = \sigma_{\Phi}$', r'$F^{-1}_{0,1} = \mathrm{Cov}(\Theta, \Phi)$', r'$\sigma_{\Omega} = \sigma_{\Phi}\sigma_{\Theta}\sin\Theta$']
+row_labels = ['Scene', r'$\sigma_{\Theta}^2 = I^{-1}_{0,0} \le \mathrm{Var}(\hat{\Theta})$', r'$\sigma_{\Phi}^2 = I^{-1}_{1,1} \le \mathrm{Var}(\hat{\Phi})$', r'$\sigma_{\Omega} = \sigma_{\Phi}\sigma_{\Theta}\sin\Theta$', r'$\sqrt{\mathrm{det}\{I^{-1}\}}\sin\Theta$']
 col_labels = ['Epi-detection', r'$45^{\circ}$-detection', r'Ortho-detection']
 
 # Generate axes
@@ -28,17 +28,18 @@ caxs = util.generate_caxs(axs)
 # Compute and plot on axes
 for i, (illum_det_angle) in enumerate(illum_det_angles):
     print('Computing microscope: ' + str(illum_det_angle))
-    m = multiframe.OneArmPolScope(n=n_pts, n_frames=4, 
+    m = multiframe.OneViewPolScope(n_pts=n_pts, n_frames=4, 
                                   illum_det_angle=illum_det_angle,
                                   det_type='lens', bfp_n=bfp_n,
                                   dist_type='poisson', max_photons=1000)
 
-    data = [m.fi_inv[:,0], m.fi_inv[:,3], m.fi_inv[:,1], m.sa_uncert]
-    scales = ['log', 'log', 'linlog', 'log']
+    data = [m.fi_inv[:,0], m.fi_inv[:,3], m.sa_uncert, m.root_det_sin]
+
+    scales = ['log', 'log', 'log', 'log']
     for j, (d, scale) in enumerate(zip(data, scales)):
         util.plot_sphere(directions=m.directions, data=d,
-                         color_norm=scale, linthresh=1e-4,
-                         color_min=1e-3, color_max=4*np.pi,
+                         color_norm=scale,
+                         color_min=2e-3, color_max=4*np.pi,
                          my_ax=axs[j+1,i], my_cax=caxs[j+1,i])
                      
     m.draw_scene(my_ax=axs[0,i], dpi=dpi, vis_px=vis_px)

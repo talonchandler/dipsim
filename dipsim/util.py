@@ -155,6 +155,9 @@ def plot_sphere(filename=None, directions=None, data=None, interact=False,
         if save_file:
             f.savefig(filename, dpi=dpi)
 
+def dispersion_index(data):
+    return np.var(data)/np.mean(data)
+            
 def plot_histogram(data, ax):
     bins = np.array([10**x for x in np.arange(-4, 2, 0.1)])
     hist, bin_edges = np.histogram(data, bins=bins)
@@ -164,7 +167,7 @@ def plot_histogram(data, ax):
     ax.set_xlim([np.min(data/10), 4*np.pi])
     ax.set_ylim([1/(2*len(data)), 1])
     ax.set_xlabel(r'$\sigma_{\Omega}$', fontsize=18)
-    d = np.var(data)/np.mean(data)
+    d = dispersion_index(data)
     d_str = '$D =' + '{:.1e}'.format(d).replace('e', '\\times 10^{') + '}$'
     ax.annotate(d_str, xy=(0,0), xytext=(0.95, 0.95), textcoords='axes fraction',
                            va='center', ha='right', fontsize=16, annotation_clip=False)

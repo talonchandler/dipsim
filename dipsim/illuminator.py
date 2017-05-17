@@ -15,7 +15,7 @@ class Illuminator:
         
         self.illum_type = illum_type
         
-        if np.linalg.norm(optical_axis) != 1.0:
+        if np.linalg.norm(optical_axis) - 1.0 > 1e-3:
             print("Warning: optical axis is not a unit vector. Normalizing.")
         self.optical_axis = optical_axis/np.linalg.norm(optical_axis)
 

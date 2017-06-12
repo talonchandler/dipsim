@@ -1,0 +1,336 @@
+\documentclass[11pt]{article}
+
+%%%%%%%%%%%%
+% Packages %
+%%%%%%%%%%%%
+\hyphenpenalty=10000
+\usepackage{tocloft}
+\renewcommand\cftsecleader{\cftdotfill{\cftdotsep}}
+\def\undertilde#1{\mathord{\vtop{\ialign{##\crcr
+$\hfil\displaystyle{#1}\hfil$\crcr\noalign{\kern1.5pt\nointerlineskip}
+$\hfil\tilde{}\hfil$\crcr\noalign{\kern1.5pt}}}}}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{epstopdf}
+\usepackage{braket}
+\usepackage{upgreek}
+\usepackage{caption}
+\usepackage{booktabs}
+\usepackage{subcaption}
+\usepackage{amssymb,latexsym,amsmath,gensymb}
+\usepackage{latexsym}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{pdflscape}
+\usepackage{url}
+\usepackage{tikz, calc}
+\usetikzlibrary{shapes.geometric, arrows, calc}
+\tikzstyle{norm} = [rectangle, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black]
+\tikzstyle{arrow} = [thick, ->, >=stealth]
+
+\providecommand{\e}[1]{\ensuremath{\times 10^{#1}}} 
+\providecommand{\mb}[1]{\mathbf{#1}}
+\providecommand{\mh}[1]{\mathbf{\hat{#1}}}
+\providecommand{\bs}[1]{\boldsymbol{#1}} 
+\providecommand{\intinf}{\int_{-\infty}^{\infty}}
+\providecommand{\fig}[4]{
+  % filename, width, caption, label
+\begin{figure}[h]
+ \captionsetup{width=1.0\linewidth}
+ \centering
+ \includegraphics[width = #2\textwidth]{#1}
+ \caption{#3}
+ \label{fig:#4}
+\end{figure}
+}
+
+\newcommand{\tensor}[1]{\overset{\text{\tiny$\leftrightarrow$}}{\mb{#1}}}
+\newcommand{\tunderbrace}[2]{\underbrace{#1}_{\textstyle#2}}
+\providecommand{\figs}[7]{
+  % filename1, filename2, caption1, caption2, label1, label2, shift
+\begin{figure}[H]
+\centering
+\begin{minipage}[b]{.45\textwidth}
+  \centering
+  \includegraphics[width=1.0\linewidth]{#1}
+  \captionsetup{justification=justified, singlelinecheck=true}
+  \caption{#3}
+  \label{fig:#5}
+\end{minipage}
+\hspace{2em}
+\begin{minipage}[b]{.45\textwidth}
+  \centering
+  \includegraphics[width=1.0\linewidth]{#2}
+  \vspace{#7em}
+  \captionsetup{justification=justified}
+  \caption{#4}
+  \label{fig:#6}
+\end{minipage}
+\end{figure}
+}
+\makeatletter
+
+\providecommand{\code}[1]{
+\begin{center}
+\lstinputlisting{#1}
+\end{center}
+}
+
+%%%%%%%%%%%
+% Spacing %
+%%%%%%%%%%%
+% Margins
+\usepackage[
+top    = 1.5cm,
+bottom = 1.5cm,
+left   = 1.5cm,
+right  = 1.5cm]{geometry}
+
+% Indents, paragraph space
+\usepackage{parskip} 
+
+% Section spacing
+\usepackage{titlesec}
+\titlespacing*{\title}
+{0pt}{0ex}{0ex}
+\titlespacing*{\section}
+{0pt}{0ex}{0ex}
+\titlespacing*{\subsection}
+{0pt}{0ex}{0ex}
+\titlespacing*{\subsubsection}
+{0pt}{0ex}{0ex}
+
+% Line spacing
+\linespread{1.1}
+
+%%%%%%%%%%%%
+% Document %
+%%%%%%%%%%%%
+\begin{document}
+\title{\vspace{-2.5em}Estimating A Single Molecule's Orientation With Polarized
+  Illumination Microscopy\vspace{-2em}} \author{}% and Patrick La Rivi\`ere}
+\date{\vspace{-1em}May 2, 2017\vspace{-1em}}
+\maketitle
+
+\section{Introduction}
+In this work we evaluate wide-field polarized microscope designs for determining
+the orientation of single molecules. In section 2 we model the relationship
+between a molecule's orientation, the microscope geometry, and the measured
+intensity. In section 3 we present simulation results to show how these
+microscopes behave, and we compare the ability of several microscope designs to
+reconstruct the orientation of single dipoles using techniques from estimation
+theory. Finally, in sections 4 and 5 we summarize our results and present plans
+for future work.
+
+\section{Methods}
+In this section we model the relationship between a single molecule's
+orientation, the microscope's geometry, and the measured intensity. We split the
+model into two parts. First, we develop the illumination model and calculate the
+excitation efficiency, $\eta_{\text{exc}}$---the fraction of the maximum power
+absorbed by the molecule. Next, we develop the detection model and calculate the
+detection efficiency, $\eta_{\text{det}}$---the fraction of the power emitted by
+the molecule that we detect. Finally, we multiply the excitation efficiency and
+the detection efficiency to find the total efficiency, $\eta_{\text{tot}}$---a
+quantity that is proportional to the measured intensity. 
+
+\subsection{Illumination Model}
+In this section we model the excitation efficiency of a single molecule with absorption
+dipole moment $\hat{\bs{\mu}}_{\text{abs}}$ at the focal point of a
+condenser. We excite the molecule with K\"{o}hler illumination with a linear
+polarizer in the back focal plane of the condenser. Each point in the back focal
+plane illuminates the molecule with a polarized plane wave rotated
+by the condenser, and each polarized plane wave acts on the molecule independently, so
+we can find the excitation efficiency by integrating over the back focal plane of the condenser. Therefore, the excitation efficiency is
+\begin{align}
+  \eta_{\text{exc}} &= \frac{\int_{\text{bfp}} d\mathbf{r}'|\hat{\bs{\mu}}_{\text{abs}}^{\dagger}\mathbf{\hat{A}}_{\text{ffp}}|^2}{\int_{\text{bfp}}d\mathbf{r}'}\label{eq:illum}\\
+\mathbf{\hat{A}}_{\text{ffp}}(\mh{r}') &= \tilde{\mb{R}}(\mh{r}')\mathbf{A}_{\text{bfp}} 
+\end{align}
+where $\mh{A}_{\text{bfp}}$ is the direction of the polarizer in the back focal
+plane, $\mh{r}'$ is the position coordinate in the back focal plane,
+$\tilde{\mb{R}}(\mh{r}')$ is the position-dependent rotation matrix that rotates
+the generalized Jones vector (GJV) in the back focal to a GJV in the front focal
+plane, $\mh{A}_{\text{ffp}}$ is the GJV in the front focal plane due to the
+point $\mh{r}'$ in the back focal plane, $\hat{\bs{\mu}}_{\text{abs}}$ is the
+molecule's absorption dipole moment, and ${}^{\dagger}$ denotes the adjoint
+operator.
+
+$\eta_{\text{exc}}$ is normalized by the area of the back focal plane so the it
+can be interpreted as the fraction of the maximum power absorbed by the
+molecule. If the back focal plane is a pinhole then the molecule is illuminated
+by a single plane wave. If the plane wave is aligned with the dipole
+($\mathbf{\hat{A}}_{\text{bfp}} = \hat{\bs{\mu}}_{\text{abs}}$) then
+$\eta_{\text{exc}}=1$, the most power the dipole can absorb. Opening the
+aperture or rotating the molecule will decrease the excitation efficiency.
+
+Equation \ref{eq:illum} is too computationally expensive to calculate for each
+illumination and dipole orientation. Instead, we follow \cite{backer} and factor
+the integral so that we can calculate an illumination basis once for each
+illumination geometry. The factored form of equation \ref{eq:illum} is
+\begin{align}
+  \eta_{\text{exc}} &= \frac{1}{\int_{\text{bfp}}d\mathbf{r}'}[\mu_x^2, \mu_y^2, \mu_z^2, \mu_x\mu_y, \mu_x\mu_z, \mu_y\mu_z]\cdot\int_{\text{bfp}} d\mathbf{r}'[|A_x|^2, |A_y|^2, |A_z|^2, 2\text{Re}\{A_x^*A_y\}, 2\text{Re}\{A_x^*A_z\}, 2\text{Re}\{A_y^*A_z\}]^T \label{eq:factored}
+\end{align}
+where
+\begin{align}
+  \mb{\hat{A}}_{\text{ffp}} &= A_x\mh{i} + A_y\mh{j} + A_z\mh{k}\\
+  \hat{\bs{\mu}}_{\text{abs}} &= \mu_x\mh{i} + \mu_y\mh{j} + \mu_z\mh{k}
+\end{align}
+We plot the illumination basis elements in figure \ref{fig:illum_basis}. 
+
+\fig{../figures/illum_basis.png}{1.0}{Illumination basis elements as a function of
+  polarization orientation and back focal plane radius. Row 1: schematics of the
+  illumination geometries---a polarizer is placed in the back focal plane of the
+  condenser lens. Row 2 and 3: plots of the illumination basis elements as a
+  function of $\rho/f$---the ratio of the back focal plane radius to the focal
+  length. The illumination basis elements should be interpreted with
+  equation \ref{eq:factored} in view---they do not have a direct physical
+  interpretation. Columns: varying polarization orientations. }{illum_basis}
+
+\subsection{Detection Model}
+In this section we model the detection efficiency---the fraction of the power
+emitted by a single molecule that we detect. We follow Fourkas \cite{fourkas} and find that the
+detection efficiency is
+\begin{align}
+  \eta_{\text{det}} &= 2\left(A + B\sin^2\theta\right)\\
+  A &= \frac{1}{4} - \frac{3}{8} \cos\alpha + \frac{1}{8} \cos^{3}\alpha\\
+  B &= \frac{3}{16} \cos\alpha - \frac{3}{16} \cos^{3}\alpha
+\end{align}
+where $\theta$ is the angle between the molecule's emission dipole moment
+$\hat{\bs{\mu}}_{\text{em}}$ and the detection arm's optical axis, and $\alpha$
+is the half angle of the collection cone. See the note set ``Inconsistency in
+rapid determination of the three-dimensional orientation of single molecules''
+for the derivation of this model. Notice that we're using the corrected versions
+of Fourkas' variables $A$ and $B$.
+
+For this work we assume that $\hat{\bs{\mu}}_{\text{abs}} = \hat{\bs{\mu}}_{\text{em}}$.
+
+\section{Results}
+\subsection{Excitation, Detection, and Total Efficiency}
+Figure \ref{fig:efficiency} shows representative results of the excitation,
+detection, and total efficiencies as a function of dipole direction and
+microscope geometry. Notice that a single frame does not give us enough
+information to recover a dipole's direction. In the next section we will
+consider using the information from combinations of single frame microscopes
+like the ones shown in Figure \ref{fig:efficiency}.
+
+\fig{../figures/geometry.png}{1.0}{Representative examples of single frame microscopes. Row
+  1: schematics of the illumination and detection geometries. Rows 2-4: excitation, detection, and total efficiency as a function of dipole direction. The total efficiency is the product of the excitation efficiency and the detection efficiency.}{efficiency}
+
+\subsection{Dipole Orientation Estimates With Multiple Frame Experiments}
+In this section we combine the results from several single frame microscopes to
+create multiple frame experiments, and we investigate the possibility of using
+the information from multiple frames to reconstruct a single molecule's
+orientation. To assess our ability to reconstruct a molecule's orientation from
+intensity measurements, we parameterize the molecule's orientation with
+spherical coordinates
+($\hat{\bs{\mu}}_{\text{em}} = \sin\Theta\cos\Phi\ \hat{\mb{i}} +
+\sin\Theta\sin\Phi\ \hat{\mb{j}} + \cos\Theta\ \hat{\mb{k}}$), find the minimum
+variance of an unbiased estimator for these parameters ($\sigma^2_{\Theta}$ and
+$\sigma^2_{\Phi}$) using the Cramer Rao lower bound, and calculate a metric we
+call the solid-angle uncertainty---
+$\sigma_{\Omega} = \sin\Theta\sigma_{\Theta}\sigma_{\Phi}$. We use
+$\sigma_{\Omega}$ as our figure of merit because it is easy to interpret---given
+a single molecule's orientation and a set of measurements, $\sigma_{\Omega}$ is
+the solid angle of the cone of uncertainty about the molecule's reconstructed
+orientation.
+
+\subsection{Single-View Microscope Results}
+Figure \ref{fig:one_arm} shows the solid-angle uncertainty for multiple-frame,
+single-view experiments. Each experiment consists of four frames with different
+polarization orientations and fixed illumination and detection geometry. We used
+a Poisson noise model with 1000 illuminating photons per frame, a back focal
+plane radius of 3/10 the focal length of the condenser, and a detection NA of
+1.3.
+  
+\fig{../figures/singlearm3.png}{0.9}{Solid-angle uncertainty for single view multiple frame
+  microscopes. Row 1: schematics of the microscope geometries---we detect four
+  frames with different illumination polarizations. Row 2: solid-angle
+  uncertainty as a function of dipole orientation. A small $\sigma_{\Omega}$
+  indicates that the orientation of a dipole oriented along this direction can
+  be precisely recovered from the data collected with this microscope
+  geometry. Columns: varying angles between the illumination and detection
+  arms. }{one_arm}
+
+\subsection{Dual-View Microscope Results}
+
+Figure \ref{fig:dual_arm} shows the solid-angle uncertainty for multiple-frame,
+dual-view experiments. We've repeated the experiments in the previous section,
+but now we collect four polarization frames with one view, swap the illumination
+and detection arms, then collect another four polarization frames. We halved the
+number of illuminating photons to 500 per frame to allow for a fair comparison
+between the single arm and dual arm results.
+
+\fig{../figures/dualarm3.png}{0.9}{Solid-angle uncertainty for dual view multiple frame
+  microscopes. Same caption as Figure \ref{fig:one_arm} except here we
+  illuminate and detect along both arms. Notice that the 45${}^{\circ}$
+  detection scheme provides the most uniform solid-angle uncertainty of the
+  designs considered here.}{dual_arm}
+
+\section{Discussion}
+An ideal microscope geometry would allow us to reconstruct the orientation of a
+single molecule with a constant solid-angle uncertainty for every orientation of
+the molecule. We can't accomplish this goal without a large number of detectors
+at all positions around the dipole, so instead we choose microscope geometries
+that are experimentally feasible and give us the most uniform solid-angle
+uncertainty.
+
+Figure \ref{fig:one_arm} shows that single-view microscopes cannot be used to
+reconstruct single molecules with uniform solid-angle uncertainty. All
+single-view geometries are degenerate near a plane of molecule orientations. In
+the epi-detection case the degeneracy occurs near the plane orthogonal to the
+optical axis. A molecule lying near this plane will give rise to data that
+cannot be used to determine whether the molecule lies above or below the
+plane. Lu discussed this degeneracy in detail and developed techniques to avoid
+reconstruction issues \cite{lux}. When the detector is rotated the plane of
+degeneracy moves but does not disappear. Notice that moving the detector away
+from epi-detection always decreases the detection efficiency, so there is no
+advantage to using oblique or orthogonal detection geometries with only one
+view.
+
+Figure \ref{fig:dual_arm} shows that oblique and orthogonal geometries can be
+advantageous for dual-view microscopes. The first column of Figure
+\ref{fig:dual_arm} shows the epi-detection case with the plane of degeneracy
+orthogonal to the detection axis. The second and third columns show that
+rotating the second arm away from the first arm creates a dramatically more
+uniform solid-angle uncertainty. Between the epi-, 45${}^{\circ}$-, and
+ortho-detection geometries, we can see that the 45${}^{\circ}$ detection
+geometry creates the most uniform solid-angle uncertainty. We note that the
+results extend symmetrically past angles larger than 90${}^{\circ}$. For
+example, 135${}^{\circ}$ detection gives equivalent results to 45${}^{\circ}$
+detection, and 135${}^{\circ}$ detection may be more experimentally feasible.
+
+\section{Next Steps}
+Limitations and/or next steps:
+\begin{enumerate}
+\item Both the illumination and detection models use the paraxial approximation. I know how to extend to the high-NA case, but the conclusions in this work do not depend
+  on high-NA lenses. Do you think I should extend now or later?
+\item I'm currently only using a Poisson noise model, but I've implemented a
+  Poisson + Gaussian model as well if we'd like results with read-out noise. Read-out
+  noise won't cause any major difference---it will just raise the solid-angle
+  uncertainty baseline.
+\item Currently I'm calculating Equation \ref{eq:factored} numerically, and I'm
+  getting reasonable results (see Figure \ref{fig:illum_basis} and Figure
+  \ref{fig:efficiency}). I can write \ref{eq:factored} in terms of six
+  integrals, and I think that those integrals will simplify under the paraxial
+  assumption. This may allow us to consider the effect of illumination in closed
+  form. Still investigating.
+\item The 45${}^{\circ}$ and 135${}^{\circ}$ cases are identical if the molecule
+  is in a homogeneous environment. I have the tools to consider the case where
+  the molecule is near an interface \cite{backer}, but I haven't implemented
+  this yet.
+\end{enumerate}
+
+Questions:
+\begin{enumerate}
+\item I've parameterized the radius of the back focal plane with $\rho/f$, the
+  ratio the back focal plane radius to the focal length. Would NA${}_{\text{illum}}$
+  be more appropriate?
+\item Is 500/1000 illuminating photons per frame appropriate? What are typical
+  read out noise levels?
+\end{enumerate}
+
+\bibliography{report}{}
+\bibliographystyle{unsrt}
+
+\end{document}
+

@@ -1,0 +1,258 @@
+\documentclass[11pt]{article}
+
+%%%%%%%%%%%%
+% Packages %
+%%%%%%%%%%%%
+\hyphenpenalty=10000
+\usepackage{tocloft}
+\renewcommand\cftsecleader{\cftdotfill{\cftdotsep}}
+
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{epstopdf}
+\usepackage{braket}
+\usepackage{upgreek}
+\usepackage{caption}
+\usepackage{booktabs}
+\usepackage{subcaption}
+\usepackage{amssymb,latexsym,amsmath,gensymb}
+\usepackage{latexsym}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{pdflscape}
+\usepackage{url}
+\usepackage{tikz, calc}
+\usetikzlibrary{shapes.geometric, arrows, calc}
+\tikzstyle{norm} = [rectangle, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black]
+\tikzstyle{arrow} = [thick, ->, >=stealth]
+
+\providecommand{\e}[1]{\ensuremath{\times 10^{#1}}} 
+\providecommand{\mb}[1]{\mathbf{#1}}
+\providecommand{\mh}[1]{\mathbf{\hat{#1}}}
+\providecommand{\bs}[1]{\boldsymbol{#1}} 
+\providecommand{\intinf}{\int_{-\infty}^{\infty}}
+\providecommand{\fig}[4]{
+  % filename, width, caption, label
+\begin{figure}[h]
+ \captionsetup{width=1.0\linewidth}
+ \centering
+ \includegraphics[width = #2\textwidth]{#1}
+ \caption{#3}
+ \label{fig:#4}
+\end{figure}
+}
+
+\newcommand{\tensor}[1]{\overset{\text{\tiny$\leftrightarrow$}}{\mb{#1}}}
+\newcommand{\tunderbrace}[2]{\underbrace{#1}_{\textstyle#2}}
+\providecommand{\figs}[7]{
+  % filename1, filename2, caption1, caption2, label1, label2, shift
+\begin{figure}[H]
+\centering
+\begin{minipage}[b]{.4\textwidth}
+  \centering
+  \includegraphics[width=1.0\linewidth]{#1}
+  \captionsetup{justification=justified, singlelinecheck=true}
+  \caption{#3}
+  \label{fig:#5}
+\end{minipage}
+\hspace{2em}
+\begin{minipage}[b]{.4\textwidth}
+  \centering
+  \includegraphics[width=1.0\linewidth]{#2}
+  \vspace{#7em}
+  \captionsetup{justification=justified}
+  \caption{#4}
+  \label{fig:#6}
+\end{minipage}
+\end{figure}
+}
+\makeatletter
+
+\providecommand{\code}[1]{
+\begin{center}
+\lstinputlisting{#1}
+\end{center}
+}
+
+%%%%%%%%%%%
+% Spacing %
+%%%%%%%%%%%
+% Margins
+\usepackage[
+top    = 1.5cm,
+bottom = 1.5cm,
+left   = 1.5cm,
+right  = 1.5cm]{geometry}
+
+% Indents, paragraph space
+\usepackage{parskip} 
+
+% Section spacing
+\usepackage{titlesec}
+\titlespacing*{\title}
+{0pt}{0ex}{0ex}
+\titlespacing*{\section}
+{0pt}{0ex}{0ex}
+\titlespacing*{\subsection}
+{0pt}{0ex}{0ex}
+\titlespacing*{\subsubsection}
+{0pt}{0ex}{0ex}
+
+% Line spacing
+\linespread{1.1}
+
+%%%%%%%%%%%%
+% Document %
+%%%%%%%%%%%%
+\begin{document}
+\title{\vspace{-2.5em}Single Molecule Fluorescence Microscopy Update\vspace{-1em}}
+\author{Talon Chandler}% and Patrick La Rivi\`ere}
+\date{\vspace{-1em}March 3, 2017\vspace{-1em}}
+\maketitle
+
+\section{Current Model and Limitations}
+In the previous note set, we developed the following forward model
+\begin{align}
+  I_{\text{img}}(\mb{r''}) = \left|\mathcal{F}_{3D}\left\{
+    \mb{\tilde{O}}_{\text{obj}}\tensor{\mathbf{G}}_{FF}\tensor{\bs{\alpha}}\mb{E}_{\text{in}}
+  \right\}
+  \right|^2.\label{eq:5}
+\end{align}
+
+Rudolph and Shalin identified several limitations of the model:
+\begin{itemize}
+\item The model needlessly tracks phase from start to finish. Rudolph and Shalin
+  correctly pointed out that phase is irrelevant on the illumination side
+  because we measure the intensity over long time periods compared to the period
+  of the electric fields.
+\item The model only considers monochromatic illumination by a single plane wave
+  and focused laser illumination, not K\"{o}hler illumination by a broadband
+  source.
+\item The model only considers excitation of a single fluorophore. 
+\end{itemize}
+These notes address these limitations. 
+
+\subsection{Single Fluorophore, Monochromatic Plane Wave}
+Consider a monochromatic plane wave with polarization axis $\mb{E}$
+incident on a single fluorophore with absorption dipole moment axis
+$\hat{\bs{\mu}}_{\text{abs}}$ and emission dipole moment
+$\hat{\bs{\mu}}_{\text{em}}$. The incident plane wave induces a dipole moment given by
+\begin{align}
+  \bs{\mu}_{\text{ind}} \propto \hat{\bs{\mu}}_{\text{em}} \left[\hat{\bs{\mu}}_{\text{abs}}\cdot \mb{E}\right].
+\end{align}
+
+\subsection{Many Fluorophores, Monochromatic Plane Wave}
+Now consider $N$ fluorophores in the specimen volume with absorption dipole
+moments $\hat{\bs{\mu}}_{\text{abs},i}$, emission dipole moments
+$\hat{\bs{\mu}}_{\text{em},i}$, and positions $\mb{r}_i$. We define the
+\textit{emission dipole moment map} as
+$\bs{\mu}_{\text{em}}(\mb{r}) \equiv \sum_{i=0}^N \hat{\bs{\mu}}_{\text{em},i}
+\delta (\mb{r} - \mb{r}_i)$. Similarly, we define the \textit{absorption dipole
+  moment map} as
+$\bs{\mu}_{\text{abs}}(\mb{r}) \equiv \sum_{i=0}^N \hat{\bs{\mu}}_{\text{abs},i}
+\delta (\mb{r} - \mb{r}_i)$. When we illuminate the fluorophores with a
+monochromatic plane wave we create the \textit{induced dipole map} given by
+\begin{align}
+    \bs{\mu}_{\text{ind}}(\mb{r}) \propto \bs{\mu}_{\text{em}}(\mb{r}) \left[\bs{\mu}_{\text{abs}}(\mb{r})\cdot \mb{E}\right].
+\end{align}
+
+\subsection{Many Fluorophores,  Focused Laser Illumination}
+Under focused laser illumination the electric field in the specimen volume
+is position dependent. If $\mb{E}(\mb{r})$ is the real 3D electric field
+direction at every point in the specimen volume, then the induced dipole map is given
+by
+\begin{align}
+    \bs{\mu}_{\text{ind}}(\mb{r}) \propto \bs{\mu}_{\text{em}}(\mb{r}) \left[\bs{\mu}_{\text{abs}}(\mb{r})\cdot \mb{E}(\mb{r})\right].
+\end{align}
+
+\subsection{Many Fluorophores, Broadband Plane Wave}
+If we illuminate a fluorophore with a broadband plane wave and measure the
+induced dipole moment over a period of time much longer than the coherence time,
+then the effective induced dipole moment will be the sum of the induced dipole
+moments created by each frequency component. In other words, each frequency
+component acts independently on the fluorophore to create an induced dipole
+moment.
+
+If we want to compare illumination sources with different spectra, we will need
+to consider the \textit{excitation efficiency}, $\eta(\omega)$, of each
+frequency $\omega$. For a two level system, $\eta(\omega) = 1$ at the resonance
+frequency and drops to 0 far from the resonance frequency following a Lorentzian
+function. $\eta(\omega)$ is a more complicated function for real
+fluorophores. The induced dipole map is given by
+\begin{align}
+    \bs{\mu}_{\text{ind}}(\mb{r}) \propto \intinf d\omega\ \eta(\omega) \bs{\mu}_{\text{em}}(\mb{r}) \left[\bs{\mu}_{\text{abs}}(\mb{r})\cdot \mb{E}(\omega)\right].
+\end{align}
+
+\subsection{Many Fluorophores, K\"{o}hler Illumination}
+If we illuminate a fluorophore with two plane waves with a random phase
+difference traveling in different directions and measure the induced dipole over
+a long time compared with the coherence time of the two waves, the induced
+dipole is the sum of the induced dipole created by each plane wave
+independently. In other words, each plane wave creates an induced dipole
+independently. (Thank you Rudolph and Shalin for steering me in this direction).
+
+Under K\"{o}hler illumination with a polarizer in the back focal plane, each
+paraxial point in the back focal plane of the condenser creates a polarized
+plane wave that is constant throughout the specimen volume. Therefore, to find
+the induced dipole moment map, we can integrate over the back focal plane of the condenser
+\begin{align}
+  \bs{\mu}_{\text{ind}}(\mb{r}) \propto
+  \intinf d\omega
+  \int d\mb{r'}\ \eta(\omega)\bs{\mu}_{\text{em}}(\mb{r})
+  \left[\bs{\mu}_{\text{abs}}(\mb{r})\cdot \mb{R}_{\mb{\hat{s}}}(\mb{r'})\mb{E}_{\text{bfp}}(\omega)\right] \label{eq:test}
+\end{align}
+where $\mb{r'}$ is the position in the back focal plane, $\mb{E}_{\text{bfp}}$
+is the electric field direction in the back focal plane set by a linear
+polarizer, and $\mb{R}_{\mb{\hat{s}}}(\mb{r'})$ is a rotation matrix that rotates the electric field in the back focal plane to the electric field in the specimen volume. 
+
+Note that equation \ref{eq:test} depends on the paraxial approximation. Points
+in the back focal plane that are far from the optical axis do not create perfect
+plane waves in the specimen volume. We can explore more accurate models for high
+NA illumination if necessary.
+
+\section{Revised Model Summary}
+On the detection side, the model remains the same. The intensity in the image plane
+is given by
+\begin{align}
+  I_{\text{img}}(\mb{r''}) \propto \left|\mathcal{F}_{3D}\left\{
+  \mb{\tilde{O}}_{\text{obj}}\tensor{\mathbf{G}}_{FF}\bs{\mu}_{\text{ind}}(\mb{r})
+  \right\}
+  \right|^2.
+\end{align}
+
+Under K\"{ohler} illumination the induced dipole moment map is
+\begin{align}
+  \bs{\mu}_{\text{ind}}(\mb{r}) \propto
+  \intinf d\omega
+  \int d\mb{r'}\ \eta(\omega)\bs{\mu}_{\text{em}}(\mb{r})
+  \left[\bs{\mu}_{\text{abs}}(\mb{r})\cdot \mb{R}_{\mb{\hat{s}}}(\mb{r'})\mb{E}_{\text{bfp}}(\omega)\right] \label{eq:test2}
+\end{align}
+Under laser illumination the induced dipole moment is\begin{align}
+  \bs{\mu}_{\text{ind}}(\mb{r}) \propto
+  \bs{\mu}_{\text{em}}(\mb{r})
+  \left[\bs{\mu}_{\text{abs}}(\mb{r})\cdot \mb{E}(\mb{r})\right] \label{eq:test3}
+\end{align}
+where $\mb{E}(\mb{r})$ is the electric field in the specimen volume. 
+
+\section{Matrix Form of the Model}
+Rudolph and Shalin suggested simplifying the model by defining a
+\textit{polarization resolved intensity},
+$\mb{I}_{\text{in}} = \left[I_{\text{in}}^x, I_{\text{in}}^y,
+  I_{\text{in}}^z\right]$ that we could use to create a matrix form of the
+model. Unfortunately, both the emission and absorption dipole maps appear in
+equations \ref{eq:test2} and \ref{eq:test3}. This means that even if the
+emission and absorption dipoles point in the same direction, the induced dipole
+moments depend on the cross terms of the dipole direction. In other words, the
+model is linear in
+$\left[\mu_x^2, \mu_y^2, \mu_z^2, \mu_{x}\mu_y, \mu_x\mu_z, \mu_y\mu_z\right]$,
+not just $\left[\mu_x^2, \mu_y^2, \mu_z^2\right]$. If we define a polarization resolved intensity vector it will need six terms, not three.
+
+Backer and Moerner made a similar simplification on the detection side to speed
+up their deconvolutions \cite{backer}.
+
+\bibliography{report}{}
+\bibliographystyle{unsrt}
+
+\end{document}
+

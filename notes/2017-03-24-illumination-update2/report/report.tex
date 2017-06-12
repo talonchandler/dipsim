@@ -1,0 +1,348 @@
+\documentclass[11pt]{article}
+
+%%%%%%%%%%%%
+% Packages %
+%%%%%%%%%%%%
+\hyphenpenalty=10000
+\usepackage{tocloft}
+\renewcommand\cftsecleader{\cftdotfill{\cftdotsep}}
+\def\undertilde#1{\mathord{\vtop{\ialign{##\crcr
+$\hfil\displaystyle{#1}\hfil$\crcr\noalign{\kern1.5pt\nointerlineskip}
+$\hfil\tilde{}\hfil$\crcr\noalign{\kern1.5pt}}}}}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{epstopdf}
+\usepackage{braket}
+\usepackage{upgreek}
+\usepackage{caption}
+\usepackage{booktabs}
+\usepackage{subcaption}
+\usepackage{amssymb,latexsym,amsmath,gensymb}
+\usepackage{latexsym}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{pdflscape}
+\usepackage{url}
+\usepackage{tikz, calc}
+\usetikzlibrary{shapes.geometric, arrows, calc}
+\tikzstyle{norm} = [rectangle, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black]
+\tikzstyle{arrow} = [thick, ->, >=stealth]
+
+\providecommand{\e}[1]{\ensuremath{\times 10^{#1}}} 
+\providecommand{\mb}[1]{\mathbf{#1}}
+\providecommand{\mh}[1]{\mathbf{\hat{#1}}}
+\providecommand{\bs}[1]{\boldsymbol{#1}} 
+\providecommand{\intinf}{\int_{-\infty}^{\infty}}
+\providecommand{\fig}[4]{
+  % filename, width, caption, label
+\begin{figure}[h]
+ \captionsetup{width=1.0\linewidth}
+ \centering
+ \includegraphics[width = #2\textwidth]{#1}
+ \caption{#3}
+ \label{fig:#4}
+\end{figure}
+}
+
+\newcommand{\tensor}[1]{\overset{\text{\tiny$\leftrightarrow$}}{\mb{#1}}}
+\newcommand{\tunderbrace}[2]{\underbrace{#1}_{\textstyle#2}}
+\providecommand{\figs}[7]{
+  % filename1, filename2, caption1, caption2, label1, label2, shift
+\begin{figure}[H]
+\centering
+\begin{minipage}[b]{.45\textwidth}
+  \centering
+  \includegraphics[width=1.0\linewidth]{#1}
+  \captionsetup{justification=justified, singlelinecheck=true}
+  \caption{#3}
+  \label{fig:#5}
+\end{minipage}
+\hspace{2em}
+\begin{minipage}[b]{.45\textwidth}
+  \centering
+  \includegraphics[width=1.0\linewidth]{#2}
+  \vspace{#7em}
+  \captionsetup{justification=justified}
+  \caption{#4}
+  \label{fig:#6}
+\end{minipage}
+\end{figure}
+}
+\makeatletter
+
+\providecommand{\code}[1]{
+\begin{center}
+\lstinputlisting{#1}
+\end{center}
+}
+
+%%%%%%%%%%%
+% Spacing %
+%%%%%%%%%%%
+% Margins
+\usepackage[
+top    = 1.5cm,
+bottom = 1.5cm,
+left   = 1.5cm,
+right  = 1.5cm]{geometry}
+
+% Indents, paragraph space
+\usepackage{parskip} 
+
+% Section spacing
+\usepackage{titlesec}
+\titlespacing*{\title}
+{0pt}{0ex}{0ex}
+\titlespacing*{\section}
+{0pt}{0ex}{0ex}
+\titlespacing*{\subsection}
+{0pt}{0ex}{0ex}
+\titlespacing*{\subsubsection}
+{0pt}{0ex}{0ex}
+
+% Line spacing
+\linespread{1.1}
+
+%%%%%%%%%%%%
+% Document %
+%%%%%%%%%%%%
+\begin{document}
+\title{\vspace{-2.5em}Dipole Illumination Model Correction\vspace{-1em}}
+\author{Talon Chandler}% and Patrick La Rivi\`ere}
+\date{\vspace{-1em}March 24, 2017\vspace{-1em}}
+\maketitle
+
+\section{Summary}
+Our current model for the induced dipole moment created by illuminating a single
+fluorophore with a monochromatic plane wave is
+\begin{align}
+  \bs{\mu}_{\text{ind}} \propto \hat{\bs{\mu}}_{\text{em}} \left[\hat{\bs{\mu}}_{\text{abs}}\cdot \mb{E}\right].
+\end{align}
+
+In these notes I will re-derive this model and correct several errors. The corrected
+model is
+\begin{align}
+  \bs{\mu}_{\text{ind}} \propto \hat{\bs{\mu}}_{\text{em}} \left|\hat{\bs{\mu}}_{\text{abs}}^{\dagger}\mb{A}\right|
+\end{align}
+where $\mb{A}$ is the complex envelope (also known as the generalized Jones
+vector).
+
+\section{Math Preliminaries}
+\subsection{Set Definitions}
+\begin{align*}
+  \mathbb{R}:&\ \text{the set of real numbers}\\
+  \mathbb{R}^n:&\ \text{the set of $n$ dimensional vectors with real components}\\
+  \mathbb{C}:&\ \text{the set of complex numbers}\\
+  \mathbb{C}^n:&\ \text{the set of $n$ dimensional vectors with complex components}\\
+  \mathbb{S}^n &= \left\{x\in \mathbb{R}^{n}: |x| = 1 \right\}:\ \text{the set of real unit vectors in $n$ dimensions.}\\
+  \mathbb{T}^n &= \left\{x\in \mathbb{C}^{n}: |x| = 1 \right\}:\ \text{the set of complex unit vectors in $n$ dimensions.}\\
+  [a, b) &= \left\{x\in \mathbb{R}: a\leq x < b\right\}:\ \text{shorthand for subsets of the real numbers. }
+\end{align*}
+\subsection{Useful Operations With Complex Vectors}
+\label{math}
+Consider $\mb{x}, \mb{y} \in \mathbb{C}^n$.
+\begin{enumerate}
+\item The conjugate transpose of $\mb{x}$ is denoted by a dagger ($\mb{x}^{\dagger}$).
+\item $|\mb{x}|^2 = \mb{x}^{\dagger}\mb{x}$.
+\item $\mb{x}^{\dagger}\mb{y} = \mb{x}\cdot \mb{y}$ if $\mb{x}, \mb{y}\in \mathbb{R}^n$
+\item $(\mb{x}\mb{y}^{\dagger})^{\dagger} = \mb{y}\mb{x}^{\dagger}$
+\end{enumerate}
+
+\section{Representations of Polarized Plane Waves}
+The time dependent electric field $\mathcal{E}$ of a polarized monochromatic
+plane wave is given by
+\begin{equation}
+  \mathcal{E}(\mb{r},t) = E_{o,x}\cos(k_{x}r_{x} - \omega t)\mh{x}\ + \\
+                     E_{o,y}\cos(k_{y}r_{y} - \omega t - \varphi_y)\mh{y}\ +\\
+                     E_{o,z}\cos(k_{z}r_{z} - \omega t - \varphi_z)\mh{z}
+                       \label{eq:plane}
+\end{equation}
+where $\mb{E}_{o} = [E_{o,x}, E_{o,y}, E_{o,z}]^T \in \mathbb{R}^3$ is the real
+electric field amplitude, $\mb{k} = [k_x, k_y, k_z]^T \in \mathbb{R}^3$ is the
+wave vector which points in the direction of propagation,
+$\mb{r} = [r_x, r_y, r_z]^T \in \mathbb{R}^3$ is the position,
+$\omega \in \mathbb{R}$ is the angular frequency, and $\varphi_y$ ($\varphi_z$)
+$\in [0, 2\pi)$ is the phase shift of the y (z) component. For equation
+\ref{eq:plane} to represent a physically realizable polarized plane wave, we
+require that $\mb{E}\cdot \mb{k} = 0$ so that the plane wave is transverse, and
+$|\mb{k}| = \frac{\omega}{c}$ so that the wave can propagate. 
+
+The complex spatial electric field $\mb{E}$ for a monochromatic polarized plane wave is given by
+\begin{equation}
+  \mb{E}(\mb{r}) = \mb{A}e^{j\mb{k}\cdot\mb{r}}
+  \label{eq:factor}
+\end{equation}
+where $\mb{E} \in \mathbb{C}^3$, and $\mb{A} \in \mathbb{C}^3$ is the complex
+envelope. We can recover the time dependent electric field from the complex spatial
+electric field using
+\begin{equation}
+  \mathcal{E}(\mb{r},t) = \text{Re}\left\{\mb{E}(\mb{r})e^{-j\omega t}\right\}
+\end{equation}
+
+We can view equation \ref{eq:factor} as a factorization of $\mb{E}$ into a
+spatially dependent part ($e^{j\mb{k}\cdot\mb{r}}$) and a spatially independent
+part ($\mb{A}$). $\mb{A}$ is called the complex envelope \cite{saleh} or the
+generalized Jones vector \cite{azzam}. The conventional Jones vector $\mb{J}$
+only considers polarized plane waves traveling along the $z$ axis, so
+$\mb{J}\in\mathbb{C}^2$ suffices to describe the polarization state. $\mb{A}$
+describes the polarization state for plane waves traveling in any direction, so
+$\mb{A} \in \mathbb{C}^3$ is required.
+
+\section{Power Absorbed By A Dipole}
+The power absorbed by a single dipole with absorption dipole moment
+$\bs{\mu}_{\text{abs}}$ illuminated by a polarized plane wave is \cite{nov}
+\begin{equation}
+  P_{\text{abs}} \propto |\hat{\bs{\mu}}_{\text{abs}}^{\dagger} \mb{E}|^2
+  \label{eq:power}
+\end{equation}
+where $\hat{\bs{\mu}}_{\text{abs}} \in \mathbb{T}^3$ is the absorption dipole
+moment. Notice that we've allowed $\hat{\bs{\mu}}_{\text{abs}}$ to be a unit
+complex vector instead of restricting it to be a unit real vector. Although
+we'll focus on the case of $\hat{\bs{\mu}}_{\text{abs}} \in \mathbb{S}^3$
+experimentally, allowing $\hat{\bs{\mu}}_{\text{abs}} \in \mathbb{T}^3$
+simplifies the notation and allows us to consider complex transition moments
+(transitions that are excited by circularly polarized light) if required. 
+
+\subsection{Absorbed Power Is Independent of Phase}
+Equation \ref{eq:power} extends to generalized Jones vectors. Plugging
+\ref{eq:factor} into \ref{eq:power} and using the operations in section \ref{math} gives
+\begin{align}
+  P_{\text{abs}} &\propto |\hat{\bs{\mu}}_{\text{abs}}^{\dagger} \mb{A}e^{j\mb{k}\cdot\mb{r}}|^2\\
+  P_{\text{abs}} &\propto (\hat{\bs{\mu}}_{\text{abs}}^{\dagger} \mb{A}e^{j\mb{k}\cdot\mb{r}})^{\dagger}(\hat{\bs{\mu}}_{\text{abs}}^{\dagger} \mb{A}e^{j\mb{k}\cdot\mb{r}})\\
+  P_{\text{abs}} &\propto (\hat{\bs{\mu}}_{\text{abs}}^{\dagger} \mb{A})^{\dagger}(\hat{\bs{\mu}}_{\text{abs}}^{\dagger} \mb{A})e^{j\mb{k}\cdot\mb{r}}e^{-j\mb{k}\cdot\mb{r}}\\
+  P_{\text{abs}} &\propto |\hat{\bs{\mu}}_{\text{abs}}^{\dagger} \mb{A}|^2
+  \label{eq:power2}                   
+\end{align}
+This confirms Rudolph and Shalin's claim that absorbed power is independent of
+phase. 
+
+\subsection{Sum Over Source}
+Finally, we show that if a dipole is illuminated by two plane waves with
+independent phase (say by two lasers that are not phase locked, or by
+illuminating two points on the back focal plane of a condenser with a thermal
+source) then the total absorbed power is the sum of the absorbed powers
+due to the individual plane waves. Let $\mb{E}_1$ and
+$\mb{E}_2\text{exp}\{j\undertilde{\phi}\}$ be the complex spatial electric
+fields created by the first and second illuminating plane waves where
+$\undertilde{\phi} \sim U(0, 2\pi)$ is a uniformly distributed phase difference
+between the two plane waves. The expected value of the absorbed power is
+\begin{align}
+  E[\undertilde{P}{\tiny{\text{abs}}}] &\propto E\left[|\hat{\bs{\mu}}_{\text{abs}}^{\dagger} (\mb{E}_1 + \mb{E}_2\text{exp}\{j\undertilde{\phi}\})|^2\right]\\
+  E[\undertilde{P}{\tiny{\text{abs}}}] &\propto E\left[\left[\hat{\bs{\mu}}_{\text{abs}}^{\dagger} (\mb{E}_1 + \mb{E}_2\text{exp}\{j\undertilde{\phi}\})\right]^{\dagger}\left[\hat{\bs{\mu}}_{\text{abs}}^{\dagger} (\mb{E}_1 + \mb{E}_2\text{exp}\{j\undertilde{\phi}\})\right]\right]\\
+  E[\undertilde{P}{\tiny{\text{abs}}}] &\propto E\left[\left[\hat{\bs{\mu}}_{\text{abs}}^{\dagger} (\mb{E}_1 + \mb{E}_2\text{exp}\{j\undertilde{\phi}\})(\mb{E}_1^{\dagger} + \mb{E}_2^{\dagger}\text{exp}\{-j\undertilde{\phi}\})\hat{\bs{\mu}}_{\text{abs}}\right]^{\dagger}\right]\\
+  E[\undertilde{P}{\tiny{\text{abs}}}] &\propto E\left[\left[\hat{\bs{\mu}}_{\text{abs}}^{\dagger} (\mb{E}_1\mb{E}_1^{\dagger} + \mb{E}_2\mb{E}_1^{\dagger}\text{exp}\{j\undertilde{\phi}\} + \mb{E}_1^{\dagger}\mb{E}_2\text{exp}\{-j\undertilde{\phi}\} + \mb{E}_2\mb{E}_2^{\dagger})\hat{\bs{\mu}}_{\text{abs}}\right]^{\dagger}\right]
+\intertext{Pulling the expectation inside and using $E[\text{exp}\{j\undertilde{\phi}\}] = 0$ gives}
+  E[\undertilde{P}{\tiny{\text{abs}}}] &\propto \left[\hat{\bs{\mu}}_{\text{abs}}^{\dagger} (\mb{E}_1\mb{E}_1^{\dagger} + \mb{E}_2\mb{E}_2^{\dagger})\hat{\bs{\mu}}_{\text{abs}}\right]^{\dagger}\\
+  E[\undertilde{P}{\tiny{\text{abs}}}] &\propto \left[\hat{\bs{\mu}}_{\text{abs}}^{\dagger}\mb{E}_1\mb{E}_1^{\dagger}\hat{\bs{\mu}}_{\text{abs}} + \hat{\bs{\mu}}_{\text{abs}}^{\dagger}\mb{E}_2\mb{E}_2^{\dagger}\hat{\bs{\mu}}_{\text{abs}}\right]^{\dagger}\\
+  E[\undertilde{P}{\tiny{\text{abs}}}] &\propto |\hat{\bs{\mu}}_{\text{abs}}^{\dagger}\mb{E}_1|^2 + |\hat{\bs{\mu}}_{\text{abs}}^{\dagger}\mb{E}_2|^2\\
+  E[\undertilde{P}{\tiny{\text{abs}}}] &\propto P_{\text{abs},1} + P_{\text{abs},2}
+\end{align}
+This confirms Rudolph and Shalin's claim that independent plane waves excite a
+fluorophore independently. We can extend the argument to an arbitrary number of
+independent plane waves which allows us to integrate over all plane waves
+incident on the fluorophore to find the total absorbed power.
+
+\section{Dipole Emission Pattern}
+The emitted electric field pattern is proportional to the Green's
+tensor multiplied by the emission dipole moment of the fluorophore
+\begin{align}
+  \mb{E}_{\text{em}}(\mb{r}) \propto \mb{G}\hat{\bs{\mu}}_{\text{em}}.\label{eq:eight}
+\end{align}
+where $\hat{\bs{\mu}}_{\text{em}} \in \mathbb{T}^3$.
+The power emitted by a fluorophore is proportional to the power absorbed
+\begin{align}
+  P_{\text{em}} &\propto P_{\text{abs}}. 
+\end{align}
+Using equation $P_{\text{em}} \propto |\mb{E}_{\text{em}}(\mb{r})|^2$ and \ref{eq:power2} gives
+\begin{align}
+  |\mb{E}_{\text{em}}(\mb{r})|^2 &\propto |\hat{\bs{\mu}}_{\text{abs}}^{\dagger}\mb{A}|^2.\label{eq:twenty}
+\end{align}
+Taking the square root of \ref{eq:twenty} and combining with \ref{eq:eight} gives the final result
+\begin{align}
+  \mb{E}_{\text{em}}(\mb{r}) \propto \mb{G}\hat{\bs{\mu}}_{\text{em}}|\hat{\bs{\mu}}^{\dagger}_{\text{abs}}\mb{A}|. \label{eq:final}
+\end{align}
+
+\section{Induced Dipole Moment}
+We can split equation \ref{eq:final} into two parts using the induced dipole
+moment
+\begin{align}
+  \bs{\mu}_{\text{ind}} \equiv \hat{\bs{\mu}}_{\text{em}}|\hat{\bs{\mu}}^{\dagger}_{\text{abs}}\mb{A}|\\
+  \mb{E}_{\text{em}}(\mb{r}) \propto \mb{G}\bs{\mu}_{\text{ind}}
+\end{align}
+where $\bs{\mu}_{\text{ind}} \in \mathbb{C}^3$. 
+
+\section{K\"{o}hler Illumination}
+The work in these notes extends to the previous note set. The induced dipole
+moment created by K\"{o}hler illumination is given by
+\begin{align}
+  \bs{\mu}_{\text{ind}} \propto
+  \bs{\mu}_{\text{em}} \int d\mb{r'}
+  \left|\bs{\mu}_{\text{abs}}^{\dagger} \mb{R}(\mb{r'})\mb{A}_{\text{bfp}}\right| \label{eq:test2}
+\end{align}
+Shalin suggested that we separate the model into three parts by moving
+$\bs{\mu}_{\text{em}}$ and $\bs{\mu}_{\text{abs}}$ outside of the integral. This
+would allow us to calculate the ``effective electric field'' or ``polarization resolved
+electric field''. The addition of the absolute value bars prevent us from making this simplification.
+
+With equation \ref{eq:test2} in view, we can see why the absolute value bars are
+required. Without the absolute value bars,
+$\bs{\mu}_{\text{abs}}^{\dagger}(\mb{r})
+\mb{R}_{\mb{\hat{s}}}(\mb{r'})\mb{A}_{\text{bfp}} \in [-1, 1]$, so the integral
+can evaluate to zero. With the absolute value bars,
+$|\bs{\mu}_{\text{abs}}^{\dagger}(\mb{r})
+\mb{R}_{\mb{\hat{s}}}(\mb{r'})\mb{A}_{\text{bfp}}| \in [0, 1]$ and each point in
+the back focal plane contributes to the induced dipole moment.
+
+\section{Total Power Emitted By A Dipole}
+\figs{../figures/scene1}{../figures/intensity1}{Scene schematic. A single dipole (see arrow in the
+  front focal plane) under $x$-polarized K\"{o}hler illumination (see arrow in
+  the back focal plane).\\}{Total power emitted by a single dipole
+  ($|\bs{\mu}_{\text{ind}}|^2$) as a function of direction under the illumination
+  geometry in Figure \ref{fig:scene}. Dots indicate where the Cartesian axes
+  intersect the sphere. Arbitrary units.}{scene}{int}{-0.2}
+
+Figure \ref{fig:scene} shows a simple K\"{o}hler illumination geometry where
+$x$-polarized light illuminates a dipole with the optical axis along $z$. Figure
+\ref{fig:int} shows the total power emitted by the dipole as a function of its
+direction. In practice, we will only collect a fraction of the total power
+emitted, but Figure \ref{fig:int} shows the total power---as if we had
+detectors on all sides of the dipole. We can see that dipoles
+aligned along the $x$ axis will emit (and absorb) the most power, while dipoles
+aligned along the $y$ or $z$ axes will emit very little power.
+
+Figure \ref{fig:illum} shows the total power emitted by a single dipole under
+different back aperture radii, $\rho$, with constant illumination power. Our
+model assumes that the lens is large enough to map each point in the back focal
+plane to a plane wave in the front focal plane, so the only parameter of
+interest is $\frac{\rho}{f}$, the ratio of the back aperture radius to the focal
+length of the lens.
+
+Figure \ref{fig:illum} also shows how the results change when we neglect (second
+row) and keep (third row) the absolute value bars inside the integral in
+equation \ref{eq:test2}. When we neglect the absolute value bars, the model
+predicts that as we open the back aperture the emitted power pattern is not
+mirror symmetric about the $x-y$ plane. When we keep the absolute value bars,
+the absorbed power pattern is symmetric about the $x-y$ plane. Also, notice that
+$+z$ and $-z$ aligned dipoles emit more power as we open the back aperture (you
+may have to zoom in on the bottom row to see the difference---the $+z$ axis in
+the bottom right plot is $\sim 300$ compared to $\sim 0$ in the bottom left
+plot). 
+
+\fig{../figures/compare_illum}{1.0}{Top row---schematics of the illumination
+  geometries. Middle row---\textbf{incorrect} emitted power pattern if the absolute value bars are neglected. Bottom row---\textbf{correct} emitted power pattern if the absolute value bars are retained. Columns---the back aperture radius increases from left to right.}{illum}
+
+\section{Aside: Generalized Jones Vectors}
+The generalized Jones vector in equation \ref{eq:factor} is going to be extremely
+useful for analyzing light fields traveling through crystals. Ortega
+\cite{ortega} and Azzam \cite{azzam} have started developing the generalized
+Jones calculus, but they haven't applied the results to stacks of
+crystals. Foreman and Torok \cite{foreman} have used generalized Jones vectors
+to analyze high-NA imaging systems, but they haven't applied their results to
+transmission microscopes like the LC-Polscope. More progress on this front soon!
+
+\bibliography{report}{}
+\bibliographystyle{unsrt}
+
+\end{document}
+

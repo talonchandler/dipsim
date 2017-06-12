@@ -1,0 +1,43 @@
+\documentclass{minimal}
+\usepackage{tikz}
+\usetikzlibrary{shapes}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{chains}
+\usetikzlibrary{matrix}
+\usetikzlibrary{scopes}
+\usetikzlibrary{decorations.pathreplacing, angles, quotes}
+
+\usepackage{tikz-3dplot}
+\usepackage{verbatim}
+\usepackage[active,tightpage]{preview}
+\PreviewEnvironment{tikzpicture}
+\setlength\PreviewBorder{1mm}\begin{document}
+
+\tdplotsetmaincoords{80}{120}
+\pgfmathsetmacro{\inclination}{50}
+\pgfmathsetmacro{\azimuth}{45}
+\begin{tikzpicture}[scale=3, tdplot_main_coords]
+\draw[-Latex] (0,0,0) -- (1,0,0) node[anchor=north east]{$\hat{\mathbf{x}}$};
+\draw[-Latex] (0,0,0) -- (0,.75,0) node[anchor=west]{$\hat{\mathbf{y}}$};
+\draw[-Latex] (0,0,0) -- (0,0,.75) node[anchor=south]{$\hat{\mathbf{z}}$} node[sloped,midway,above,scale=0.75] {};
+
+\coordinate (O) at (0,0,0);
+\tdplotsetcoord{P}{1}{\inclination}{\azimuth}
+
+\draw[-Latex] (O) -- (P) node[anchor=south west] {} node[sloped,pos=0.6,above,scale=0.75] {};
+\draw[dashed] (P) -- (Pyz);
+\draw[dashed] (O) -- (Pyz);
+
+\tdplotsetthetaplanecoords{90}
+\tdplotdrawarc[tdplot_rotated_coords]{(O)}{0.15}{40}{90}{xshift=10, yshift=3}{$\phi_{\mathbf{\hat{y}}\mathbf{\hat{z}}}$}
+
+\draw[decoration={brace,mirror,raise=0pt},decorate]
+(0,0,0) -- node[xshift=10, yshift=-5] {$\rho_{\mathbf{\hat{y}}\mathbf{\hat{z}}}$} (Pyz);
+
+\draw[decoration={brace,raise=0pt},decorate]
+(P) -- node[xshift=0, yshift=9] {$s_{\mathbf{\hat{x}}}$} (Pyz);
+
+\end{tikzpicture}
+
+\end{document}

@@ -1,0 +1,282 @@
+\documentclass[11pt]{article}
+
+%%%%%%%%%%%%
+% Packages %
+%%%%%%%%%%%%
+\hyphenpenalty=10000
+\usepackage{tocloft}
+\renewcommand\cftsecleader{\cftdotfill{\cftdotsep}}
+\def\undertilde#1{\mathord{\vtop{\ialign{##\crcr
+$\hfil\displaystyle{#1}\hfil$\crcr\noalign{\kern1.5pt\nointerlineskip}
+$\hfil\tilde{}\hfil$\crcr\noalign{\kern1.5pt}}}}}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{epstopdf}
+\usepackage{braket}
+\usepackage{upgreek}
+\usepackage{caption}
+\usepackage{booktabs}
+\usepackage{subcaption}
+\usepackage{amssymb,latexsym,amsmath,gensymb}
+\usepackage{latexsym}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{pdflscape}
+\usepackage{url}
+\usepackage{tikz, calc}
+\usetikzlibrary{shapes.geometric, arrows, calc}
+\tikzstyle{norm} = [rectangle, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black]
+\tikzstyle{arrow} = [thick, ->, >=stealth]
+
+\providecommand{\e}[1]{\ensuremath{\times 10^{#1}}} 
+\providecommand{\mb}[1]{\mathbf{#1}}
+\providecommand{\mh}[1]{\mathbf{\hat{#1}}}
+\providecommand{\bs}[1]{\boldsymbol{#1}} 
+\providecommand{\intinf}{\int_{-\infty}^{\infty}}
+\providecommand{\fig}[4]{
+  % filename, width, caption, label
+\begin{figure}[h]
+ \captionsetup{width=1.0\linewidth}
+ \centering
+ \includegraphics[width = #2\textwidth]{#1}
+ \caption{#3}
+ \label{fig:#4}
+\end{figure}
+}
+
+\newcommand{\tensor}[1]{\overset{\text{\tiny$\leftrightarrow$}}{\mb{#1}}}
+\newcommand{\tunderbrace}[2]{\underbrace{#1}_{\textstyle#2}}
+\providecommand{\figs}[7]{
+  % filename1, filename2, caption1, caption2, label1, label2, shift
+\begin{figure}[H]
+\centering
+\begin{minipage}[b]{.45\textwidth}
+  \centering
+  \includegraphics[width=1.0\linewidth]{#1}
+  \captionsetup{justification=justified, singlelinecheck=true}
+  \caption{#3}
+  \label{fig:#5}
+\end{minipage}
+\hspace{2em}
+\begin{minipage}[b]{.45\textwidth}
+  \centering
+  \includegraphics[width=1.0\linewidth]{#2}
+  \vspace{#7em}
+  \captionsetup{justification=justified}
+  \caption{#4}
+  \label{fig:#6}
+\end{minipage}
+\end{figure}
+}
+\makeatletter
+
+\providecommand{\code}[1]{
+\begin{center}
+\lstinputlisting{#1}
+\end{center}
+}
+
+%%%%%%%%%%%
+% Spacing %
+%%%%%%%%%%%
+% Margins
+\usepackage[
+top    = 1.5cm,
+bottom = 1.5cm,
+left   = 1.5cm,
+right  = 1.5cm]{geometry}
+
+% Indents, paragraph space
+\usepackage{parskip} 
+
+% Section spacing
+\usepackage{titlesec}
+\titlespacing*{\title}
+{0pt}{0ex}{0ex}
+\titlespacing*{\section}
+{0pt}{0ex}{0ex}
+\titlespacing*{\subsection}
+{0pt}{0ex}{0ex}
+\titlespacing*{\subsubsection}
+{0pt}{0ex}{0ex}
+
+% Line spacing
+\linespread{1.1}
+
+%%%%%%%%%%%%
+% Document %
+%%%%%%%%%%%%
+\begin{document}
+\title{\vspace{-2.5em} Inconsistency In ``Rapid determination of the three-dimensional orientation of single molecules''\vspace{-1em}}
+\author{Talon Chandler}% and Patrick La Rivi\`ere}
+\date{\vspace{-1em}April 25, 2017\vspace{-1em}}
+\maketitle
+
+\section{Introduction}
+There is an inconsistency in John T. Fourkas' paper titled ``Rapid determination
+of the three dimensional orientation of single molecules''\cite{fourkas}. In
+section 2 I describe the inconsistency. In section 3 I follow Fourkas'
+calculation in detail and correct it. In section 4 I show the results of the
+corrected calculation and show that the new results are consistent. Finally, in
+section 5 I discuss how these notes will affect other papers and the
+applicability of these results.
+
+\section{Inconsistency}
+Equations 4 and 5 of \cite{fourkas} model the fraction of the total intensity
+from a single fluorophore collected by an objective with a polarizer in the back
+focal plane as a function of polarizer orientation, dipole orientation
+($\Theta$, $\Phi$), and half angle of the light collection cone
+($\alpha = \sin^{-1}(\text{NA}/n)$). I expect that as $\alpha$ approaches
+$\frac{\pi}{2}$ (or a NA approaches $n$) the fraction of the total power
+radiated by the dipole that is collected by the lens should approach
+$\frac{1}{2}$
+\begin{align}
+  \lim_{\alpha\rightarrow \frac{\pi}{2}} \frac{I_{0}(\Theta, \Phi, \alpha) + I_{90}(\Theta, \Phi, \alpha)}{I_{\text{tot}}(\Theta, \Phi)} = \frac{1}{2}. \label{eq:prop}
+\end{align}
+
+First, I reproduce equations 4 and 5 from \cite{fourkas}
+\begin{subequations}
+\begin{align}
+    I_{0}(\Theta, \Phi, \alpha) &= I_{\text{tot}}(t, t+\tau)(A + B\sin^{2}{\Theta} + C\sin^{2}{\Theta} \cos{2 \Phi})\\
+    I_{45}(\Theta, \Phi, \alpha) &= I_{\text{tot}}(t, t+\tau)(A + B\sin^{2}{\Theta} + C\sin^{2}{\Theta}\sin{2 \Phi})\\
+    I_{90}(\Theta, \Phi, \alpha) &= I_{\text{tot}}(t, t+\tau)(A + B\sin^{2}{\Theta} - C\sin^{2}{\Theta} \cos{2 \Phi})\\
+  I_{135}(\Theta, \Phi, \alpha) &= I_{\text{tot}}(t, t+\tau)(A + B\sin^{2}{\Theta} - C\sin^{2}{\Theta} \sin{2 \Phi}),
+\end{align}\label{eq:int1}
+\end{subequations}
+and
+\vspace{-1em}
+\begin{subequations}
+\begin{align}
+  A &= \frac{1}{6} - \frac{1}{4}\cos\alpha + \frac{1}{12}\cos^3\alpha\\
+  B &= \frac{1}{8}\cos\alpha - \frac{1}{8}\cos^3\alpha\\
+  C &= \frac{7}{48} - \frac{1}{16} \cos{\alpha } - \frac{1}{16} \cos^{2}{\alpha } - \frac{1}{48} \cos^{3}{\alpha }.
+\end{align}\label{eq:coeff1}
+\end{subequations}
+Next, I take the limit proposed in equation \ref{eq:prop}
+\begin{align}
+  \lim_{\alpha\rightarrow \frac{\pi}{2}} \frac{I_{0}(\Theta, \Phi, \alpha) + I_{90}(\Theta, \Phi, \alpha)}{I_{\text{tot}}(\Theta, \Phi)} &= \lim_{\alpha\rightarrow \frac{\pi}{2}} 2\left(A(\alpha) + B(\alpha)\sin^2\Theta\right) =2\left(\frac{1}{6} + 0\right) = \frac{1}{3} \neq \frac{1}{2}.
+\end{align}
+Fourkas' model predicts that only $\frac{1}{3}$ of the total power radiated by the
+fluorophore is collected by an objective with a collection half angle of $\frac{\pi}{2}$.
+
+\section{Corrected Calculation}
+I start by following Fourkas and define the $z$ axis as the optical axis of the
+objective. I express a directional unit vector $\hat{\mb{r}}$ and the
+fluorescence emission dipole $\hat{\bs{\mu}}_{\text{em}}$ in spherical
+coordinates as follows
+\begin{align}
+  \hat{\mb{r}} &= \sin\theta\cos\phi\hat{\mb{i}} + \sin\theta\sin\phi\hat{\mb{j}} + \cos\theta\hat{\mb{k}}\label{eq:r_coords}\\
+  \hat{\bs{\mu}}_{\text{em}} &= \sin\Theta\cos\Phi\hat{\mb{i}} + \sin\Theta\sin\Phi\hat{\mb{j}} + \cos\Theta\hat{\mb{k}}.\label{eq:mu_coords}
+\end{align}
+Next, I calculate the generalized Jones vector $\mb{A}$ (GJV or the complex
+envelope) along a direction $\hat{\mb{r}}$ in the far field
+\begin{align}
+\mb{\hat{A}}_{\text{ff}}(\hat{\mb{r}}) &= \mh{r}\times\hat{\bs{\mu}}_{\text{em}}\times\mh{r} \label{eq:fourkasa}\\ &= (\tilde{\mb{I}} - \hat{\mb{r}}\hat{\mb{r}}^{\dagger})\hat{\bs{\mu}}_{\text{em}} \label{eq:greena} 
+\end{align}
+where $\mb{I}$ is the identity matrix and ${}^{\dagger}$ is the adjoint
+operator. Notice that $(\tilde{\mb{I}} - \hat{\mb{r}}\hat{\mb{r}}^{\dagger})$ is
+the Green's tensor with the phase excluded. Also notice that $\mb{\hat{A}}_{\text{ff}}(\mh{r})$ is
+not the electric field---it is the GJV because I have stopped keeping track of
+the phase. I will follow Fourkas and use equation \ref{eq:fourkasa}, but I have
+written equation \ref{eq:greena} to relate this work to future work with the
+Green's tensor.
+
+Next, I model the action of an ideal, infinity corrected, polarization
+preserving objective on the GJV. The lens rotates the GJV so that it is
+perpendicular to the $z$ axis at every point on the unit sphere---we can model this by rotating the ray by $-\phi$ about the $z$ axis, by $-\theta$ about the $y$ axis, then by $\phi$ about $z$ axis. In matrix form the position-dependent rotation matrix is
+\begin{align}  
+  \tilde{\mb{R}}(\mh{r}) = \begin{bmatrix} \cos\theta\cos^2\phi + \sin^2\phi & (\cos\theta -1)\sin\phi\cos\phi & -\sin\theta\cos\phi\\ (\cos\theta - 1)\sin\phi\cos\phi & \cos\theta\sin^2\phi + \cos^2\phi & -\sin\theta\sin\phi \\ \sin\theta\cos\phi& \sin\theta\sin\phi & \cos\theta \end{bmatrix},\label{eq:matrix}
+\end{align}
+which is identical to the equation 2 in \cite{fourkas}.
+
+Next, I express the transmission axis of the polarizer $\mh{P}$ using
+\begin{align}
+  \hat{\mb{P}} = \cos\phi_{\text{pol}}\hat{\mb{i}} + \sin\phi_{\text{pol}}\hat{\mb{j}}. \label{eq:polarizer}
+\end{align}
+I model the action of the polarizer in the back focal plane by taking the
+dot product of the generalized Jones vector with the polarizer axis $\mh{P}$ and multiplying by the polarizer axis direction. The GJV in the back focal plane of the objective is given by
+\begin{align}
+  \mb{A}_{\text{bfp}}(\mh{r}) = \mh{P}\left[\mh{P}\cdot\tilde{\mb{R}}(\mh{r})(\mh{r}\times\hat{\bs{\mu}}_{\text{em}}\times\mh{r})\right].\label{eq:approx}
+\end{align}
+Notice that I am following Fourkas and mapping the GJV directly to the back focal plane
+without considering the change of coordinates. I will discuss this approximation in section \ref{discussion}.
+
+Next, I model the detection process by squaring the GJV and integrating over
+the cap of the sphere collected by the objective, $\Omega$. The complete model
+of the detected intensity is
+\begin{align}
+  I_{\phi_{\text{pol}}}(\Theta, \Phi) \propto \int_{\Omega}d\mh{r}\ \left|\mh{P}\left[\mh{P}\cdot\tilde{\mb{R}}(\mh{r})(\mh{r}\times\hat{\bs{\mu}}_{\text{em}}\times\mh{r})\right]\right|^2. \label{eq:model1}
+\end{align}
+Next, I calculate the total power emitted by a unit dipole
+\begin{align}
+  I_{\text{tot}} = \int_{\mathbb{S}^2}d\mh{r}\ \left|\mh{r}\times\hat{\bs{\mu}}_{\text{em}}\times\mh{r}\right|^2 = \int_0^{2\pi}d\phi\int_0^{\pi}d\theta\sin^3\theta = \frac{8\pi}{3}
+\end{align}
+Finally, I calculate the fraction of the total power detected
+\begin{align}
+  \frac{I_{\phi_{\text{pol}}}(\Theta, \Phi)}{I_{\text{tot}}} = \frac{3}{8\pi}\int_{\Omega}d\mh{r}\ \left|\mh{P}\left[\mh{P}\cdot\tilde{\mb{R}}(\mh{r})(\mh{r}\times\hat{\bs{\mu}}_{\text{em}}\times\mh{r})\right]\right|^2\label{eq:final}
+\end{align}
+where the total radiated power $I_{\text{tot}}$ was found using equation \ref{eq:model1} with no polarizer or objective and by integrating over all directions. 
+
+Notice that I normalized using the total radiated intensity. Fourkas incorrectly normalized the GJV before calculating the intensity as follows 
+\begin{align}
+  \frac{I_{\phi_{\text{pol}}}(\Theta, \Phi)}{I_{\text{tot}}} &\neq \int_{\Omega}d\mh{r}\left|\left(\frac{\mb{A}_{\phi_{\text{pol}}}}{\mb{A}_{\text{tot}}}\right)\right|^2\label{eq:incorrect}\\
+  \intertext{It's not physically clear what $\mb{A}_{\text{tot}}$ represents, but I can make a good guess about how Fourkas calculated it}
+  \mb{A}_{\text{tot}} &= \int_{\mathbb{S}^2} d\mh{r} (\mh{r}\times\hat{\bs{\mu}}_{\text{em}}\times\mh{r}) = \int_0^{2\pi}d\phi\int_0^{\pi}d\theta\sin\theta = 4\pi\label{eq:atot}\\
+  \intertext{Plugging \ref{eq:atot} into \ref{eq:incorrect} gives}
+  \frac{I_{\phi_{\text{pol}}}(\Theta, \Phi)}{I_{\text{tot}}} &\neq \frac{1}{16\pi}\int_{\Omega}d\mh{r}\ \left|\mh{P}\left[\mh{P}\cdot\tilde{\mb{R}}(\mh{r})(\mh{r}\times\hat{\bs{\mu}}_{\text{em}}\times\mh{r})\right]\right|^2\label{eq:four_final}
+\end{align}
+Notice that equation \ref{eq:four_final} and equation \ref{eq:final} differ by a factor of $\frac{3}{2}$.
+
+\section{Results}
+I evaluated equations \ref{eq:final} and \ref{eq:four_final} by substituting equations \ref{eq:r_coords}, \ref{eq:mu_coords}, \ref{eq:matrix}, and \ref{eq:polarizer} and simplifying using SymPy, an open-source computer algebra system. Equation \ref{eq:four_final} yields Fourkas' published expressions. Equation \ref{eq:final} yields Fourkas' expressions multiplied by a factor of $\frac{3}{2}$. We can make this correction by changing the
+coefficients of $A$, $B$, and $C$ to 
+\begin{subequations}
+\begin{align}
+  A_{\text{new}} &= \frac{1}{4} - \frac{3}{8} \cos{\alpha } + \frac{1}{8} \cos^{3}{\alpha }\\
+  B_{\text{new}} &= \frac{3}{16} \cos{\alpha } - \frac{3}{16} \cos^{3}{\alpha }\\
+  C_{\text{new}} &= \frac{7}{32} - \frac{3}{32} \cos{\alpha } - \frac{3}{32} \cos^{2}{\alpha } - \frac{1}{32} \cos^{3}{\alpha}.
+\end{align}\label{eq:coeff2}
+\end{subequations}
+
+Fourkas' published inversion expressions still hold if we use $A_{\text{new}}$,
+$B_{\text{new}}$, and $C_{\text{new}}$.
+
+Finally, I confirm that taking the limit with the new expressions approaches $\frac{1}{2}$
+\begin{align}
+  \lim_{\alpha\rightarrow \frac{\pi}{2}} \frac{I_{0}(\Theta, \Phi) + I_{90}(\Theta, \Phi)}{I_{\text{tot}}(\Theta, \Phi)} &= \lim_{\alpha\rightarrow \frac{\pi}{2}} 2\left(A_{\text{new}} + B_{\text{new}}\sin^2\Theta\right) =2\left(\frac{1}{4} + 0\right) = \frac{1}{2}  
+\end{align}
+
+\section{Discussion} \label{discussion} Fourkas' expressions underpredict the
+fraction of the total power collected by an objective with a polarizer by a
+constant fraction of $\frac{3}{2}$. Therefore, using Fourkas' expressions to
+find $I_{\text{tot}}$ will result in overpredictions of $I_{\text{tot}}$, but
+the incorrect expressions will not cause any error in the predictions of molecular
+orientation.
+
+Lu and Bout \cite{bout2008} study the effect of noise on the reconstruction of
+single fluorophores using Fourkas' expressions. Their main results are
+unaffected by the correction introduced in these notes, but because these notes
+predict a higher intensity than Fourkas, Lu and Bout overpredict the effect of
+noise in their model.
+
+As mentioned after equation \ref{eq:approx}, Fourkas uses an approximation when
+he directly maps the GJV in the back focal plane to the GJV in the detector
+plane. To conserve energy, the power carried by a ray that makes an angle
+$\theta$ with the optical axis needs to be attenuated by a factor of
+$\sqrt{\cos\theta}$ \cite{nov, backer}. This attenuation factor can be ignored
+under the paraxial approximation ($\cos\theta \approx 1$), which means that all
+of the results in Fourkas and the correction in these notes only apply to low NA
+lenses. Analytically extending these results to high NA lenses could be the
+subject of future work.
+
+As noted in \cite{lieb}, Fourkas' model only considers single molecules in
+homogeneous environments. With an extension of the Green's tensor (equation
+\ref{eq:greena}) \cite{nov, backer}, we could consider single molecules near
+glass interfaces.
+
+\bibliography{report}{}
+\bibliographystyle{unsrt}
+
+\end{document}
+

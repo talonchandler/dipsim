@@ -14,7 +14,7 @@ docs/*
 
 # Results
 *png
-*pdf
+examples/*pdf
 *asy
 *log
 *aux

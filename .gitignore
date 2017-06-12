@@ -13,9 +13,8 @@ pmst.egg-info/*
 docs/*
 
 # Results
-*png
+examples/*png
 examples/*pdf
-*asy
 *log
 *aux
 *dvi

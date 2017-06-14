@@ -1,0 +1,258 @@
+\documentclass[11pt]{article}
+
+%%%%%%%%%%%%
+% Packages %
+%%%%%%%%%%%%
+\hyphenpenalty=10000
+\usepackage{tocloft}
+\renewcommand\cftsecleader{\cftdotfill{\cftdotsep}}
+\def\undertilde#1{\mathord{\vtop{\ialign{##\crcr
+$\hfil\displaystyle{#1}\hfil$\crcr\noalign{\kern1.5pt\nointerlineskip}
+$\hfil\tilde{}\hfil$\crcr\noalign{\kern1.5pt}}}}}
+\usepackage{cleveref}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{epstopdf}
+\usepackage{braket}
+\usepackage{upgreek}
+\usepackage{caption}
+\usepackage{booktabs}
+\usepackage{subcaption}
+\usepackage{amssymb,latexsym,amsmath,gensymb}
+\usepackage{latexsym}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{pdflscape}
+\usepackage{url}
+\usepackage{tikz, calc}
+\usetikzlibrary{shapes.geometric, arrows, calc}
+\tikzstyle{norm} = [rectangle, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black]
+\tikzstyle{arrow} = [thick, ->, >=stealth]
+
+\providecommand{\e}[1]{\ensuremath{\times 10^{#1}}} 
+\providecommand{\mb}[1]{\mathbf{#1}}
+\providecommand{\mh}[1]{\mathbf{\hat{#1}}}
+\providecommand{\bs}[1]{\boldsymbol{#1}} 
+\providecommand{\intinf}{\int_{-\infty}^{\infty}}
+\providecommand{\fig}[4]{
+  % filename, width, caption, label
+\begin{figure}[h]
+ \captionsetup{width=1.0\linewidth}
+ \centering
+ \includegraphics[width = #2\textwidth]{#1}
+ \caption{#3}
+ \label{fig:#4}
+\end{figure}
+}
+
+\newcommand{\tensor}[1]{\overset{\text{\tiny$\leftrightarrow$}}{\mb{#1}}}
+\newcommand{\tunderbrace}[2]{\underbrace{#1}_{\textstyle#2}}
+\providecommand{\figs}[7]{
+  % filename1, filename2, caption1, caption2, label1, label2, shift
+\begin{figure}[H]
+\centering
+\begin{minipage}[b]{.45\textwidth}
+  \centering
+  \includegraphics[width=1.0\linewidth]{#1}
+  \captionsetup{justification=justified, singlelinecheck=true}
+  \caption{#3}
+  \label{fig:#5}
+\end{minipage}
+\hspace{2em}
+\begin{minipage}[b]{.45\textwidth}
+  \centering
+  \includegraphics[width=1.0\linewidth]{#2}
+  \vspace{#7em}
+  \captionsetup{justification=justified}
+  \caption{#4}
+  \label{fig:#6}
+\end{minipage}
+\end{figure}
+}
+\makeatletter
+
+\providecommand{\code}[1]{
+\begin{center}
+\lstinputlisting{#1}
+\end{center}
+}
+
+\newcommand{\crefrangeconjunction}{--}
+%%%%%%%%%%%
+% Spacing %
+%%%%%%%%%%%
+% Margins
+\usepackage[
+top    = 1.5cm,
+bottom = 1.5cm,
+left   = 1.5cm,
+right  = 1.5cm]{geometry}
+
+% Indents, paragraph space
+\usepackage{parskip} 
+
+% Section spacing
+\usepackage{titlesec}
+\titlespacing*{\title}
+{0pt}{0ex}{0ex}
+\titlespacing*{\section}
+{0pt}{0ex}{0ex}
+\titlespacing*{\subsection}
+{0pt}{0ex}{0ex}
+\titlespacing*{\subsubsection}
+{0pt}{0ex}{0ex}
+
+% Line spacing
+\linespread{1.1}
+
+%%%%%%%%%%%%
+% Document %
+%%%%%%%%%%%%
+\begin{document}
+\title{\vspace{-2.5em} Closed Form Expressions for the Excitation and Detection Efficiency of Single Dipoles Under Polarized Wide-Field Illumination \vspace{-1em}}
+\author{Talon Chandler}% and Patrick La Rivi\`ere}
+\date{\vspace{-1em}\today\vspace{-1em}}
+\maketitle
+\section{Introduction}
+In these notes I will develop the relationships between the excitation/detection
+efficiencies and the dipole orientation, polarizer orientation, and microscope
+geometry for wide-field illumination microscopes. First, I will write out the
+relationships for the epi-illumination and epi-detection case, then I will
+generalize the relationships for oblique or orthogonal geometries. 
+
+\section{Detection Efficiency}
+In the 2017-04-25 notes I followed Fourkas and showed that the detection
+efficiency (the fraction of emitted power that we collect) for a polarized
+wide-field microscope is
+\begin{align}
+  \eta_{\text{det},\phi_{\text{det}}}  = \frac{\int_{\Omega}d\mh{r}\ \left|\mh{P}_{\text{det}}\cdot\tilde{\mb{R}}(\mh{r})(\mh{r}\times\hat{\bs{\mu}}_{\text{em}}\times\mh{r})\right|^2}{\int_{\mathbb{S}^2}d\mh{r}\left|\mh{r}\times\hat{\bs{\mu}}_{\text{em}}\times\mh{r}\right|^2}\label{eq:final}
+\end{align}
+where
+\begin{align}
+  \hat{\mb{r}} &= \sin\theta\cos\phi\hat{\mb{i}} + \sin\theta\sin\phi\hat{\mb{j}} + \cos\theta\hat{\mb{k}}\label{eq:r_coords}\ \ \ \text{is the dummy integration vector,}\\
+  \hat{\bs{\mu}}_{\text{em}} &= \sin\Theta\cos\Phi\hat{\mb{i}} + \sin\Theta\sin\Phi\hat{\mb{j}} + \cos\Theta\hat{\mb{k}}\ \ \ \text{is the emission dipole moment,}\label{eq:mu_coords}\\
+  \tilde{\mb{R}}(\mh{r}) &= \begin{bmatrix} \cos\theta\cos^2\phi + \sin^2\phi & (\cos\theta -1)\sin\phi\cos\phi & -\sin\theta\cos\phi\\ (\cos\theta - 1)\sin\phi\cos\phi & \cos\theta\sin^2\phi + \cos^2\phi & -\sin\theta\sin\phi \\ \sin\theta\cos\phi& \sin\theta\sin\phi & \cos\theta \end{bmatrix}\label{eq:matrix}\\&\text{is the rotation matrix that models the objective lens,}\\
+  \hat{\mb{P}}_{\text{det}} &= \cos\phi_{\text{det}}\hat{\mb{i}} + \sin\phi_{\text{det}}\hat{\mb{j}}\ \ \ \text{is the pass axis of the polarizer,}\\
+  \Omega &= \{(\phi, \theta)|\phi \in (0,2\pi]\ \text{and}\ \theta\in (0, \alpha]\}\ \ \ \text{is the cap of the sphere collected by the objective.}\label{eq:omega}
+\end{align}
+Plugging equations \ref{eq:r_coords}--\ref{eq:omega} into equation \ref{eq:final} and
+simplifying gives Fourkas' result with an extra factor of $\frac{3}{2}$
+\begin{subequations}
+\begin{align}
+  \eta_{\text{det},0}(\Theta, \Phi, \alpha) &= A + B\sin^{2}{\Theta} + C\sin^{2}{\Theta} \cos{2 \Phi}\\
+  \eta_{\text{det},45}(\Theta, \Phi, \alpha) &= A + B\sin^{2}{\Theta} + C\sin^{2}{\Theta} \sin{2 \Phi}\\
+  \eta_{\text{det},90}(\Theta, \Phi, \alpha) &= A + B\sin^{2}{\Theta} - C\sin^{2}{\Theta} \cos{2 \Phi}\\
+  \eta_{\text{det},135}(\Theta, \Phi, \alpha) &= A + B\sin^{2}{\Theta} - C\sin^{2}{\Theta} \sin{2 \Phi}
+\end{align}\label{eq:int1}
+\end{subequations}
+where
+\vspace{-1em}
+\begin{subequations}
+\begin{align}
+  A &= \frac{1}{4} - \frac{3}{8} \cos{\alpha } + \frac{1}{8} \cos^{3}{\alpha }\\
+  B &= \frac{3}{16} \cos{\alpha } - \frac{3}{16} \cos^{3}{\alpha }\\
+  C &= \frac{7}{32} - \frac{3}{32} \cos{\alpha } - \frac{3}{32} \cos^{2}{\alpha } - \frac{1}{32} \cos^{3}{\alpha}.
+\end{align}\label{eq:coeff2}%
+\end{subequations}
+If we remove the polarizer from the detection arm the detection efficiency is
+\begin{align}
+  \eta_{\text{det},\times}(\Theta, \alpha) = \eta_{\text{det},0} + \eta_{\text{det},90} = 2A + 2B\sin^2\Theta
+\end{align}
+where $\times$ denotes ``no polarizer''.
+
+\section{Excitation Efficiency}
+Here we calculate the excitation efficiency (the fraction of incident power that
+excites the fluorophore). We calculate the power that excites the dipole by
+taking the 3D Jones vector that is incident on the condenser
+$\mh{P}_{\text{exc}}$, pass it through the condenser using a rotation matrix
+$\tilde{\mb{R}}$, take the dot product with the absorption dipole moment
+$\hat{\bs{\mu}}_{\text{abs}}$, take the modulus squared to find the intensity,
+then integrate over the cone of illumination. Finally, we find the excitation
+efficiency by dividing by the total power incident on the fluorophore. The final
+expression is
+\begin{align}
+  \eta_{\text{exc},\phi_{\text{exc}}} = \frac{\int_{\Omega}d\mh{r}|\hat{\bs{\mu}}_{\text{abs}}\cdot\tilde{\mb{R}}(\mh{r})\mh{P}_{\text{exc}}|^2}{\int_{\Omega}d\mh{r}}\label{eq:finalexc}
+\end{align}
+where
+\begin{align}
+  \hat{\mb{r}} &= \sin\theta\cos\phi\hat{\mb{i}} + \sin\theta\sin\phi\hat{\mb{j}} + \cos\theta\hat{\mb{k}}\label{eq:r_coords2}\ \ \ \text{is the dummy integration vector,}\\
+  \hat{\bs{\mu}}_{\text{abs}} &= \sin\Theta\cos\Phi\hat{\mb{i}} + \sin\Theta\sin\Phi\hat{\mb{j}} + \cos\Theta\hat{\mb{k}}\ \ \ \text{is the absorption dipole moment,}\label{eq:mu_coords}\\
+  \tilde{\mb{R}}(\mh{r}) &= \begin{bmatrix} \cos\theta\cos^2\phi + \sin^2\phi & (\cos\theta -1)\sin\phi\cos\phi & -\sin\theta\cos\phi\\ (\cos\theta - 1)\sin\phi\cos\phi & \cos\theta\sin^2\phi + \cos^2\phi & -\sin\theta\sin\phi \\ \sin\theta\cos\phi& \sin\theta\sin\phi & \cos\theta \end{bmatrix}\label{eq:matrix}\\&\text{is the rotation matrix that models the condenser lens,}\\
+  \hat{\mb{P}}_{\text{exc}} &= \cos\phi_{\text{exc}}\hat{\mb{i}} + \sin\phi_{\text{det}}\hat{\mb{j}}\ \ \ \text{is the pass axis of the excitation polarizer,}\\
+  \Omega &= \{(\phi, \theta)|\phi \in (0,2\pi]\ \text{and}\ \theta\in (0, \alpha]\}\ \ \ \text{is the cap of the sphere illuminated by the condenser.}\label{eq:omega2}
+\end{align}
+Plugging equations \ref{eq:r_coords2}--\ref{eq:omega2} into equation
+\ref{eq:finalexc} and simplifying gives
+\begin{subequations}
+\begin{align}
+  \eta_{\text{exc},0}(\Theta, \Phi, \alpha) &= D(A + B\sin^{2}{\Theta} + C\sin^{2}{\Theta} \cos{2 \Phi})\\
+  \eta_{\text{exc},45}(\Theta, \Phi, \alpha) &= D(A + B\sin^{2}{\Theta} + C\sin^{2}{\Theta} \sin{2 \Phi})\\
+  \eta_{\text{exc},90}(\Theta, \Phi, \alpha) &= D(A + B\sin^{2}{\Theta} - C\sin^{2}{\Theta} \cos{2 \Phi})\\
+  \eta_{\text{exc},135}(\Theta, \Phi, \alpha) &= D(A + B\sin^{2}{\Theta} - C\sin^{2}{\Theta} \sin{2 \Phi})
+\end{align}\label{eq:int2}
+\end{subequations}
+where
+\vspace{-1em}
+\begin{align}
+  D = \frac{4}{3(1 - \cos\alpha)}
+\end{align}\label{eq:coeff2}%
+The excitation efficiency is the same as the detection efficiency with an extra
+factor $D$.
+
+Finally, we'll confirm that the excitation efficiency reduces to Malus' law when $\Theta = \pi/2$ and as $\alpha \rightarrow 0$.
+\begin{align*}
+  &=\lim_{\alpha\rightarrow 0} \eta_{\text{exc},0}(\pi/2, \Phi, \alpha)\\
+  &= \lim_{\alpha\rightarrow 0}D(A + B + C\cos{2 \Phi})\\
+  &= \lim_{\alpha\rightarrow 0} \left(\frac{4}{3(1-\cos\alpha)}\right)\left(\frac{1}{4} - \frac{3}{16} \cos{\alpha } - \frac{1}{16} \cos^{3}{\alpha } + \left(\frac{7}{32} - \frac{3}{32} \cos{\alpha } - \frac{3}{32} \cos^{2}{\alpha } - \frac{1}{32} \cos^{3}{\alpha}\right)\cos 2\Phi\right)\\
+  &= \lim_{\alpha\rightarrow 0} \frac{\frac{1}{4} - \frac{1}{4} \cos{\alpha } - \frac{1}{12} \cos^{3}{\alpha } + \left(\frac{7}{24} - \frac{1}{8} \cos{\alpha } - \frac{1}{8} \cos^{2}{\alpha } - \frac{1}{24} \cos^{3}{\alpha}\right)\cos 2\Phi}{1 - \cos\alpha}\\
+  \intertext{Applying L'Hospital's rule gives}
+  &= \lim_{\alpha\rightarrow 0} \frac{\frac{1}{4} \sin{\alpha } + \frac{1}{4}\sin\alpha\cos^{2}{\alpha } + \left(\frac{1}{8} \sin{\alpha } + \frac{1}{4}\sin \alpha \cos{\alpha } + \frac{1}{8} \sin\alpha\cos^{2}{\alpha}\right)\cos 2\Phi}{\sin\alpha}\\
+  &= \frac{1}{2} + \frac{1}{2}\cos2\Phi = \boxed{\cos^2{\Phi}}.
+\end{align*}
+
+\section{Epi-illumination and Epi-detection Forward Model}
+If we excite with polarized illumination from above and detect without a
+polarizer from the same direction the intensity we expect to collect is
+\begin{align}
+  I_{\phi_{\text{exc}}} &= I_{\text{tot}}\eta_{\text{exc},\phi_{\text{exc}}}\eta_{\text{det}, \times}
+\end{align}
+where $I_{\text{tot}}$ is the intensity collected from the fluorophore if we had
+an experimental setup that had an excitation and detection efficiency of one.
+
+If we collect frames with four polarization settings we get the following expressions
+\begin{subequations}
+\begin{align}
+  I_{0}(\Theta, \Phi, \alpha) &= I_{\text{tot}}D(A + B\sin^{2}{\Theta} + C\sin^{2}{\Theta} \cos{2 \Phi})(2A + 2B\sin^2\Theta)\\
+  I_{45}(\Theta, \Phi, \alpha) &= I_{\text{tot}}D(A + B\sin^{2}{\Theta} + C\sin^{2}{\Theta} \sin{2 \Phi})(2A + 2B\sin^2\Theta)\\
+  I_{90}(\Theta, \Phi, \alpha) &= I_{\text{tot}}D(A + B\sin^{2}{\Theta} - C\sin^{2}{\Theta} \cos{2 \Phi})(2A + 2B\sin^2\Theta)\\
+  I_{135}(\Theta, \Phi, \alpha) &= I_{\text{tot}}D(A + B\sin^{2}{\Theta} - C\sin^{2}{\Theta} \sin{2 \Phi})(2A + 2B\sin^2\Theta).
+\end{align}\label{eq:int1}
+\end{subequations}
+
+\section{Oblique or Orthogonal Arms}
+The expressions above assume that the optical axis is aligned with the $\mh{z}$
+axis. If the optical axis is along a different axis, we could modify the
+expressions by (1) changing the limits of integration in equations
+\ref{eq:final} and \ref{eq:finalexc} and recalculating or (2) performing a
+change of coordinates in equation \ref{eq:int2}. Approach (2) is much easier and
+uses the change of spherical coordinates derived in the 2017-06-09 notes. The
+main results are reproduced here
+\begin{subequations}
+\begin{align}
+  \Theta' &= \arccos\left(\sin\psi\cos\Phi\sin\Theta + \cos\psi\cos\Theta\right)\label{eq:thetap}\\
+  \Phi' &= \arccos\left(\frac{\cos\psi\cos\Phi\sin\Phi - \sin\psi\cos\Theta}{\sqrt{1 - (\sin\psi\cos\Phi\sin\Theta + \cos\psi\cos\Theta)^2}}\right)\label{eq:phip}
+\end{align}\label{eq:solution}% 
+\end{subequations}
+\begin{subequations}
+\begin{align}
+  \Theta &= \arccos\left(-\sin\psi\cos\Phi'\sin\Theta' + \cos\psi\cos\Theta'\right)\\
+  \Phi &= \arccos\left(\frac{\cos\psi\cos\Phi'\sin\Phi' + \sin\psi\cos\Theta'}{\sqrt{1 - (\sin\psi\cos\Phi'\sin\Theta' + \cos\psi\cos\Theta')^2}}\right)
+\end{align}\label{eq:solutionp}% 
+\end{subequations}
+
+The forward model for an oblique detection or excitation arm can be found by plugging
+equation \ref{eq:solutionp} into equation \ref{eq:int1}.
+
+\end{document}
+

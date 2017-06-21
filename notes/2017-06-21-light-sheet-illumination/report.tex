@@ -1,0 +1,235 @@
+\documentclass[11pt]{article}
+
+\usepackage{myreport}
+\usepackage[american]{babel}
+\usepackage[backend=biber, sorting=none]{biblatex}
+\addbibresource{report.bib}
+
+\begin{document}
+\title{\vspace{-2.5em} Excitation and Detection Efficiency Under Scanned Light
+  Sheet Illumination \vspace{-2.5em}} \author{Talon Chandler}
+\date{\vspace{-1em}\today\vspace{-1em}}
+\maketitle
+\section{Introduction}
+In these notes I will calculate the excitation and detection efficiency of a
+single fluorophore under polarized scanned light sheet illumination. I will
+start by finding the transverse and longitudinal fields at all positions in a
+Gaussian beam using reasonable approximations. Next I will calculate the
+excitation efficiency of a single fluorophore as the beam is scanned across the
+fluorophore. I will combine these results with the results from previous notes
+to write the complete forward model. Finally I will discuss the approximations
+we may need to simplify reconstruction.
+
+\section{Transverse and Longitudinal Fields In A Scanned Gaussian Beam}
+The complex spatial electric field of a paraxial Gaussian beam propagating along the
+$\mh{z}$ axis is \cite{nov}
+\begin{align}
+  \mb{E}(x,y,z) &= \mb{A}\frac{w_0}{w(z)}\text{exp}\left\{{-\frac{(x^2+y^2)}{w^2(z)}}+i\left[kz - \eta(z) + \frac{k(x^2+y^2)}{2R(z)}\right]\right\}\label{eq:gauss}
+\end{align}
+where
+\begin{alignat}{2}  
+  \mb{A} &= \cos\phi_{\text{pol}}\mh{x} + \sin\phi_{\text{pol}}\mh{y}\qquad &&\text{is the input Jones vector},\\
+  w_0 &\approx \frac{2n}{k(\text{NA})}\qquad &&\text{is the beam waist radius,}\\
+  z_0 &= \frac{kw_0^2}{2} &&\text{is the Rayleigh range,}\\
+  k &= \frac{2\pi n}{\lambda}\qquad &&\text{is the wave number,}\\
+  w(z) &= w_0\sqrt{1+\frac{z^2}{z_0^2}}\qquad &&\text{is the beam radius,}\\  
+  R(z) &= z\left(1+\frac{z_0^2}{z^2}\right)\qquad &&\text{is the wavefront radius,}\\
+  \eta(z) &= \text{arctan}\left(\frac{z}{z_0}\right)\qquad &&\text{is the phase correction.}
+\end{alignat}
+Equation \ref{eq:gauss} uses the paraxial approximation, so it can only be used
+for beams with a waist that is significantly larger than the reduced wavelength
+($w_0 \gg \lambda/n$). Notice that under the paraxial approximation the beam is uniformly polarized in the transverse plane.
+
+We would like to calculate the longitudinal component of a Gaussian beam when
+the beam waist approaches the reduced wavelength ($w_0 > \lambda/n$). One
+approach is to numerically evaluate the Richards-Wolf diffraction integral
+\cite{richards, biobeam}. This approach is time consuming and too
+accurate for our needs---we only want to model weak longitudinal
+fields. Instead, I will follow Novotny et. al. \cite{nov} and use a longitudinal
+correction to equation \ref{eq:gauss}.
+
+As written, equation \ref{eq:gauss} doesn't satisfy Gauss' law
+($\nabla \cdot \mb{E} = 0$), so we will add a longitudinal field to correct
+it. If the input beam is polarized along the $\mh{x}$ axis
+($\phi_{\text{pol}}=0$), then we can rearrange Gauss' law to relate the
+longitudinal and transverse fields with
+\begin{align}
+  E_z(x, y, z) = - \int \left[\frac{\partial}{\partial x} E_x(x,y,z)\right]dz. 
+\end{align}
+Carnicer et al. \cite{carnicer} worked through this integral using the angular
+spectrum representation and found that
+\begin{align}
+  E_z(x,y,z) = -i\frac{2x}{kw_0^2}E_x(x,y,z) = -i\frac{x}{z_0}E_x(x,y,z)\label{eq:longit}. 
+\end{align}
+
+Equation \ref{eq:longit} means that:
+\begin{itemize}
+\item There is no longitudinal polarization in the $\mh{y}-\mh{z}$ plane
+  because $E_z(0,y,z) = 0$.
+\item There are longitudinal fields lobes on both sides of the optical axis
+  along the transverse polarization direction.
+\item The longitudinal fields are $90^{\circ}$ out of phase with the transverse
+  fields which means that the total field is elliptically polarized off axis.
+\item The longitudinal field strength is proportional to
+  $\lambda/w_0^2$---highly focused beams have the strongest longitudinal fields.
+\end{itemize}
+
+If the input is polarized along the $\mh{x}$ axis, the corrected 3D Jones vector is
+\begin{align}
+\mb{A}(x,y,z) = \mh{x}- i\frac{x}{z_0}\mh{z}.
+\end{align}
+
+If the input polarization is arbitrary then the corrected 3D Jones vector is
+\begin{align}
+  \mb{A}(x,y,z) = \cos\phi_{\text{pol}}\mh{x} + \sin\phi_{\text{pol}}\mh{y} - i\frac{x\cos\phi_{\text{pol}} + y\sin\phi_{\text{pol}}}{z_0}\mh{z}.
+\end{align}
+
+If the beam is scanned along the $\mh{y}$ axis with velecity $v$ then the time
+dependent 3D Jones vector is
+\begin{align}
+  \mb{A}(x,y,z,t) = \cos\phi_{\text{pol}}\mh{x} + \sin\phi_{\text{pol}}\mh{y} - i\frac{x\cos\phi_{\text{pol}} + (y - vt)\sin\phi_{\text{pol}}}{z_0}\mh{z}\label{eq:scanned_j}
+\end{align}
+and the time dependent electric field is
+\begin{align}
+  \mb{E}(x,y,z,t) &= \mb{A}(x,y,z,t)\frac{w_0}{w(z)}\text{exp}\left\{{-\frac{(x^2+(y-vt)^2)}{w^2(z)}}+i\left[kz - \eta(z) + \frac{k(x^2+(y-vt)^2)}{2R(z)}\right]\right\}\label{eq:scanned_e}.
+\end{align}
+We will use equations \ref{eq:scanned_j} and \ref{eq:scanned_e} to calculate
+the excitation efficiency of a single fluorophore. Notice that as the Rayleigh
+range $z_0$ increases the longitudinal electric field decreases, so we can ignore the
+longitudinal component when the beam is weakly focused.
+
+\section{Scanned Beam Excitation Efficiency}
+We define the excitation efficiency of a fluorophore as the fraction of 
+incident power that excites the fluorophore. If a fluorophore with absorption
+dipole moment $\bs{\mu}_{\text{abs}}$ is placed in a time-independent complex
+electric field $\mb{E}$, then the excitation efficiency is given by
+\begin{align}
+  \eta_{\text{exc}}(x,y,z) = \frac{|\bs{\mu}_{\text{abs}} \cdot \mb{E}(x,y,z)|^2}{|\mb{E}(x,y,z) |^2}.
+\end{align}
+If the fluorophore is placed in the path of a scanned laser then the electric
+field becomes time dependent. If the laser is scanned extremely fast we would
+need to consider the coherence of the electric field, but we will only consider
+slow scanning here to simplify the calculation. Specifically, we require that
+$v \ll w_0/\tau_c$---the scan velocity must be much less than the beam width
+divided by the coherence time. In this case the excitation efficiency is
+\begin{align}
+  \eta_{\text{exc}}(x,y,z) = \frac{\intinf|\bs{\mu}_{\text{abs}} \cdot \mb{E}(x,y,z,t)|^2dt}{\intinf|\mb{E}(x,y,z,t)|^2dt}\label{eq:excitation}
+\end{align}
+We plug equation \ref{eq:scanned} into equation \ref{eq:excitation}, express
+$\bs{\mu}_{\text{abs}}$ in spherical coordinates
+\begin{align}
+  \bs{\mu}_{\text{abs}} = \cos\Phi\sin\Theta\mh{x} + \sin\Phi\sin\Theta\mh{y} + \cos\Theta\mh{z},
+\end{align}
+and evaluate the integrals (see Appendix for details) to write the
+excitation efficiency as
+\begin{align}
+  \eta_{\text{exc}}(x,y,z) = \frac{\sin^2\Theta\cos^2(\Phi-\phi_{\text{pol}}) + \cos^2\Theta\frac{x^2\cos^2\phi_{\text{pol}} + \frac{1}{4}w^2(z)\sin^2\phi_{\text{pol}}}{z_0^2}}{1+\frac{x^2\cos^2\phi_{\text{pol}} + \frac{1}{4}w^2(z)\sin^2\phi_{\text{pol}}}{z_0^2}}.\label{eq:strong}
+\end{align}
+If the beam is weakly focused then we can ignore the longitudinal excitation and
+the excitation efficiency simplifies to
+\begin{align}
+  \eta_{\text{exc}} = \sin^2\Theta\cos^2(\Phi-\phi_{\text{pol}}).
+\end{align}
+
+\section{Detection Efficiency}
+If we detect fluorescence in wide-field mode with an orthogonal arm and no
+polarizer then the detection efficiency is
+\begin{align}
+  \eta_{\text{det}} = 2A + 2B\sin^2\Theta'
+\end{align}
+where
+\begin{align}
+  A &= \frac{1}{4} - \frac{3}{8}\cos\alpha + \frac{1}{8}\cos^3\alpha,\\
+  B &= \frac{3}{16}\cos\alpha - \frac{3}{16}\cos^3\alpha, 
+\end{align}
+$\alpha = \text{arcsin(NA}/n)$ is the detection cone half angle, and $\Theta'$
+is the angle between the dipole axis and the detection optical axis. See the
+2017-06-09 notes for the relationship between $\Theta'$ and $\Theta,\Phi$. See
+\cite{fourkas} and the 2017-04-25 notes for the derivation of the detection
+efficiencies and additional expression for detection arms that use a polarizer.
+
+\section{Orientation Forward Model}
+The detected intensity is proportional to the the product of the excitation and
+detection efficiencies. Using a weakly focused excitation beam and an
+unpolarized detection arm gives us the following model
+\begin{align}
+  I_{\phi_{\text{pol}}} &= I_{\text{tot}}\sin^2\Theta\cos^2(\Phi - \phi_{\text{pol}})(2A+2B\sin^2\Theta')\label{eq:forward}
+\end{align}
+where $I_{\text{tot}}$ is the intensity we would collect if we had an excitation and detection efficiency of 1.
+
+\section{Discussion}
+Equation \ref{eq:strong} shows that for strongly focused beams the excitation
+efficiency is a function of position. This couples the orientation and location
+of the fluorophore and complicates our reconstruction. For now we'll use only
+weakly focused beams so that we can ignore the longitudinal component.
+
+To ignore the longitudinal component, we require that the ratio of the beam
+waist to the Rayleigh range be much less than 2 ($w/z_0 \ll 2$).  The excitation
+beam in \cite{wu2013} satisfies this criteria
+$w/z_0 = 1.2\ \mu\text{m}/9\ \mu\text{m} = 0.13$, but we'll need to be careful if
+we want to use beams that are more strongly focused.
+
+Under the weak focusing approximation the orientation and position of
+fluorophores are decoupled. This will allow us to split the reconstruction into
+two steps (1) estimate the position of the fluorophores using unpolarized frames
+(or the sum of orthogonally polarized frames) with established reconstruction
+techniques then (2) estimate the orientation or the fluorophores using polarized
+frames and equation \ref{eq:forward}.
+
+Note that we are working in a different regime than Agrawal et. al. \cite{agrawal}. They
+are considering imaging systems with better resolution than ours, so the
+position and orientation are coupled and must be estimated together. At our
+resolution, the position and orientation are decoupled so we can estimate them
+separately.
+
+\section{References}
+\setlength\biblabelsep{0.025\textwidth}
+\printbibliography[heading=none]
+\pagebreak
+
+\section{Appendix}
+We will evaluate the following integrals to find the excitation efficiency
+\begin{align}
+  \eta_{\text{exc}}(x,y,z) = \frac{\intinf|\bs{\mu}_{\text{abs}} \cdot \mb{E}(x,y,z,t)|^2dt}{\intinf|\mb{E}(x,y,z,t)|^2dt}\label{eq:excitation}
+\end{align}
+where
+\begin{align}
+  \bs{\mu}_{\text{abs}} &= \cos\Phi\sin\Theta\mh{x} + \sin\Phi\sin\Theta\mh{y} + \cos\Theta\mh{z}\\
+  \mb{E}(x,y,z,t) &= \mb{A}(x,y,z,t)\frac{w_0}{w(z)}\text{exp}\left\{{-\frac{(x^2+(y-vt)^2)}{w^2(z)}}+i\left[kz - \eta(z) + \frac{k(x^2+(y-vt)^2)}{2R(z)}\right]\right\}\\
+  \mb{A}(x,y,z,t) &= \cos\phi_{\text{pol}}\mh{x} + \sin\phi_{\text{pol}}\mh{y} - i\frac{x\cos\phi_{\text{pol}} + (y - vt)\sin\phi_{\text{pol}}}{z_0}\mh{z}.\label{eq:scanned_jones}
+\end{align}
+
+We'll need the following facts
+\begin{align}
+  \intinf e^{-ax^2}dx &= \sqrt{\frac{\pi}{a}}\\
+  \intinf xe^{-ax^2}dx &= 0 \label{eq:odd}\\ 
+  \intinf x^2e^{-ax^2}dx &= \frac{1}{2a}\sqrt{\frac{\pi}{a}}.
+\end{align}
+
+The numerator is
+\begin{align}
+  = &\intinf|\bs{\mu}_{\text{abs}} \cdot \mb{E}(x,y,z,t)|^2dt\\
+  \begin{split}
+  = &\intinf\Bigg |\left[\cos\Phi\sin\Theta\cos\phi_{\text{pol}} + \sin\Phi\sin\Theta\sin\phi_{\text{pol}} - i\cos\Theta\frac{x\cos\phi_{\text{pol}} + (y - vt)\sin\phi_{\text{pol}}}{z_0}\right]\\
+    &\ \ \ \ \ \ \ \ \frac{w_0}{w(z)}\text{exp}\left\{{-\frac{(x^2+(y-vt)^2)}{w^2(z)}}+i\left[kz - \eta(z) + \frac{k(x^2+(y-vt)^2)}{2R(z)}\right]\right\}\Bigg |^2dt.
+  \end{split}\\
+  \intertext{After changing variables $y' = y - vt$ and moving constants outside the integral we get}
+  = &\frac{w_0^2}{w^2(z)}e^{-\frac{2x^2}{w^2(z)}}\intinf\left|\left[\cos\Phi\sin\Theta\cos\phi_{\text{pol}} + \sin\Phi\sin\Theta\sin\phi_{\text{pol}} - i\cos\Theta\frac{x\cos\phi_{\text{pol}} + y'\sin\phi_{\text{pol}}}{z_0}\right]\right|^2e^{-\frac{2y'^2}{w^2(z)}}dy'.
+ \intertext{After expanding the square brackets we get}
+   = &\frac{w_0^2}{w^2(z)}e^{-\frac{2x^2}{w^2(z)}}\intinf \Bigg [(\cos\Phi\sin\Theta\cos\phi_{\text{pol}} + \sin\Phi\sin\Theta\sin\phi_{\text{pol}})^2 +\cos^2\Theta\frac{(x\cos\phi_{\text{pol}} +y'\sin\phi_{\text{pol}})^2}{z_0^2} \Bigg ]e^{-\frac{2y'^2}{w^2(z)}}dy'\\
+   = &\frac{w_0^2}{w(z)}e^{-\frac{2x^2}{w^2(z)}}\sqrt{\frac{\pi}{2}}\Bigg [\sin^2\Theta\cos^2(\Phi - \phi_{\text{pol}})  + \cos^2\Theta\frac{x^2\cos^2\phi_{\text{pol}} + \frac{1}{4}w^2(z)\sin^2\phi_{\text{pol}}}{z_0^2}  \Bigg ].
+\end{align}
+The denominator is
+\begin{align}
+  = &\intinf|\mb{E}(x,y,z,t)|^2dt\\
+  = &\frac{w_0^2}{w^2(z)}e^{-\frac{2x^2}{w^2(z)}}\intinf\left|\left[\cos\phi_{\text{pol}}\mh{x} + \sin\phi_{\text{pol}}\mh{y} - i\frac{x\cos\phi_{\text{pol}} + y'\sin\phi_{\text{pol}}}{z_0}\mh{z}\right]\right|^2e^{-\frac{2y'^2}{w^2(z)}}dy'\\
+  = &\frac{w_0^2}{w^2(z)}e^{-\frac{2x^2}{w^2(z)}}\intinf\left[1 + \frac{(x\cos\phi_{\text{pol}} + y'\sin\phi_{\text{pol}})^2}{z^2_0}\right]e^{-\frac{2y'^2}{w^2(z)}}dy'\\
+  = &\frac{w_0^2}{w(z)}e^{-\frac{2x^2}{w^2(z)}}\sqrt{\frac{\pi}{2}}\left[1 + \frac{x^2\cos^2\phi_{\text{pol}} + \frac{1}{4}w^2(z)\sin^2\phi_{\text{pol}}}{z^2_0}\right].
+\end{align}
+The final excitation efficiency is
+\begin{align*}
+\eta_{\text{exc}}(x,y,z) = \frac{\sin^2\Theta\cos^2(\Phi - \phi_{\text{\text{pol}}}) + \cos^2\Theta\frac{x^2\cos^2\phi_{\text{pol}} + \frac{1}{4}w^2(z)\sin^2\phi_{\text{pol}}}{z_0^2}}{1 + \frac{x^2\cos^2\phi_{\text{pol}} + \frac{1}{4}w^2(z)\sin^2\phi_{\text{pol}}}{z^2_0}}.
+\end{align*}
+
+\end{document}
+

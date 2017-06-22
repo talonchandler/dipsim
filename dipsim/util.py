@@ -200,21 +200,3 @@ def generate_caxs(axs):
         divider = make_axes_locatable(ax)
         caxs.append(divider.append_axes("right", size="5%", pad=0.15))
     return np.array(caxs).reshape(axs.shape)
-
-def a3to6(vec3):
-    # Converts a gjv from three components to six components.
-    return np.array([np.conj(vec3[0])*vec3[0],
-                     np.conj(vec3[1])*vec3[1],
-                     np.conj(vec3[2])*vec3[2],
-                     2*np.real(np.conj(vec3[0])*vec3[1]),
-                     2*np.real(np.conj(vec3[0])*vec3[2]),
-                     2*np.real(np.conj(vec3[1])*vec3[2])])
-
-def mu3to6(vec3):
-    # Converts a dipole vector from three components to six components.
-    return np.array([np.conj(vec3[0])*vec3[0],
-                     np.conj(vec3[1])*vec3[1],
-                     np.conj(vec3[2])*vec3[2],
-                     np.real(np.conj(vec3[0])*vec3[1]),
-                     np.real(np.conj(vec3[0])*vec3[2]),
-                     np.real(np.conj(vec3[1])*vec3[2])])

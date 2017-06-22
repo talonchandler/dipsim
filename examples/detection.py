@@ -5,8 +5,7 @@ import matplotlib.pyplot as plt
 import os; import time; start = time.time(); print('Running...')
 
 # Main input parameters
-n_pts = 1000 # 50000
-bfp_n = 25
+n_pts = 2500 # 50000
 pols = [np.array([-1,1,0]), np.array([1,1,0]), np.array([0,1,0]),np.array([1,0,0])]
 ill_axes = [np.array([0, 0, 1]), np.array([0, 0, 1]), np.array([0, 0, 1]), np.array([0, 0, 1])]
 det_axes = [np.array([0, 0, 1]), np.array([0, 0, 1]), np.array([-1.0/np.sqrt(2), 0, 1.0/np.sqrt(2)]), np.array([-1.0/np.sqrt(2), 0, 1.0/np.sqrt(2)])]
@@ -35,23 +34,23 @@ for i, (pol, det_axis, ill_axis) in enumerate(zip(pols, det_axes, ill_axes)):
 
     # Create microscope
     det = detector.Detector(optical_axis=np.array(det_axis),
-                            na=1.3,
+                            na=0.8,
                             n=1.5)
+    
     ill = illuminator.Illuminator(illum_type='kohler',
                                   optical_axis=ill_axis,
-                                  f=10,
-                                  bfp_rad=2,
-                                  bfp_pol_dir=pol,
-                                  bfp_n=bfp_n)
+                                  na=0.8,
+                                  bfp_pol_dir=pol)
+                                  
     m = microscope.Microscope(illuminator=ill, detector=det, max_photons=1)
     
     # Plot scene and efficiencies
     m.plot_excitation_efficiency(n=n_pts, my_ax=axs[1,i], my_cax=caxs[1,i],
                                  color_min=0, color_max=1.0)
     m.plot_collection_efficiency(n=n_pts, my_ax=axs[2,i], my_cax=caxs[2,i],
-                                 color_min=0.05, color_max=0.16)
+                                 color_min=0, color_max=0.06)
     m.plot_sensitivity(n=n_pts, my_ax=axs[3,i], my_cax=caxs[3,i],
-                                 color_min=0, color_max=0.16)
+                                 color_min=0, color_max=0.06)
     
     m.draw_scene(my_ax=axs[0,i], dpi=dpi, vis_px=vis_px)
     caxs[0,i].axis('off')

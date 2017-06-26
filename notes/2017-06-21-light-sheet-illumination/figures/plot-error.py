@@ -70,5 +70,14 @@ for FOV in FOVs:
 ax.set_yscale('log')
 ax.set_xlim([1,5])
 ax.set_xlabel('$w_0$ ($\mu$m)')
-ax.set_ylabel('Maximum Intensity Weighted Excitation Ratio')
+ax.set_ylabel('Maximum Intensity-Weighted Excitation Ratio')
+
+from matplotlib.ticker import FuncFormatter
+def log_10_product(x, pos):
+    return str(100*x) + '\%'
+formatter = FuncFormatter(log_10_product)
+ax.set_yticks([0.001, 0.01, 0.04])
+ax.yaxis.set_major_formatter(formatter)
+
+
 fig.savefig('max-error.pdf')

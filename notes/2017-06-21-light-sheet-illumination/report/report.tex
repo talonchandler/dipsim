@@ -6,13 +6,13 @@
 \addbibresource{report.bib}
 
 \begin{document}
-\title{\vspace{-2.5em} Excitation and Detection Efficiency Under Scanned Light
-  Sheet Illumination \vspace{-2.5em}} \author{Talon Chandler}
-\date{\vspace{-1em}\today\vspace{-1em}}
+\title{\vspace{-2.5em} Excitation and Detection Efficiency Under Light-Sheet
+  Illumination \vspace{-1.0em}} \author{Talon Chandler}
+\date{\vspace{-1em}June 21, 2017\\ (Updated: June 26, 2017)\vspace{-1em}}
 \maketitle
 \section{Introduction}
 In these notes I will calculate the excitation and detection efficiency of a
-single fluorophore under polarized scanned light sheet illumination. I will
+single fluorophore under polarized scanned light-sheet illumination. I will
 start by finding the transverse and longitudinal fields at all positions in a
 Gaussian beam using reasonable approximations. Next I will calculate the
 excitation efficiency of a single fluorophore as the beam is scanned across the
@@ -28,7 +28,7 @@ $\mh{z}$ axis is \cite{nov}
 \end{align}
 where
 \begin{alignat}{2}  
-  \mb{A} &= \cos\phi_{\text{pol}}\mh{x} + \sin\phi_{\text{pol}}\mh{y}\qquad &&\text{is the input Jones vector},\\
+  \mb{A} &= \cos\phi_{\text{pol}}\mh{x} + \sin\phi_{\text{pol}}\mh{y}\qquad &&\text{is the input Jones vector in 3D},\\
   w_0 &\approx \frac{2n}{k(\text{NA})}\qquad &&\text{is the beam waist radius,}\\
   z_0 &= \frac{kw_0^2}{2} &&\text{is the Rayleigh range,}\\
   k &= \frac{2\pi n}{\lambda}\qquad &&\text{is the wave number,}\\
@@ -66,10 +66,11 @@ Equation \ref{eq:longit} means that:
 \begin{itemize}
 \item There is no longitudinal polarization in the $\mh{y}-\mh{z}$ plane
   because $E_z(0,y,z) = 0$.
-\item There are longitudinal fields lobes on both sides of the optical axis
+\item There are longitudinal field lobes on both sides of the optical axis
   along the transverse polarization direction.
-\item The longitudinal fields are $90^{\circ}$ out of phase with the transverse
-  fields which means that the total field is elliptically polarized off axis.
+\item The factor of $i$ means that the longitudinal fields are $90^{\circ}$ out
+  of phase with the transverse fields which means that the total field is
+  elliptically polarized off axis.
 \item The longitudinal field strength is proportional to
   $\lambda/w_0^2$---highly focused beams have the strongest longitudinal fields.
 \end{itemize}
@@ -84,12 +85,12 @@ If the input polarization is arbitrary then the corrected 3D Jones vector is
   \mb{A}(x,y,z) = \cos\phi_{\text{pol}}\mh{x} + \sin\phi_{\text{pol}}\mh{y} - i\frac{x\cos\phi_{\text{pol}} + y\sin\phi_{\text{pol}}}{z_0}\mh{z}.
 \end{align}
 
-If the beam is scanned along the $\mh{y}$ axis with velecity $v$ then the time
+If the beam is scanned along the $\mh{y}$ axis with velocity $v$ then the time
 dependent 3D Jones vector is
 \begin{align}
   \mb{A}(x,y,z,t) = \cos\phi_{\text{pol}}\mh{x} + \sin\phi_{\text{pol}}\mh{y} - i\frac{x\cos\phi_{\text{pol}} + (y - vt)\sin\phi_{\text{pol}}}{z_0}\mh{z}\label{eq:scanned_j}
 \end{align}
-and the time dependent electric field is
+and the time-dependent electric field is
 \begin{align}
   \mb{E}(x,y,z,t) &= \mb{A}(x,y,z,t)\frac{w_0}{w(z)}\text{exp}\left\{{-\frac{(x^2+(y-vt)^2)}{w^2(z)}}+i\left[kz - \eta(z) + \frac{k(x^2+(y-vt)^2)}{2R(z)}\right]\right\}\label{eq:scanned_e}.
 \end{align}
@@ -151,32 +152,32 @@ longitudinal fluorophores.
 At first glance equation \ref{eq:ratio} looks bleak---the excitation ratio grows
 without bound in the $x$ direction which means that the longitudinal excitation
 becomes a larger fraction of the total excitation as we move away from the plane
-of the light sheet. Fortunately, we only care about regions of the beam with a
-high intensity, so we look at the intensity weighted excitation ratio instead.
+of the light-sheet. Fortunately, we only care about regions of the beam with a
+high intensity, so we look at the intensity-weighted excitation ratio instead.
 \begin{align*}
-    \text{Intensity Weighted Excitation Ratio} &= \frac{w_0}{w(z)}e^{-\frac{2x^2}{w^2(z)}}\frac{x^2\cos^2\phi_{\text{pol}} + \frac{1}{4}w^2(z)\sin^2\phi_{\text{pol}}}{z_0^2}\label{eq:intratio} \\
+    \text{Intensity-Weighted Excitation Ratio} &= \frac{w_0}{w(z)}e^{-\frac{2x^2}{w^2(z)}}\frac{x^2\cos^2\phi_{\text{pol}} + \frac{1}{4}w^2(z)\sin^2\phi_{\text{pol}}}{z_0^2}\label{eq:intratio} \\
 \end{align*}
-We can interpret the intensity weighted excitation ratio as the fraction of the
+We can interpret the intensity-weighted excitation ratio as the fraction of the
 maximum signal (created by a transverse fluorophore at the origin) that we
 ignore by ignoring longitudinal excitation. Figure \ref{fig:error} shows that
-the intensity weighted excitation ratio is <2\% for the imaging parameters used
+the intensity weighted excitation ratio is \textless 2\% for the imaging parameters used
 in Wu et. al. \cite{wu2013}.
 
-\fig{figures/error.pdf}{1.0}{Intensity weighted excitation ratio as a
+\fig{../figures/error.pdf}{1.0}{Intensity-weighted excitation ratio as a
   function of position using the parameters in Wu et. al. \cite{wu2013}:
   $w_0 = 1.2\ \mu$m, $z_0 = 9\ \mu$m, $\lambda = 488$ nm, FOV$\approx$ 80$\times$80
-  $\mu$m${}^2$. The maximum values are at the edge of the FOV and are <2\%.}{error}
+  $\mu$m${}^2$. The maximum values are at the edge of the FOV and are \textless 2\%.}{error}
 
 As a rough heuristic, if the fraction of the signal from noise and background is
-greater than the intensity weighted excitation ratio we can justifiably ignore
+greater than the intensity-weighted excitation ratio we can justifiably ignore
 the longitudinal component.
 
-Figure 2 shows the maximum intensity weighted excitation ratio for an
-80$\times$80 $\mu$m${}^2$ FOV as a function of $w_0$. The maximum intensity
-weighted excitation ratio decreases as $w_0$ increases because wider beams
-have smaller longitudinal components.
+Figure 2 shows the maximum intensity-weighted excitation ratio for an
+80$\times$80 $\mu$m${}^2$ FOV as a function of $w_0$. The maximum
+intensity-weighted excitation ratio decreases as $w_0$ increases because wider
+beams have smaller longitudinal components.
 
-\fig{figures/max-error.pdf}{0.5}{Maximum intensity weighted excitation ration (see equation \ref{eq:intratio}) for an 80$\times$80 $\mu$m${}^2$ FOV with $\lambda = 488$ nm.}{max-error}
+\fig{../figures/max-error.pdf}{0.5}{Maximum intensity-weighted excitation ration (see equation \ref{eq:intratio}) for an 80$\times$80 $\mu$m${}^2$ FOV with $\lambda = 488$ nm.}{max-error}
 
 \section{Detection Efficiency}
 If we detect fluorescence in wide-field mode with an orthogonal arm and no
@@ -212,10 +213,10 @@ weakly focused beams so that we can ignore the longitudinal component.
 
 To ignore the longitudinal component, we require that the fraction of the signal
 from noise and background is greater than the intensity weighted excitation
-ratio (<2\% with current imaging parameters). We'll need to be careful about
+ratio (\textless 2\% with current imaging parameters). We'll need to be careful about
 longitudinal excitation if we want to use beams that are more strongly focused.
 
-Under the weak focusing approximation the orientation and position of
+Under the weak-focusing approximation the orientation and position of
 fluorophores are decoupled. This will allow us to split the reconstruction into
 two steps (1) estimate the position of the fluorophores using unpolarized frames
 (or the sum of orthogonally polarized frames) with established reconstruction

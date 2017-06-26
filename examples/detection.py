@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import os; import time; start = time.time(); print('Running...')
 
 # Main input parameters
-n_pts = 2500 # 50000
+n_pts = 250 # 50000
 pols = [np.array([-1,1,0]), np.array([1,1,0]), np.array([0,1,0]),np.array([1,0,0])]
 ill_axes = [np.array([0, 0, 1]), np.array([0, 0, 1]), np.array([0, 0, 1]), np.array([0, 0, 1])]
 det_axes = [np.array([0, 0, 1]), np.array([0, 0, 1]), np.array([-1.0/np.sqrt(2), 0, 1.0/np.sqrt(2)]), np.array([-1.0/np.sqrt(2), 0, 1.0/np.sqrt(2)])]
@@ -14,8 +14,6 @@ n_cols = len(det_axes)
 inch_fig = 5
 vis_px = 2000
 dpi = 250
-#row_labels = [r'$x$-polarized, epi-detection', r'$y$-polarized, 45-detection', r'$x$-polarized, ortho-detection', r'$y$-polarized, 135-detection', ]
-#col_labels = [r'$0$-polarized, 45-detection', r'$45$-polarized, 45-detection']#, r'$90$-polarized, 45-detection', r'$135$-polarized, 45-detection']
 col_labels = 4*['']
 row_labels = ['Scene', r'Excitation Efficiency $\eta_{\text{exc}}$', r'Detection Efficiency $\eta_{\text{det}}$', r'Total Efficiency $\eta_{\text{tot}}$']
 
@@ -33,14 +31,14 @@ for i, (pol, det_axis, ill_axis) in enumerate(zip(pols, det_axes, ill_axes)):
     print('Computing microscope: ' + str(i))
 
     # Create microscope
-    det = detector.Detector(optical_axis=np.array(det_axis),
-                            na=0.8,
-                            n=1.5)
-    
     ill = illuminator.Illuminator(illum_type='kohler',
                                   optical_axis=ill_axis,
                                   na=0.8,
                                   bfp_pol_dir=pol)
+    
+    det = detector.Detector(optical_axis=np.array(det_axis),
+                            na=0.8,
+                            n=1.5)
                                   
     m = microscope.Microscope(illuminator=ill, detector=det, max_photons=1)
     

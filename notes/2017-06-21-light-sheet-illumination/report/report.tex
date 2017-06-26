@@ -104,18 +104,18 @@ incident power that excites the fluorophore. If a fluorophore with absorption
 dipole moment $\bs{\mu}_{\text{abs}}$ is placed in a time-independent complex
 electric field $\mb{E}$, then the excitation efficiency is given by
 \begin{align}
-  \eta_{\text{exc}}(x,y,z) = \frac{|\bs{\mu}_{\text{abs}} \cdot \mb{E}(x,y,z)|^2}{|\mb{E}(x,y,z) |^2}.
+  \eta_{\text{exc}} = \frac{|\bs{\mu}_{\text{abs}} \cdot \mb{E}(x,y,z)|^2}{|\mb{E}(x,y,z) |^2}.
 \end{align}
 If the fluorophore is placed in the path of a scanned laser then the electric
-field becomes time dependent. If the laser is scanned extremely fast we would
-need to consider the coherence of the electric field, but we will only consider
-slow scanning here to simplify the calculation. Specifically, we require that
+field becomes time dependent. If the laser is scanned quickly we would need to
+consider the coherence of the electric field, but we will only consider slow
+scanning here to simplify the calculation. Specifically, we require that
 $v \ll w_0/\tau_c$---the scan velocity must be much less than the beam width
 divided by the coherence time. In this case the excitation efficiency is
 \begin{align}
-  \eta_{\text{exc}}(x,y,z) = \frac{\intinf|\bs{\mu}_{\text{abs}} \cdot \mb{E}(x,y,z,t)|^2dt}{\intinf|\mb{E}(x,y,z,t)|^2dt}\label{eq:excitation}
+  \eta_{\text{exc}} = \frac{\intinf|\bs{\mu}_{\text{abs}} \cdot \mb{E}(x,y,z,t)|^2dt}{\intinf|\mb{E}(x,y,z,t)|^2dt}\label{eq:excitationx}
 \end{align}
-We plug equation \ref{eq:scanned} into equation \ref{eq:excitation}, express
+We plug equation \ref{eq:scanned_e} into equation \ref{eq:excitationx}, express
 $\bs{\mu}_{\text{abs}}$ in spherical coordinates
 \begin{align}
   \bs{\mu}_{\text{abs}} = \cos\Phi\sin\Theta\mh{x} + \sin\Phi\sin\Theta\mh{y} + \cos\Theta\mh{z},
@@ -123,13 +123,60 @@ $\bs{\mu}_{\text{abs}}$ in spherical coordinates
 and evaluate the integrals (see Appendix for details) to write the
 excitation efficiency as
 \begin{align}
-  \eta_{\text{exc}}(x,y,z) = \frac{\sin^2\Theta\cos^2(\Phi-\phi_{\text{pol}}) + \cos^2\Theta\frac{x^2\cos^2\phi_{\text{pol}} + \frac{1}{4}w^2(z)\sin^2\phi_{\text{pol}}}{z_0^2}}{1+\frac{x^2\cos^2\phi_{\text{pol}} + \frac{1}{4}w^2(z)\sin^2\phi_{\text{pol}}}{z_0^2}}.\label{eq:strong}
+  \eta_{\text{exc}} = \frac{\sin^2\Theta\cos^2(\Phi-\phi_{\text{pol}}) + \cos^2\Theta\frac{x^2\cos^2\phi_{\text{pol}} + \frac{1}{4}w^2(z)\sin^2\phi_{\text{pol}}}{z_0^2}}{1+\frac{x^2\cos^2\phi_{\text{pol}} + \frac{1}{4}w^2(z)\sin^2\phi_{\text{pol}}}{z_0^2}}.\label{eq:strong}
 \end{align}
 If the beam is weakly focused then we can ignore the longitudinal excitation and
 the excitation efficiency simplifies to
 \begin{align}
-  \eta_{\text{exc}} = \sin^2\Theta\cos^2(\Phi-\phi_{\text{pol}}).
+  \eta_{\text{exc}} \approx \sin^2\Theta\cos^2(\Phi-\phi_{\text{pol}}).\label{eq:weak_approx}
 \end{align}
+
+\textbf{How good is the approximation in equation \ref{eq:weak_approx}?}
+
+For longitudinal fluorophores equation \ref{eq:weak_approx} is a very bad
+approximation---it predicts that a longitudinal fluorophore will not be excited
+at all. We can't use a percentage error because the approximation completely
+ignores the excitation of longitudinal dipoles.
+
+Instead, we can compare the size of signals from longitudinal and transverse
+fluorophores. If the signal from longitudinal fluorophores is less than the
+signal from noise and background, then we can ignore the signal from
+longitudinal fluorophores.
+\begin{align}
+  \text{Excitation Ratio} &= \frac{\text{Max Longitudinal Excitation}}{\text{Max Transverse Excitation}}\\
+                          &= \frac{\eta_{\text{exc}}(\Theta = 0)}{\eta_{\text{exc}}(\Theta = \pi/2, \Phi = \phi_{\text{pol}})}\\
+                          &= \frac{x^2\cos^2\phi_{\text{pol}} + \frac{1}{4}w^2(z)\sin^2\phi_{\text{pol}}}{z_0^2}\label{eq:ratio}
+\end{align}
+
+At first glance equation \ref{eq:ratio} looks bleak---the excitation ratio grows
+without bound in the $x$ direction which means that the longitudinal excitation
+becomes a larger fraction of the total excitation as we move away from the plane
+of the light sheet. Fortunately, we only care about regions of the beam with a
+high intensity, so we look at the intensity weighted excitation ratio instead.
+\begin{align*}
+    \text{Intensity Weighted Excitation Ratio} &= \frac{w_0}{w(z)}e^{-\frac{2x^2}{w^2(z)}}\frac{x^2\cos^2\phi_{\text{pol}} + \frac{1}{4}w^2(z)\sin^2\phi_{\text{pol}}}{z_0^2}\label{eq:intratio} \\
+\end{align*}
+We can interpret the intensity weighted excitation ratio as the fraction of the
+maximum signal (created by a transverse fluorophore at the origin) that we
+ignore by ignoring longitudinal excitation. Figure \ref{fig:error} shows that
+the intensity weighted excitation ratio is <2\% for the imaging parameters used
+in Wu et. al. \cite{wu2013}.
+
+\fig{figures/error.pdf}{1.0}{Intensity weighted excitation ratio as a
+  function of position using the parameters in Wu et. al. \cite{wu2013}:
+  $w_0 = 1.2\ \mu$m, $z_0 = 9\ \mu$m, $\lambda = 488$ nm, FOV$\approx$ 80$\times$80
+  $\mu$m${}^2$. The maximum values are at the edge of the FOV and are <2\%.}{error}
+
+As a rough heuristic, if the fraction of the signal from noise and background is
+greater than the intensity weighted excitation ratio we can justifiably ignore
+the longitudinal component.
+
+Figure 2 shows the maximum intensity weighted excitation ratio for an
+80$\times$80 $\mu$m${}^2$ FOV as a function of $w_0$. The maximum intensity
+weighted excitation ratio decreases as $w_0$ increases because wider beams
+have smaller longitudinal components.
+
+\fig{figures/max-error.pdf}{0.5}{Maximum intensity weighted excitation ration (see equation \ref{eq:intratio}) for an 80$\times$80 $\mu$m${}^2$ FOV with $\lambda = 488$ nm.}{max-error}
 
 \section{Detection Efficiency}
 If we detect fluorescence in wide-field mode with an orthogonal arm and no
@@ -163,11 +210,10 @@ efficiency is a function of position. This couples the orientation and location
 of the fluorophore and complicates our reconstruction. For now we'll use only
 weakly focused beams so that we can ignore the longitudinal component.
 
-To ignore the longitudinal component, we require that the ratio of the beam
-waist to the Rayleigh range be much less than 2 ($w/z_0 \ll 2$).  The excitation
-beam in \cite{wu2013} satisfies this criteria
-$w/z_0 = 1.2\ \mu\text{m}/9\ \mu\text{m} = 0.13$, but we'll need to be careful if
-we want to use beams that are more strongly focused.
+To ignore the longitudinal component, we require that the fraction of the signal
+from noise and background is greater than the intensity weighted excitation
+ratio (<2\% with current imaging parameters). We'll need to be careful about
+longitudinal excitation if we want to use beams that are more strongly focused.
 
 Under the weak focusing approximation the orientation and position of
 fluorophores are decoupled. This will allow us to split the reconstruction into

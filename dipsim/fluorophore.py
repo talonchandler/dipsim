@@ -6,8 +6,8 @@ class Fluorophore:
 
     """
     def __init__(self, position=np.array([0, 0, 0]),
-                 mu_abs=np.array([0, 0, 1]),
-                 mu_em=np.array([0, 0, 1])):
+                 mu_abs=np.array([0, 0]),
+                 mu_em=np.array([0, 0])):
         self.position = position
         self.mu_abs = mu_abs        
         self.mu_em = mu_em

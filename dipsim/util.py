@@ -69,6 +69,19 @@ def fibonacci_sphere(n):
     phi = np.mod((np.pi*(3.0 - np.sqrt(5.0)))*np.arange(n), 2*np.pi) - np.pi
     return np.vstack((theta, phi)).T
 
+def theta_prime(theta, phi, psi):
+    return np.arccos(np.sin(psi)*np.cos(phi)*np.sin(theta) + np.cos(psi)*np.cos(theta))
+
+def phi_prime(theta, phi, psi):
+    num = np.cos(psi)*np.cos(phi)*np.sin(theta) - np.sin(psi)*np.cos(theta)
+    den = np.sqrt(1 - (np.sin(psi)*np.cos(phi)*np.sin(theta) + np.cos(psi)*np.cos(theta))**2)
+    if phi < np.pi and phi > 0:
+        return np.arccos(num/den)
+    elif phi < 0 and phi > -np.pi:
+        return -np.arccos(num/den)
+    else:
+        return np.nan
+    
 # Three coordinate conversion functions. Use R to use theta-phi coordinates that
 # are measured from axes other than the typical z and x axes.
 def tp2xyz(tp, R=np.eye(3,3)):

@@ -24,8 +24,7 @@ class Microscope:
         return self.max_photons*self.calc_sensitivity(args)
     
     def calc_sensitivity(self, args):
-        flu_dir = util.tp2xyz(args)
-        flu = fluorophore.Fluorophore(mu_abs=flu_dir, mu_em=flu_dir)
+        flu = fluorophore.Fluorophore(mu_abs=args, mu_em=args)
         excite = self.illuminator.calc_excitation_efficiency(flu)
         collect = self.detector.calc_collection_efficiency(flu)        
         return excite*collect
@@ -38,8 +37,7 @@ class Microscope:
         util.plot_sphere(filename, directions=directions, data=I, **kwargs)
 
     def calc_excitation_efficiency(self, args):
-        flu_dir = util.tp2xyz(args)
-        flu = fluorophore.Fluorophore(mu_abs=flu_dir, mu_em=flu_dir)        
+        flu = fluorophore.Fluorophore(mu_abs=args, mu_em=args)
         I = self.illuminator.calc_excitation_efficiency(flu)
         return I
     
@@ -52,8 +50,7 @@ class Microscope:
         util.plot_sphere(filename, directions=directions, data=I, **kwargs)
 
     def calc_collection_efficiency(self, args):
-        flu_dir = util.tp2xyz(args)
-        flu = fluorophore.Fluorophore(mu_abs=flu_dir, mu_em=flu_dir)        
+        flu = fluorophore.Fluorophore(mu_abs=args, mu_em=args)        
         I = self.detector.calc_collection_efficiency(flu)
         return I
     
@@ -81,16 +78,16 @@ class Microscope:
         view = canvas.central_widget.add_view(camera=my_cam)
 
         if dual_arm:
-            det_axes = [self.illuminator.optical_axis, self.detector.optical_axis]
-            ill_axes = [self.detector.optical_axis, self.illuminator.optical_axis]
+            det_axes = [self.illuminator.theta_optical_axis, self.detector.theta_optical_axis]
+            ill_axes = [self.detector.theta_optical_axis, self.illuminator.theta_optical_axis]
         else:
-            det_axes = [self.detector.optical_axis]
-            ill_axes = [self.illuminator.optical_axis]
+            det_axes = [self.detector.theta_optical_axis]
+            ill_axes = [self.illuminator.theta_optical_axis]
 
         for idx, (det_axis, ill_axis) in enumerate(zip(det_axes, ill_axes)):
             # Plot illumination arm
-            angle = -np.rad2deg(np.arccos(np.dot(ill_axis, k))),
-            axis = np.cross(ill_axis, k)
+            angle = np.rad2deg(ill_axis)
+            axis = np.cross(util.tp2xyz(np.array([ill_axis,0])), k)
             if np.linalg.norm(axis) == 0:
                 axis = k
             
@@ -106,8 +103,8 @@ class Microscope:
             
         for idx, (det_axis, ill_axis) in enumerate(zip(det_axes, ill_axes)):
             # Detection arm
-            angle = -np.rad2deg(np.arccos(np.dot(det_axis, k)))
-            axis = np.cross(det_axis, k)            
+            angle = np.rad2deg(det_axis)
+            axis = np.cross(util.tp2xyz(np.array([det_axis, 0])), k)            
             if np.linalg.norm(axis) == 0:
                 axis = k
 
@@ -138,8 +135,8 @@ class Microscope:
 
         for idx, (det_axis, ill_axis) in enumerate(zip(det_axes, ill_axes)):
             # Plot illumination arm
-            angle = -np.rad2deg(np.arccos(np.dot(ill_axis, k))),
-            axis = np.cross(ill_axis, k)
+            angle = np.rad2deg(ill_axis),
+            axis = np.cross(util.tp2xyz(np.array([ill_axis, 0])), k)
             if np.linalg.norm(axis) == 0:
                 axis = k
 
@@ -148,7 +145,7 @@ class Microscope:
             m = MatrixTransform()
             m.rotate(angle=angle, axis=axis)
             ax.transform = m
-
+            
             # Plot illumination circle
             circ = visuals.MyArrow(parent=view.scene, radius=i.bfp_rad, length=0.1,
                                    rows=1, cols=100, cone_length=0.01,
@@ -160,14 +157,13 @@ class Microscope:
 
             # Plot polarizations
             if pol_dirs == None:
-                pol_dirs = [i.bfp_pol_dir]
+                pol_dirs = [i.phi_pol]
             for pol_dir in pol_dirs:
                 for direction in [-1, 1]:
                     pol = visuals.MyArrow(parent=view.scene, length=i.bfp_rad/2, radius=0.25)
                     m = MatrixTransform()
                     m.rotate(angle=direction*90, axis=(0,1,0))
-                    phi_angle = np.degrees(np.arctan2(pol_dir[1], pol_dir[0]))
-                    m.rotate(angle=phi_angle, axis=(0,0,1))
+                    m.rotate(angle=np.rad2deg(pol_dir), axis=(0,0,1))
                     m.translate((0, 0, 2*i.f))
                     m.rotate(angle=angle, axis=axis)
                     pol.transform = m

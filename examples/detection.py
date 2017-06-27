@@ -5,10 +5,11 @@ import matplotlib.pyplot as plt
 import os; import time; start = time.time(); print('Running...')
 
 # Main input parameters
-n_pts = 250 # 50000
-pols = [np.array([-1,1,0]), np.array([1,1,0]), np.array([0,1,0]),np.array([1,0,0])]
-ill_axes = [np.array([0, 0, 1]), np.array([0, 0, 1]), np.array([0, 0, 1]), np.array([0, 0, 1])]
-det_axes = [np.array([0, 0, 1]), np.array([0, 0, 1]), np.array([-1.0/np.sqrt(2), 0, 1.0/np.sqrt(2)]), np.array([-1.0/np.sqrt(2), 0, 1.0/np.sqrt(2)])]
+n_pts = 500 # 50000
+
+pols = [0, np.pi/4, np.pi/2, np.pi/4]
+ill_axes = [0, 0, 0, 0]
+det_axes = [0, 0, -np.pi/2, -np.pi/2]
 n_rows = 4
 n_cols = len(det_axes)
 inch_fig = 5
@@ -25,18 +26,17 @@ if len(pols) == 1:
     axs = np.expand_dims(axs, 1)
 caxs = util.generate_caxs(axs)
 
-
 # Compute and plot on axes
 for i, (pol, det_axis, ill_axis) in enumerate(zip(pols, det_axes, ill_axes)):
     print('Computing microscope: ' + str(i))
 
     # Create microscope
     ill = illuminator.Illuminator(illum_type='kohler',
-                                  optical_axis=ill_axis,
+                                  theta_optical_axis=ill_axis,
                                   na=0.8,
-                                  bfp_pol_dir=pol)
+                                  phi_pol=pol)
     
-    det = detector.Detector(optical_axis=np.array(det_axis),
+    det = detector.Detector(theta_optical_axis=np.array(det_axis),
                             na=0.8,
                             n=1.5)
                                   

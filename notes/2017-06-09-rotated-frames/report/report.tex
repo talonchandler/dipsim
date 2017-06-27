@@ -107,7 +107,7 @@ right  = 1.5cm]{geometry}
 %%%%%%%%%%%%
 \begin{document}
 \title{\vspace{-2.5em} Relating Spherical Coordinates In Rotated Frames\vspace{-1em}} \author{Talon Chandler}% and Patrick La Rivi\`ere}
-\date{\vspace{-1em}June 9, 2017\\ (Updated: June 26, 2017)\vspace{-1em}}
+\date{\vspace{-1em}June 9, 2017\\ (Updated: June 27, 2017)\vspace{-1em}}
 \maketitle
 
 \section{Introduction}
@@ -171,7 +171,7 @@ Solving for $\theta'$ and $\phi'$ in terms of $\theta$, $\phi$, and $\psi$ gives
 \begin{subequations}
 \begin{align}
   \theta' &= \arccos\left(\sin\psi\cos\phi\sin\theta + \cos\psi\cos\theta\right)\label{eq:thetap}\\
-  \phi' &= \arccos\left(\frac{\cos\psi\cos\phi\sin\phi - \sin\psi\cos\theta}{\sqrt{1 - (\sin\psi\cos\phi\sin\theta + \cos\psi\cos\theta)^2}}\right).\label{eq:phip}
+  \phi' &= \arccos\left(\frac{\cos\psi\cos\phi\sin\theta - \sin\psi\cos\theta}{\sqrt{1 - (\sin\psi\cos\phi\sin\theta + \cos\psi\cos\theta)^2}}\right).\label{eq:phip}
 \end{align}\label{eq:solution}% 
 \end{subequations}
 Equation \ref{eq:thetap} follows directly from equation \ref{eq:prevc}. Equation
@@ -181,9 +181,19 @@ The inverse equations can be found by the substituting $\psi \rightarrow -\psi$:
 \begin{subequations}
 \begin{align}
   \theta &= \arccos\left(-\sin\psi\cos\phi'\sin\theta' + \cos\psi\cos\theta'\right)\\
-  \phi &= \arccos\left(\frac{\cos\psi\cos\phi'\sin\phi' + \sin\psi\cos\theta'}{\sqrt{1 - (\sin\psi\cos\phi'\sin\theta' + \cos\psi\cos\theta')^2}}\right).
+  \phi &= \arccos\left(\frac{\cos\psi\cos\phi'\sin\theta' + \sin\psi\cos\theta'}{\sqrt{1 - (\sin\psi\cos\phi'\sin\theta' + \cos\psi\cos\theta')^2}}\right).
 \end{align}\label{eq:solutionp}% 
 \end{subequations}
+
+\textbf{Note:} The arccos in equations \ref{eq:solution} and \ref{eq:solutionp}
+depends the range of $\phi$. If $\phi \in [-\pi, \pi]$ then use
+\begin{align}
+  \phi' &=
+          \begin{cases}
+            \arccos\left(\frac{\cos\psi\cos\phi\sin\theta - \sin\psi\cos\theta}{\sqrt{1 - (\sin\psi\cos\phi\sin\theta + \cos\psi\cos\theta)^2}}\right) \ \ \ &0 \leq \phi < \pi  \\
+            -\arccos\left(\frac{\cos\psi\cos\phi\sin\theta - \sin\psi\cos\theta}{\sqrt{1 - (\sin\psi\cos\phi\sin\theta + \cos\psi\cos\theta)^2}}\right) \ \ \ &-\pi \leq \phi < 0\\
+          \end{cases}
+\end{align}
 
 
 \section{Relating Spherical Coordinates In Two Orthogonal Frames}

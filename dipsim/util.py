@@ -2,7 +2,9 @@ from dipsim import visuals
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
+import subprocess
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+import matplotlib.image as mpimg
 import vispy
 
 def normalize(x):
@@ -213,3 +215,86 @@ def generate_caxs(axs):
         divider = make_axes_locatable(ax)
         caxs.append(divider.append_axes("right", size="5%", pad=0.15))
     return np.array(caxs).reshape(axs.shape)
+
+def draw_scene(scene_string, filename='out.png', my_ax=None, dpi=500,
+               save_file=False):
+                
+    asy_string = """
+    import three;
+    settings.outformat = "pdf";
+    settings.prc = true;
+    settings.embed= true;
+    settings.render=16;
+
+    size(6cm,0);
+    currentprojection = orthographic(1, 1, 1);
+
+    void circle(real Theta, real Alpha, bool dash, triple color) {
+      triple normal = expi(Theta, 0);
+      real h = 1 - sqrt(2 - 2*cos(Alpha) - sin(Alpha)^2);
+      real radius = sin(Alpha);
+      path3 mycircle = circle(c=h*normal, r=radius, normal=normal);
+      if (dash) {
+        draw(mycircle, p=dashed+rgb(xpart(color), ypart(color), zpart(color)));
+      } else {
+        draw(mycircle, p=rgb(xpart(color), ypart(color), zpart(color)));
+      }
+    }
+
+    void mydot(real Theta, triple color) {
+      triple normal = expi(Theta, 0);
+      dot(normal, p=rgb(xpart(color), ypart(color), zpart(color)));
+    }
+
+    void arrow(real Theta, real Phi_Pol, triple color) {
+      draw(rotate(Theta, Y)*rotate(Phi_Pol, Z)*(Z--(Z+0.2*X)), p=rgb(xpart(color), ypart(color), zpart(color)), arrow=Arrow3(emissive(rgb(xpart(color), ypart(color), zpart(color)))));
+      draw(rotate(Theta, Y)*rotate(Phi_Pol, Z)*(Z--(Z-0.2*X)), p=rgb(xpart(color), ypart(color), zpart(color)), arrow=Arrow3(emissive(rgb(xpart(color), ypart(color), zpart(color)))));
+    }
+
+    // Sphere
+    draw(unitsphere, surfacepen=material(diffusepen=white+opacity(0.1), emissivepen=grey, specularpen=white));
+
+    // Draw points on sphere
+    dotfactor = 7;
+    dot(X); 
+    dot(Y); 
+
+    circle(0, pi/2, false, (0, 0, 0));
+    """
+
+    asy_string += scene_string
+    asy_string += "dot(Z);shipout(scale(4.0)*currentpicture.fit());"
+
+    text_file = open("temp.asy", "w")
+    text_file.write(asy_string)
+    text_file.close()
+
+    subprocess.call(['asy', 'temp.asy'])
+    subprocess.call(['convert', '-density', str(dpi), '-units', 'PixelsPerInch', 'temp.pdf', 'temp.png'])
+
+    im = mpimg.imread('temp.png')
+    f = plt.figure(figsize=(5, 5), frameon=False)
+    local_ax = plt.axes([0, 0, 1, 1]) # x, y, width, height
+    if my_ax == None:
+        my_ax = local_ax
+
+    for ax in [local_ax, my_ax]:
+        draw_axis(ax)
+        ax.spines['right'].set_color('none')
+        ax.spines['left'].set_color('none')
+        ax.spines['top'].set_color('none')
+        ax.spines['bottom'].set_color('none')
+        ax.xaxis.set_ticks_position('none')
+        ax.yaxis.set_ticks_position('none')
+        ax.xaxis.set_ticklabels([])
+        ax.yaxis.set_ticklabels([])
+
+        # Plot
+        ax.imshow(im, interpolation='none')
+
+    # Save
+    if save_file:
+        f.savefig(filename, dpi=dpi)
+
+    subprocess.call(['rm', 'temp.asy', 'temp.pdf', 'temp.png'])
+    return ax

@@ -24,7 +24,7 @@ if len(illum_det_angles) == 1:
 caxs = util.generate_caxs(axs)
 
 # Compute and plot on axes
-for i, (illum_det_angle) in enumerate(illum_det_angles):
+for i, illum_det_angle in enumerate(illum_det_angles):
     print('Computing microscope: ' + str(illum_det_angle))
     m = multiframe.TwoViewPolScope(n_pts=n_pts, n_frames=4, 
                                    illum_det_angle=illum_det_angle,
@@ -32,7 +32,8 @@ for i, (illum_det_angle) in enumerate(illum_det_angles):
                                    det_type='lens',
                                    dist_type='poisson', max_photons=500)
 
-    m.draw_scene(my_ax=axs[0,i], dpi=dpi)
+    scene_string = m.scene_string()
+    util.draw_scene(scene_string, my_ax=axs[0,i], dpi=dpi)
     
     util.plot_sphere(directions=m.directions, data=m.root_det_sin,
                      color_norm='log', linthresh=1e-4,

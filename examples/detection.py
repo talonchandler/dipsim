@@ -1,4 +1,4 @@
-from dipsim import multiframe, util, detector, illuminator, microscope 
+from dipsim import multiframe, util, detector, illuminator, microscope, util
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -7,9 +7,9 @@ import os; import time; start = time.time(); print('Running...')
 # Main input parameters
 n_pts = 500 # 50000
 
-pols = [0, np.pi/4]#, np.pi/2, np.pi/4]
-ill_axes = [0, 0]#, 0, 0]
-det_axes = [0, 0]#, -np.pi/2, -np.pi/2]
+pols = [0, np.pi/4, np.pi/2, np.pi/4]
+ill_axes = [0, 0, 0, 0]
+det_axes = [0, 0, -np.pi/2, -np.pi/2]
 n_rows = 4
 n_cols = len(det_axes)
 inch_fig = 5
@@ -30,7 +30,7 @@ for i, (pol, det_axis, ill_axis) in enumerate(zip(pols, det_axes, ill_axes)):
     print('Computing microscope: ' + str(i))
 
     # Create microscope
-    ill = illuminator.Illuminator(illum_type='kohler',
+    ill = illuminator.Illuminator(illum_type='wide',
                                   theta_optical_axis=ill_axis,
                                   na=0.8,
                                   phi_pol=pol)
@@ -47,8 +47,9 @@ for i, (pol, det_axis, ill_axis) in enumerate(zip(pols, det_axes, ill_axes)):
                                  color_min=0, color_max=0.08)
     m.plot_sensitivity(n=n_pts, my_ax=axs[3,i], my_cax=caxs[3,i],
                                  color_min=0, color_max=0.08)
-    
-    m.draw_scene(my_ax=axs[0,i], dpi=dpi)
+
+    scene_string = m.scene_string('(1,0,0)')
+    util.draw_scene(scene_string, my_ax=axs[0,i], dpi=dpi)
     caxs[0,i].axis('off')
 
 # Label axes and save

@@ -6,14 +6,13 @@ import os; import time; start = time.time(); print('Running...')
 
 # Main input parameters
 n_pts = 10000
-bfp_n = 256
-illum_det_angles = np.deg2rad([0, 45, 90])
+illum_det_angles = [0, np.pi/4, np.pi/2]
 n_cols = len(illum_det_angles)
 n_rows = 3
 inch_fig = 5
 vis_px = 2000
 dpi = 250
-row_labels = ['Scene', r'$\sigma_{\Omega} = \sigma_{\Phi}\sigma_{\Theta}\sin\Theta$', r'Fractional Histogram']
+row_labels = ['Scene', r'$\sigma_{\Omega} = \sqrt{\textrm{det}\{I^{-1}\}}\sin\Theta$', r'Fractional Histogram']
 col_labels = ['Epi-detection', r'$45^{\circ}$-detection', r'Ortho-detection']
 
 # Generate axes
@@ -29,19 +28,18 @@ for i, (illum_det_angle) in enumerate(illum_det_angles):
     print('Computing microscope: ' + str(illum_det_angle))
     m = multiframe.TwoViewPolScope(n_pts=n_pts, n_frames=4, 
                                    illum_det_angle=illum_det_angle,
-                                   #na_ill=0.8, na_det=0.8, n_samp=1.33,
                                    na1=0.8, na2=0.8, n_samp=1.33,
-                                   det_type='lens', bfp_n=bfp_n,
+                                   det_type='lens',
                                    dist_type='poisson', max_photons=500)
 
     m.draw_scene(my_ax=axs[0,i], dpi=dpi, vis_px=vis_px)
     
-    util.plot_sphere(directions=m.directions, data=m.sa_uncert,
+    util.plot_sphere(directions=m.directions, data=m.root_det_sin,
                      color_norm='log', linthresh=1e-4,
-                     color_min=1e-3, color_max=4*np.pi,
+                     color_min=3e-3, color_max=1e0,
                      my_ax=axs[1,i], my_cax=caxs[1,i])
 
-    util.plot_histogram(m.sa_uncert, ax=axs[2,i])
+    util.plot_histogram(m.root_det_sin, ax=axs[2,i])
 
     caxs[0,i].axis('off')
     caxs[2,i].axis('off')        

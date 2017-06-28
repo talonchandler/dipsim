@@ -80,7 +80,7 @@ def phi_prime(theta, phi, psi):
     elif phi < 0 and phi > -np.pi:
         return -np.arccos(num/den)
     else:
-        return np.nan
+        return 0
     
 # Three coordinate conversion functions. Use R to use theta-phi coordinates that
 # are measured from axes other than the typical z and x axes.
@@ -106,7 +106,7 @@ def tp2tp_prime(tp, R=np.eye(3,3)):
 # Plotting functions
 def plot_sphere(filename=None, directions=None, data=None, interact=False,
                 color_norm='linear', color_min=0, color_max=1,
-                gamma=0.25, color_map='viridis', linthresh=1e-3,
+                gamma=0.25, color_map='coolwarm', linthresh=1e-3,
                 my_ax=None, my_cax=None, dpi=500, vis_px=1000,
                 save_file=False):
 

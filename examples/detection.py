@@ -7,16 +7,16 @@ import os; import time; start = time.time(); print('Running...')
 # Main input parameters
 n_pts = 500 # 50000
 
-pols = [0, np.pi/4, np.pi/2, np.pi/4]
-ill_axes = [0, 0, 0, 0]
-det_axes = [0, 0, -np.pi/2, -np.pi/2]
+pols = [0, np.pi/4]#, np.pi/2, np.pi/4]
+ill_axes = [0, 0]#, 0, 0]
+det_axes = [0, 0]#, -np.pi/2, -np.pi/2]
 n_rows = 4
 n_cols = len(det_axes)
 inch_fig = 5
 vis_px = 2000
 dpi = 250
-col_labels = 4*['']
-row_labels = ['Scene', r'Excitation Efficiency $\eta_{\text{exc}}$', r'Detection Efficiency $\eta_{\text{det}}$', r'Total Efficiency $\eta_{\text{tot}}$']
+col_labels = n_cols*['']
+row_labels = ['Geometry', r'Excitation Efficiency $\eta_{\text{exc}}$', r'Detection Efficiency $\eta_{\text{det}}$', r'Total Efficiency $\eta_{\text{tot}}$']
 
 # Generate axes
 size = (inch_fig*n_cols, inch_fig*n_rows)

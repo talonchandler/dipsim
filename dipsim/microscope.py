@@ -86,7 +86,7 @@ class Microscope:
 
         for idx, (det_axis, ill_axis) in enumerate(zip(det_axes, ill_axes)):
             # Plot illumination arm
-            angle = np.rad2deg(ill_axis)
+            angle = np.abs(np.rad2deg(ill_axis))
             axis = np.cross(util.tp2xyz(np.array([ill_axis,0])), k)
             if np.linalg.norm(axis) == 0:
                 axis = k
@@ -103,7 +103,7 @@ class Microscope:
             
         for idx, (det_axis, ill_axis) in enumerate(zip(det_axes, ill_axes)):
             # Detection arm
-            angle = np.rad2deg(det_axis)
+            angle = np.abs(np.rad2deg(ill_axis))
             axis = np.cross(util.tp2xyz(np.array([det_axis, 0])), k)            
             if np.linalg.norm(axis) == 0:
                 axis = k
@@ -135,7 +135,7 @@ class Microscope:
 
         for idx, (det_axis, ill_axis) in enumerate(zip(det_axes, ill_axes)):
             # Plot illumination arm
-            angle = np.rad2deg(ill_axis),
+            angle = np.abs(np.rad2deg(ill_axis))
             axis = np.cross(util.tp2xyz(np.array([ill_axis, 0])), k)
             if np.linalg.norm(axis) == 0:
                 axis = k

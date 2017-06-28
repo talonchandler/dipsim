@@ -13,7 +13,6 @@ det_axes = [0, 0]#, -np.pi/2, -np.pi/2]
 n_rows = 4
 n_cols = len(det_axes)
 inch_fig = 5
-vis_px = 2000
 dpi = 250
 col_labels = n_cols*['']
 row_labels = ['Geometry', r'Excitation Efficiency $\eta_{\text{exc}}$', r'Detection Efficiency $\eta_{\text{det}}$', r'Total Efficiency $\eta_{\text{tot}}$']
@@ -37,8 +36,7 @@ for i, (pol, det_axis, ill_axis) in enumerate(zip(pols, det_axes, ill_axes)):
                                   phi_pol=pol)
     
     det = detector.Detector(theta_optical_axis=np.array(det_axis),
-                            na=0.8,
-                            n=1.5)
+                            na=0.8)
                                   
     m = microscope.Microscope(illuminator=ill, detector=det, max_photons=1)
     
@@ -46,11 +44,11 @@ for i, (pol, det_axis, ill_axis) in enumerate(zip(pols, det_axes, ill_axes)):
     m.plot_excitation_efficiency(n=n_pts, my_ax=axs[1,i], my_cax=caxs[1,i],
                                  color_min=0, color_max=1.0)
     m.plot_collection_efficiency(n=n_pts, my_ax=axs[2,i], my_cax=caxs[2,i],
-                                 color_min=0, color_max=0.06)
+                                 color_min=0, color_max=0.08)
     m.plot_sensitivity(n=n_pts, my_ax=axs[3,i], my_cax=caxs[3,i],
-                                 color_min=0, color_max=0.06)
+                                 color_min=0, color_max=0.08)
     
-    m.draw_scene(my_ax=axs[0,i], dpi=dpi, vis_px=vis_px)
+    m.draw_scene(my_ax=axs[0,i], dpi=dpi)
     caxs[0,i].axis('off')
 
 # Label axes and save

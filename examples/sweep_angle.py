@@ -5,15 +5,15 @@ import matplotlib.pyplot as plt
 import os; import time; start = time.time(); print('Running...')
 
 # Main input parameters
-n_pts = 10000
-illum_det_angles = [0, np.pi/4, np.pi/2]
+n_pts = 1000
+illum_det_angles = [0, np.pi/2]
 n_cols = len(illum_det_angles)
 n_rows = 3
 inch_fig = 5
-vis_px = 2000
-dpi = 250
-row_labels = ['Scene', r'$\sigma_{\Omega} = \sqrt{\textrm{det}\{I^{-1}\}}\sin\Theta$', r'Fractional Histogram']
-col_labels = ['Epi-detection', r'$45^{\circ}$-detection', r'Ortho-detection']
+dpi = 400
+
+row_labels = ['Geometry', r'$\sigma_{\Omega} = \sqrt{\textrm{det}\{I^{-1}\}}\sin\Theta$', r'Fractional Histogram']
+col_labels = ['Epi-Widefield', r'Symmetric Orthogonal Widefield (NA=0.8)']
 
 # Generate axes
 size = (inch_fig*n_cols, inch_fig*n_rows)
@@ -32,7 +32,7 @@ for i, (illum_det_angle) in enumerate(illum_det_angles):
                                    det_type='lens',
                                    dist_type='poisson', max_photons=500)
 
-    m.draw_scene(my_ax=axs[0,i], dpi=dpi, vis_px=vis_px)
+    m.draw_scene(my_ax=axs[0,i], dpi=dpi)
     
     util.plot_sphere(directions=m.directions, data=m.root_det_sin,
                      color_norm='log', linthresh=1e-4,

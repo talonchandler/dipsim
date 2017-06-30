@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import os; import time; start = time.time(); print('Running...')
 
 # Main input parameters
-n_pts = 500 # 50000
+n_pts = 10000
 
 pols = [0, np.pi/4, np.pi/2, np.pi/4]
 ill_axes = [0, 0, 0, 0]
@@ -48,14 +48,14 @@ for i, (pol, det_axis, ill_axis) in enumerate(zip(pols, det_axes, ill_axes)):
     m.plot_sensitivity(n=n_pts, my_ax=axs[3,i], my_cax=caxs[3,i],
                                  color_min=0, color_max=0.08)
 
-    scene_string = m.scene_string('(1,0,0)')
+    scene_string = m.scene_string()
     util.draw_scene(scene_string, my_ax=axs[0,i], dpi=dpi)
     caxs[0,i].axis('off')
 
 # Label axes and save
 util.label_rows_and_cols(axs, row_labels, col_labels)
 print('Saving final figure.')    
-fig.savefig('detection.png', dpi=dpi)
+fig.savefig('single-view.png', dpi=dpi)
 
 print('Total time: '+str(np.round(time.time() - start, 2)))
 os.system('say "done"')

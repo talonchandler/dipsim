@@ -180,7 +180,7 @@ def plot_histogram(data, ax):
     ax.set_xscale('log')
     ax.set_yscale('log')    
     ax.set_xlim([np.min(data/10), 4*np.pi])
-    ax.set_ylim([1/(2*len(data)), 1])
+    ax.set_ylim([1e-3, 1])
     ax.set_xlabel(r'$\sigma_{\Omega}$', fontsize=18)
     d = dispersion_index(data)
     d_str = '$D =' + '{:.1e}'.format(d).replace('e', '\\times 10^{') + '}$'
@@ -235,7 +235,7 @@ def draw_scene(scene_string, filename='out.png', my_ax=None, dpi=500,
       real radius = sin(Alpha);
       path3 mycircle = circle(c=h*normal, r=radius, normal=normal);
       if (dash) {
-        draw(mycircle, p=dashed+rgb(xpart(color), ypart(color), zpart(color)));
+        draw(mycircle, p=linetype(new real[] {8,8}, offset=xpart(color))+rgb(xpart(color), ypart(color), zpart(color)));
       } else {
         draw(mycircle, p=rgb(xpart(color), ypart(color), zpart(color)));
       }

@@ -7,14 +7,16 @@ import os; import time; start = time.time(); print('Running...')
 # Main input parameters
 n_pts = 10000
 
-pols = [0, np.pi/4, np.pi/2, np.pi/4]
-ill_axes = [0, 0, 0, 0]
-det_axes = [0, 0, -np.pi/2, -np.pi/2]
+pols = 3*[0]
+ill_axes = 3*[0]
+det_axes = 3*[0]
+ill_nas = [0.9, 1.1, 1.3]
+det_nas = [0.9, 1.1, 1.3]
 n_rows = 4
 n_cols = len(det_axes)
 inch_fig = 5
 dpi = 250
-col_labels = n_cols*['']
+col_labels = ['NA = 0.9', 'NA = 1.1', 'NA = 1.3']
 row_labels = ['Geometry', r'Excitation Efficiency $\eta_{\text{exc}}$', r'Detection Efficiency $\eta_{\text{det}}$', r'Total Efficiency $\eta_{\text{tot}}$']
 
 # Generate axes
@@ -26,17 +28,17 @@ if len(pols) == 1:
 caxs = util.generate_caxs(axs)
 
 # Compute and plot on axes
-for i, (pol, det_axis, ill_axis) in enumerate(zip(pols, det_axes, ill_axes)):
+for i, (pol, det_axis, ill_axis, det_na, ill_na) in enumerate(zip(pols, det_axes, ill_axes, det_nas, ill_nas)):
     print('Computing microscope: ' + str(i))
 
     # Create microscope
     ill = illuminator.Illuminator(illum_type='wide',
                                   theta_optical_axis=ill_axis,
-                                  na=0.8,
+                                  na=ill_na,
                                   phi_pol=pol)
     
     det = detector.Detector(theta_optical_axis=np.array(det_axis),
-                            na=0.8)
+                            na=det_na)
                                   
     m = microscope.Microscope(illuminator=ill, detector=det, max_photons=1)
     
@@ -44,9 +46,9 @@ for i, (pol, det_axis, ill_axis) in enumerate(zip(pols, det_axes, ill_axes)):
     m.plot_excitation_efficiency(n=n_pts, my_ax=axs[1,i], my_cax=caxs[1,i],
                                  color_min=0, color_max=1.0)
     m.plot_collection_efficiency(n=n_pts, my_ax=axs[2,i], my_cax=caxs[2,i],
-                                 color_min=0, color_max=0.08)
+                                 color_min=0, color_max=0.5)
     m.plot_sensitivity(n=n_pts, my_ax=axs[3,i], my_cax=caxs[3,i],
-                                 color_min=0, color_max=0.08)
+                                 color_min=0, color_max=0.5)
 
     scene_string = m.scene_string()
     util.draw_scene(scene_string, my_ax=axs[0,i], dpi=dpi)
@@ -55,7 +57,7 @@ for i, (pol, det_axis, ill_axis) in enumerate(zip(pols, det_axes, ill_axes)):
 # Label axes and save
 util.label_rows_and_cols(axs, row_labels, col_labels)
 print('Saving final figure.')    
-fig.savefig('single-view.png', dpi=dpi)
+fig.savefig('single-frame.png', dpi=dpi)
 
 print('Total time: '+str(np.round(time.time() - start, 2)))
 os.system('say "done"')

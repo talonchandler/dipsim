@@ -107,7 +107,7 @@ def tp2tp_prime(tp, R=np.eye(3,3)):
 
 # Plotting functions
 def plot_sphere(filename=None, directions=None, data=None, interact=False,
-                color_norm='linear', color_min=0, color_max=1,
+                color_norm='linear', color_min=0, color_max=None,
                 gamma=0.25, color_map='coolwarm', linthresh=1e-3,
                 my_ax=None, my_cax=None, dpi=500, vis_px=1000,
                 save_file=False):
@@ -126,6 +126,9 @@ def plot_sphere(filename=None, directions=None, data=None, interact=False,
     dots.set_data(pos=np.array([[1.01,0,0],[0,1.01,0],[0,0,1.01]]),
                   edge_color='black', face_color='black', size=vis_px/50)
 
+    if color_max == None:
+        color_max = np.max(data)
+    
     # Calculate colors
     if color_norm == 'linear':
         norm = matplotlib.colors.Normalize(vmin=color_min, vmax=color_max)

@@ -173,8 +173,8 @@ def plot_sphere(filename=None, directions=None, data=None, interact=False,
         if save_file:
             f.savefig(filename, dpi=dpi)
 
-def dispersion_index(data):
-    return np.var(data)/np.mean(data)
+def coeff_of_variation(data):
+    return np.std(data)/np.mean(data)
 
 def plot_histogram(data, ax):
     bins = np.array([10**x for x in np.arange(-4, 2, 0.1)])
@@ -185,11 +185,11 @@ def plot_histogram(data, ax):
     ax.set_xlim([np.min(data/10), 4*np.pi])
     ax.set_ylim([1e-3, 1])
     ax.set_xlabel(r'$\sigma_{\Omega}$', fontsize=18)
-    d = dispersion_index(data)
-    d_str = '$D =' + '{:.1e}'.format(d).replace('e', '\\times 10^{') + '}$'
-    ax.annotate(d_str, xy=(0,0), xytext=(0.95, 0.95), textcoords='axes fraction',
+    cv = coeff_of_variation(data)
+    cv_str = '$c_v =' + '{:.1e}'.format(cv).replace('e', '\\times 10^{') + '}$'
+    ax.annotate(cv_str, xy=(0,0), xytext=(0.95, 0.95), textcoords='axes fraction',
                            va='center', ha='right', fontsize=16, annotation_clip=False)
-    return d
+    return cv
             
 def draw_axis(ax, x=0.925, y=0.1):
     length=0.1

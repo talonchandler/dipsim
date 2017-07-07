@@ -27,7 +27,7 @@ class Microscope:
         collect = self.detector.calc_collection_efficiency(flu)        
         return excite*collect
 
-    def plot_sensitivity(self, filename='out.png', n=50, **kwargs):
+    def plot_sensitivity(self, filename='', n=50, **kwargs):
         directions = util.fibonacci_sphere(n)
         print('Generating data for microscope: '+filename)
         I = np.apply_along_axis(self.calc_sensitivity, 1, directions)
@@ -47,7 +47,7 @@ class Microscope:
         util.plot_sphere(filename, directions=directions, data=I, **kwargs)
 
     def calc_collection_efficiency(self, direction):
-        flu = fluorophore.Fluorophore(mu_abs=direction, mu_em=args)        
+        flu = fluorophore.Fluorophore(mu_abs=direction, mu_em=direction)
         I = self.detector.calc_collection_efficiency(flu)
         return I
     

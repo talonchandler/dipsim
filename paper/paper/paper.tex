@@ -2,8 +2,8 @@
 \usepackage[OE]{express}
 
 \begin{document}
-\title{Determining Single-Molecule Orientation With Polarized Illumination:
-  Instrument Design and Forward Model}
+\title{Polarized Illumination For Determining Single-Molecule Orientation:
+  Modeling and Instrument Design}
 
 \author{Talon Chandler,\authormark{1} Author Two,\authormark{2,*} and Author Three\authormark{2,3}}
 
@@ -26,15 +26,68 @@ Abstract here.
 \end{thebibliography}
 
 \section{Introduction}
+Single molecule orientation determination is important because
+
+A variety of techniques have been tested to determine the orientation of
+single molecules:
+
+polarized detection [Fourkas], shape analysis [Moerner], other things from
+Moerner review. 
+
+We propose polarized illumination as an complementary method to polarized
+detection. We get the speed (no shape analysis required).
+
+In this work we make three contributions:
+\begin{itemize}
+\item we develop the polarized illumination forward model for a broad class of
+  microscopes (section 2.X-2.X)
+\item we develop metrics to compare the performance of polarized illumination
+  microscopes 
+\item we use these metrics to compare microscopes design and make recommendations
+  for polarized illumination microscopes. 
+\end{itemize}
+
 
 \section{Methods}
-Illumination forward model, CRLB, dispersion index
+\subsection{Illumination Model}
+
+\subsection{Detection Model}
+
+\subsection{Complete Forward Model}
+\begin{align}
+  I = I_{\text{tot}}\eta_{\text{exc}}\eta_{\text{det}}
+\end{align}
+
+\subsection{Microscope Designs}
+
+\subsection{Evaluation Metrics}
+\begin{align}
+  F &= \sum_{i=0}^N \frac{1}{I}
+  \begin{bmatrix}
+    \frac{\partial^2 I}{\partial \Theta^2}&\frac{\partial I}{\partial \Theta}\frac{\partial I}{\partial \Phi}\\
+    \frac{\partial I}{\partial \Theta}\frac{\partial I}{\partial \Phi}&\frac{\partial^2 I}{\partial \Phi^2}\\    
+  \end{bmatrix}\\
+  \sigma_{\Omega} &= \frac{\sin\Theta}{\sqrt{\text{det}\{F\}}}
+\end{align}
+We call $\sigma_{\Omega}$ the \emph{solid-angle uncertainty}. 
+We sampled $\sigma_{\Omega}$ on 100,000 approximately equally
+spaced points on the unit sphere and calculated the \emph{coefficient of variation}
+$c_v$ of these points where
+\begin{align}
+  c_v = \frac{\sigma_{\sigma_{\Omega}}}{\mu_{\sigma_{\Omega}}}
+\end{align}
 
 \section{Results}
 \subsection{One-Arm Designs}
 \begin{figure}[htbp]
-\centering\includegraphics[width=\textwidth]{single-frame}
-\caption{Caption 123}
+\centering\includegraphics[width=\textwidth]{single-arm}
+\caption{\textbf{Left:} Schematic of a single-arm four-frame epi-illumination
+  microscope with NA = 0.8 and $n = 1.33$. The solid and dashed lines enclose
+  the illumination and detection solid angles, respectively, and the arrows
+  indicate the illumination polarization orientations. \textbf{Right:} Solid
+  angle uncertainty for the same microscope when $I_{\text{tot}} = 1000$
+  photons. Note the regions of high uncertainty near the equator and poles
+  as noted in XXX.}
 \end{figure}
 
 \subsection{Two-Arm Designs}
@@ -43,14 +96,6 @@ Illumination forward model, CRLB, dispersion index
 \section{Discussion}
 
 \section{Conclusion}
-After proofreading the manuscript, compress your .TEX manuscript file and all
-figures (which should be in EPS format, or PDF format if you are using
-PDF-\LaTeX) in a ZIP, TAR or TAR-GZIP package. Prism, OSA's article tracking
-system, will process in \LaTeX mode by default but will use PDF-\LaTeX if PDF
-figure files are detected. Note: TAR or TAR-GZIP is no longer required. All
-files must be referenced at the root level (e.g., file \texttt{figure-1.eps},
-not \texttt{/myfigs/figure-1.eps}). If there is video or other multimedia, the
-associated files should be uploaded separately.
 
 \section*{Funding}
 TODO

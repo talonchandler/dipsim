@@ -5,8 +5,7 @@ import matplotlib.pyplot as plt
 import os; import time; start = time.time(); print('Running...')
 
 # Main input parameters
-n_pts = 10000
-
+n_pts = 1000
 pols = 3*[0]
 ill_axes = 3*[0]
 det_axes = 3*[0]

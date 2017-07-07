@@ -2,22 +2,17 @@ import numpy as np
 import dipsim.util as util
 
 class Illuminator:
-    """An illumination path is specified by its illumination type (Kohler, 
-    laser, scanned), optical axis, back focal plane source radius, back focal 
-    plane polarization, and back focal plane apodization function.
-
-    *** Back focal plane polarization is specified in the x-y plane then 
-    rotated. Be careful with oblique illumination. ***
-
+    """An Illuminator is specified by its illumination type (wide, sheet),
+    optical axis, numerical aperture, index of refraction of the sample, and
+    polarization.
     """
-    def __init__(self, illum_type='wide', theta_optical_axis=0, na=0.8, n=1.33, phi_pol=0):
+    def __init__(self, illum_type='wide', theta_optical_axis=0, na=0.8,
+                 n=1.33, phi_pol=0):
         self.illum_type = illum_type
         self.theta_optical_axis = theta_optical_axis
         self.na = na
         self.n = n
         self.alpha = np.arcsin(self.na/self.n)
-        self.f = 10 # Arbitrary
-        self.bfp_rad = self.f*np.tan(self.alpha)
         self.phi_pol = phi_pol
 
     def calc_excitation_efficiency(self, fluorophore):

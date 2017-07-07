@@ -2,7 +2,7 @@ import numpy as np
 
 class Fluorophore:
     """A single fluorophore is specified by its 3D position, (unit) absorption
-    dipole moment, and (unit) emission dipole moment.
+    dipole moment (theta, phi), and (unit) emission dipole moment (theta, phi).
 
     """
     def __init__(self, position=np.array([0, 0, 0]),

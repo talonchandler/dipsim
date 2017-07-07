@@ -3,10 +3,6 @@ import matplotlib.pyplot as plt
 import functools
 import vispy
 from dipsim import util, fluorophore, visuals
-from vispy.visuals.transforms import (STTransform, LogTransform,
-                                      MatrixTransform, PolarTransform)
-
-from vispy import gloo
 
 class Microscope:
     """
@@ -22,11 +18,11 @@ class Microscope:
         self.max_photons = max_photons
         self.color = color
 
-    def calc_intensity(self, args):
-        return self.max_photons*self.calc_sensitivity(args)
+    def calc_intensity(self, direction):
+        return self.max_photons*self.calc_sensitivity(direction)
     
-    def calc_sensitivity(self, args):
-        flu = fluorophore.Fluorophore(mu_abs=args, mu_em=args)
+    def calc_sensitivity(self, direction):
+        flu = fluorophore.Fluorophore(mu_abs=direction, mu_em=direction)
         excite = self.illuminator.calc_excitation_efficiency(flu)
         collect = self.detector.calc_collection_efficiency(flu)        
         return excite*collect
@@ -38,29 +34,27 @@ class Microscope:
         print('Plotting data for microscope: '+filename)
         util.plot_sphere(filename, directions=directions, data=I, **kwargs)
 
-    def calc_excitation_efficiency(self, args):
-        flu = fluorophore.Fluorophore(mu_abs=args, mu_em=args)
+    def calc_excitation_efficiency(self, direction):
+        flu = fluorophore.Fluorophore(mu_abs=direction, mu_em=direction)
         I = self.illuminator.calc_excitation_efficiency(flu)
         return I
     
-    def plot_excitation_efficiency(self, filename='out.png', n=50, **kwargs):
+    def plot_excitation_efficiency(self, filename='', n=50, **kwargs):
         directions = util.fibonacci_sphere(n)
         print('Generating data for microscope: '+filename)
-        I = np.apply_along_axis(self.calc_excitation_efficiency,
-                                      1, directions)
+        I = np.apply_along_axis(self.calc_excitation_efficiency, 1, directions)
         print('Plotting data for microscope: '+filename)
         util.plot_sphere(filename, directions=directions, data=I, **kwargs)
 
-    def calc_collection_efficiency(self, args):
-        flu = fluorophore.Fluorophore(mu_abs=args, mu_em=args)        
+    def calc_collection_efficiency(self, direction):
+        flu = fluorophore.Fluorophore(mu_abs=direction, mu_em=args)        
         I = self.detector.calc_collection_efficiency(flu)
         return I
     
-    def plot_collection_efficiency(self, filename='out.png', n=50, **kwargs):
+    def plot_collection_efficiency(self, filename='', n=50, **kwargs):
         directions = util.fibonacci_sphere(n)
         print('Generating data for microscope: '+filename)
-        I = np.apply_along_axis(self.calc_collection_efficiency,
-                                      1, directions)
+        I = np.apply_along_axis(self.calc_collection_efficiency, 1, directions)
         print('Plotting data for microscope: '+filename)
         util.plot_sphere(filename, directions=directions, data=I, **kwargs)
 
@@ -95,4 +89,3 @@ class Microscope:
         asy_string += pol_string
 
         return asy_string
-

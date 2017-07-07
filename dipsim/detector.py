@@ -2,18 +2,15 @@ import numpy as np
 import dipsim.util as util
 
 class Detector:
-    """A detection path is specified by its optical axis, numerical aperture, and
-    index of refraction of the medium.
-
+    """A Detector is specified by its optical axis, numerical aperture, and
+       index of refraction of the medium.
     """
     def __init__(self, theta_optical_axis, det_type='lens', na=0.8, n=1.33):
         self.theta_optical_axis = theta_optical_axis
         self.det_type = det_type
         self.na = na # Numerical aperture
         self.n = n
-        self.f = 10 # Arbitrary
         self.alpha = np.arcsin(self.na/self.n)        
-        self.det_rad = self.f*np.tan(self.alpha)
 
     def calc_collection_efficiency(self, fluorophore):
         if self.det_type=='lens':

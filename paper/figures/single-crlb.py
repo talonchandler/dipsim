@@ -9,7 +9,7 @@ row_labels = ['Geometry', r'$\sigma_{\Omega}$', r'Relative Frequency']
 nas = [0.7, 0.9, 1.1, 1.3]
 col_labels = ['NA='+str(na) for na in nas]
 
-n_pts = 50000
+n_pts = 500
 n_cols = len(col_labels)
 n_rows = 3
 inch_fig = 5
@@ -37,12 +37,12 @@ for i, na in enumerate(nas):
     scene_string = exp.scene_string()
     util.draw_scene(scene_string, my_ax=axs[0,i], dpi=dpi)
     
-    util.plot_sphere(directions=exp.directions, data=exp.root_det_sin,
+    util.plot_sphere(directions=exp.directions, data=exp.sa_uncert,
                      color_norm='log', linthresh=1e-4,
                      color_min=8e-4, color_max=1e0,
                      my_ax=axs[1,i], my_cax=caxs[1,i])
 
-    util.plot_histogram(exp.root_det_sin, ax=axs[2,i])
+    util.plot_histogram(exp.sa_uncert, ax=axs[2,i])
 
     caxs[0,i].axis('off')
     caxs[2,i].axis('off')        

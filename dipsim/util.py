@@ -1,76 +1,13 @@
 from dipsim import visuals
 import numpy as np
+import subprocess
 import matplotlib
 import matplotlib.pyplot as plt
-import subprocess
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.image as mpimg
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 import vispy
 
-def normalize(x):
-    """ 
-    Returns a normalized vector. Returns zero vector if input is zero.
-    """
-    len_x = np.linalg.norm(x)
-    if len_x == 0:
-        return x
-    else:
-        return x/len_x
-
-def rot_mat(theta, u):
-    """
-    Returns the rotation matrix that performs a right handed rotation by 
-    angle theta about the vector u.
-
-    Reference: https://en.wikipedia.org/wiki/Rodrigues'_rotation_formula
-    """
-    u = u/np.linalg.norm(u)
-    K = np.array([[0, -u[2], u[1]], [u[2], 0, -u[0]], [-u[1], u[0], 0]])
-    return np.identity(3) + K*np.sin(theta) + np.dot(K, K)*(1 - np.cos(theta))
-
-def rot_map(u, v=np.array([0,0,1])):
-    """
-    Returns the rotation matrix that aligns v with u.
-    """
-    if np.array_equal(u, v):
-        return np.eye(3)
-    else:
-        return rot_mat(np.arccos(np.dot(v, u)), np.cross(v, u))
-
-def orthonormal_basis(v0):
-    """
-    Returns two orthonormal vectors that are orthogonal to v0.
-    """
-    if np.dot(v0, [0, 0, 1]) == 0:
-        v1 = np.array([0, 0, 1])                
-    else:
-        v1 = np.array([1, 0, -v0[0]/v0[2]])
-    v1 = v1/np.linalg.norm(v1)
-    v2 = np.cross(v1, v0)
-    v2 = v2/np.linalg.norm(v2)
-    return v1, v2
-
-def my_orthonormal_basis(v0):
-    """
-    Returns two orthonormal vectors that are orthogonal to v0.
-    """
-    if np.dot(v0, [0, 0, 1]) == 1:
-        v1 = np.array([1, 0, 0])                
-    else:
-        v1 = np.array([-v0[1], v0[0], 0])
-    v1 = v1/np.linalg.norm(v1)
-    v2 = np.cross(v0, v1)
-    v2 = v2/np.linalg.norm(v2)
-    return v1, v2
-
-def fibonacci_sphere(n):
-    # Returns "equally" spaced points on a unit sphere in spherical coordinates.
-    # http://stackoverflow.com/a/26127012/5854689
-    z = np.linspace(1 - 1/n, -1 + 1/n, num=n) 
-    theta = np.arccos(z)
-    phi = np.mod((np.pi*(3.0 - np.sqrt(5.0)))*np.arange(n), 2*np.pi) - np.pi
-    return np.vstack((theta, phi)).T
-
+# Coordinate conversion functions. 
 def theta_prime(theta, phi, psi):
     return np.arccos(np.sin(psi)*np.cos(phi)*np.sin(theta) + np.cos(psi)*np.cos(theta))
 
@@ -84,8 +21,6 @@ def phi_prime(theta, phi, psi):
     else:
         return 0
     
-# Three coordinate conversion functions. Use R to use theta-phi coordinates that
-# are measured from axes other than the typical z and x axes.
 def tp2xyz(tp, R=np.eye(3,3)):
     xyz = [np.sin(tp[0])*np.cos(tp[1]), np.sin(tp[0])*np.sin(tp[1]), np.cos(tp[0])]
     return np.dot(R, xyz)
@@ -94,18 +29,17 @@ def xyz2tp(xyz, R=np.eye(3,3)):
     xyz_prime = np.dot(np.linalg.inv(R), xyz)
     theta = np.arccos(xyz_prime[2]/np.linalg.norm(xyz_prime)),
     phi = np.arctan2(xyz_prime[1], xyz_prime[0])
-    # if phi < 0:
-    #     phi += 2*np.pi
     return np.array([theta, phi])
 
-def tp2tp_prime(tp, R=np.eye(3,3)):
-    if np.array_equal(R, np.eye(3,3)):
-        return tp
-    else:
-        xyz = tp2xyz(tp)
-        return xyz2tp(xyz, R)
-
 # Plotting functions
+def fibonacci_sphere(n):
+    # Returns "equally" spaced points on a unit sphere in spherical coordinates.
+    # http://stackoverflow.com/a/26127012/5854689
+    z = np.linspace(1 - 1/n, -1 + 1/n, num=n) 
+    theta = np.arccos(z)
+    phi = np.mod((np.pi*(3.0 - np.sqrt(5.0)))*np.arange(n), 2*np.pi) - np.pi
+    return np.vstack((theta, phi)).T
+
 def plot_sphere(filename=None, directions=None, data=None, interact=False,
                 color_norm='linear', color_min=0, color_max=None,
                 gamma=0.25, color_map='coolwarm', linthresh=1e-3,

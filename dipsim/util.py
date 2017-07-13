@@ -210,6 +210,10 @@ def draw_scene(scene_string, filename='out.png', my_ax=None, dpi=500,
     subprocess.call(['convert', '-density', str(dpi), '-units', 'PixelsPerInch', 'temp.pdf', 'temp.png'])
 
     im = mpimg.imread('temp.png')
+
+    # Chop top of im to make it square and fix asy error
+    im = im[int(im.shape[1]*0.075):,:,:]
+    
     f = plt.figure(figsize=(5, 5), frameon=False)
     local_ax = plt.axes([0, 0, 1, 1]) # x, y, width, height
     if my_ax == None:

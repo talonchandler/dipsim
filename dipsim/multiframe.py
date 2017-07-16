@@ -31,8 +31,13 @@ class MultiFrameMicroscope:
                                               illum_type=ill_types[i],
                                               na=ill_nas[i], n=n_samp,
                                               phi_pol=phi)
-                
-                m.append(microscope.Microscope(illuminator=ill, detector=det, max_photons=max_photons, color=colors[i]))
+
+                if type(max_photons) == list:
+                    max_photon = max_photons[i]
+                else:
+                    max_photon = max_photons
+                    
+                m.append(microscope.Microscope(illuminator=ill, detector=det, max_photons=max_photon, color=colors[i]))
 
         self.microscopes = m
         self.noise_model = stats.NoiseModel(self.calc_total_intensities, **kwargs)

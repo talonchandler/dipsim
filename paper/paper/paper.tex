@@ -269,11 +269,8 @@ measure of the uncertainty of the orientation parameters.
 We calculated $\sigma_{\Omega}$ on 100,000 approximately equally spaced points
 on the unit sphere for each microscope design. A desirable microscope design
 will have a small solid-angle uncertainty that is uniform for all fluorophore
-orientations. To summarize and compare microscope designs we use the mean and
-standard deviation of the solid-angle uncertainty at the sample points. Because
-the solid-angle uncertainty admits unbounded values, we ignore the highest
-percentile of the sample points and take the mean and standard deviation of the
-0-99th percentile.
+orientations. To summarize and compare microscope designs we use the median and
+median absolute deviation (MAD) of the solid-angle uncertainty.
 
 \section{Results}
 \subsection{One-Arm Designs}\label{one-arm}
@@ -281,12 +278,12 @@ percentile of the sample points and take the mean and standard deviation of the
 \item Figure \ref{fig:single-arm} shows the results when we used a single
   objective to illuminate and detect.
 \item We swept through the illumination and detection NA while keeping the
-  incident power ($I_{\text{tot}}$) constant and found that the lowest mean and
-  standard deviation of the solid-angle uncertainty occurs with a small
+  incident power ($I_{\text{tot}}$) constant and found that the lowest median and
+  MAD of the solid-angle uncertainty occurs with a small
   illumination NA and a large detection NA.
 \item A small illumination NA maximizes the ``contrast'' in the excitation
   efficiency, while a large detection NA maximizes the ``contrast'' in the
-  detection efficiency. 
+  detection efficiency.
 \end{itemize}
 
 \begin{figure}[htbp]
@@ -294,10 +291,10 @@ percentile of the sample points and take the mean and standard deviation of the
 \caption{Epi-illumination microscope with varying NA and underfilling of the
   back aperture. a) Schematic of a single-arm four-frame epi-illumination
   microscope. b) Solid angle uncertainty for the microscope in a) when
-  $I_{\text{tot}} = 1000$ photons. c) Mean of the solid-angle uncertainty as a
-  function of illumination and detection NA. d) Standard deviation of
-  solid-angle uncertainty as a function of illumination and detection NA. The
-  microscope in a) and b) is indicated by a cross in c) and d).}
+  $I_{\text{tot}} = 1000$ photons. c) Median of the solid-angle uncertainty as a
+  function of illumination and detection NA. d) MAD of solid-angle uncertainty
+  as a function of illumination and detection NA. The microscope in a) and b) is
+  indicated by a cross in c) and d).}
 \label{fig:single-arm}
 \end{figure}
 
@@ -307,9 +304,11 @@ percentile of the sample points and take the mean and standard deviation of the
   symmetric widefield design. Both objectives serve as a an illumination and
   detection NA.
 \item We swept through the NA and the angle between the objectives while
-  considering steric constraints and while keeping the incident power constant. 
-  We found that the lowest mean and standard deviation of the solid-angle
-  uncertainty occurs with orthogonal arms with the highest possible NA. 
+  considering steric constraints and while keeping the incident power constant.
+  We found that the lowest median of the solid-angle uncertainty occurs the largest
+  possible NA. We also found the increasing NA always lowers the MAD, but orthogonal
+  arms are not always best. At large NA, it is advantageous to move the objectives
+  as close or as far apart within steric constraints. 
 \end{itemize}
 
 \begin{figure}[htbp]
@@ -338,9 +337,9 @@ percentile of the sample points and take the mean and standard deviation of the
   asymmetric light-sheet designs. We kept the two arms orthogonal and used light-sheet
   illumination. We swept the NA asymmetry and the dose asymmetry and found that the
   best results occur for symmetric designs. 
-\item There is a tradeoff between solid-angle uncertainty mean and variance. You
+\item There is a tradeoff between solid-angle uncertainty median and MAD. You
   can slightly reduce the mean or variance by using an asymmetric design, but
-  you pay for it. Reducing the mean increases the variance and vice-versa.
+  you pay for it. Reducing the median increases the MAD and vice-versa.
 \item The best dual arm microscope design is a symmetric light-sheet
   illumination microscope with the largest possible detection NA.
 \end{itemize}
@@ -363,6 +362,9 @@ percentile of the sample points and take the mean and standard deviation of the
   arms. I'm still thinking/unsure about the factor of $\sim$1/9 due to rolling
   shutter on the lower objective. If we do end up using this factor it will
   weight the importance of a large NA on the upper objectives.
+\item There is a small dip in the MAD when the upper and lower objectives have
+  the same NA, but it is still better to use the largest possible lower
+  NA. 
 \end{itemize}
 
 \begin{figure}[htbp]

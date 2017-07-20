@@ -7,15 +7,14 @@ import os; import time; start = time.time(); print('Running...')
 import matplotlib.gridspec as gridspec
 
 # Main input parameters
-col_labels = ['Geometry (NA = 0.6, $\\beta=80{}^{\circ}$)', r'$\sigma_{\Omega}$ [sr]', 'Mean${}_{0-99}$$\{\sigma_{\Omega}\}$ [sr]', 'STD${}_{0-99}$$\{\sigma_{\Omega}\}$ [sr]']
+col_labels = ['Geometry (NA = 0.6, $\\beta=80{}^{\circ}$)', r'$\sigma_{\Omega}$ [sr]', 'Median$\{\sigma_{\Omega}\}$ [sr]', 'MAD$\{\sigma_{\Omega}\}$ [sr]']
 fig_labels = ['a)', 'b)', 'c)', 'd)']
 n_pts = 500 # Points on sphere
-n_pts_sphere = 25000 # Points on sphere
+n_pts_sphere = 50000 # Points on sphere
 n_grid_pts = 21
 n_rows, n_cols = 1, len(col_labels)
 inch_fig = 5
 dpi = 300
-percentile = 99
 
 # Setup figure and axes
 fig = plt.figure(figsize=(2.2*inch_fig, 2*inch_fig))
@@ -40,7 +39,6 @@ for ax, col_label, fig_label  in zip([ax0, ax1, ax2, ax3], col_labels, fig_label
     ax.annotate(fig_label, xy=(0,0), xytext=(0, 1.05), textcoords='axes fraction',
                 va='center', ha='center', fontsize=14, annotation_clip=False)
     
-
 for ax in [ax0, ax1, ax2, ax3]:
     ax.tick_params(axis='both', labelsize=14)
 for cax in [cax1, cax2, cax3]:
@@ -64,7 +62,7 @@ def is_feasible(pt):
 pts_list = [pt for pt in pts if is_feasible(pt)]
 pts = np.array(pts_list).T
 
-# Calculate mean and variance for each point
+# Calculate med and mad for each point
 def calc_stats(param):
     na = param[0]
     angle = param[1]
@@ -75,16 +73,17 @@ def calc_stats(param):
                                       n_pts=n_pts, max_photons=500, n_samp=1.33)
 
     exp.calc_estimation_stats()
-    data = exp.sa_uncert[exp.sa_uncert < np.percentile(exp.sa_uncert, percentile)]
-    return np.mean(data), np.std(data)
+    data = exp.sa_uncert
+    med = np.median(data)
+    return med, np.median(np.abs(data - med))
 
-mean = []
-std = []
+med = []
+mad = []
 for i, pt in enumerate(pts.T):
     print('Calculating microscope '+str(i+1)+'/'+str(pts.shape[1]))
     x = calc_stats(pt)
-    mean.append(x[0])
-    std.append(x[1])
+    med.append(x[0])
+    mad.append(x[1])
 
 # Plot 2D regions
 def plot_2d_regions(ax, cax, pts, data, special_pt=(-1,-1)):
@@ -180,8 +179,8 @@ util.plot_sphere(directions=exp.directions, data=exp.sa_uncert,
                  my_ax=ax1, my_cax=cax1)
     
 # Plots last two columns
-plot_2d_regions(ax2, cax2, pts, mean, special_pt=(na, angle))
-plot_2d_regions(ax3, cax3, pts, std, special_pt=(na, angle))
+plot_2d_regions(ax2, cax2, pts, med, special_pt=(na, angle))
+plot_2d_regions(ax3, cax3, pts, mad, special_pt=(na, angle))
     
 # Label axes and save
 print('Saving final figure.')    

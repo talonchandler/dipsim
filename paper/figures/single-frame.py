@@ -16,7 +16,7 @@ n_cols = 4
 inch_fig = 5
 dpi = 300
 
-col_labels = ['Geometry', r'Excitation Efficiency $\eta_{\text{exc}}$', r'Detection Efficiency $\eta_{\text{det}}$', r'Total Efficiency $\eta_{\text{tot}}$']
+col_labels = ['Geometry', r'Absorption Efficiency $\eta_{\textrm{abs}}$', r'Detection Efficiency $\eta_{\textrm{det}}$', r'Total Efficiency $\eta_{\textrm{tot}}$']
 row_labels = 3*['']
 
 # Generate axes

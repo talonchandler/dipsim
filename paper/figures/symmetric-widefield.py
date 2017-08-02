@@ -97,6 +97,10 @@ def plot_2d_regions(ax, cax, pts, data, special_pt=(-1,-1)):
     ax.yaxis.set_major_locator(FixedLocator([0, 45, 90, 135, 180]))
     ax.yaxis.set_major_formatter(FuncFormatter(degrees))
 
+    from matplotlib.ticker import FuncFormatter, FixedLocator
+    ax.set_yticks([0, 0.25, 0.5, 0.75, 1.0, 1.33])
+    ax.set_yticklabels(['0', '0.25', '0.5', '0.75', '1.0', '1.33'])
+
     # Annotation
     def my_annotate(ax, annotation, xy, fontsize=9, rotation=0):
         ax.annotate(annotation, xy=(0,0), xytext=xy, textcoords='axes fraction',

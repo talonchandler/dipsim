@@ -7,9 +7,9 @@ import os; import time; start = time.time(); print('Running...')
 import matplotlib.gridspec as gridspec
 
 # Main input parameters
-col_labels = ['Geometry\n($\\alpha_{1}$ = 60${}^{\circ}$, Dose${}_1$/Dose${}_2$ = 10)', r'$\sigma_{\Omega}$ [sr]', 'Median$\{\sigma_{\Omega}\}$ [sr]', 'MAD$\{\sigma_{\Omega}\}$ [sr]']
+col_labels = ['Geometry\n($\\alpha_{1}$ = 60${}^{\circ}$,\n Exposure${}_1$/Exposure${}_2$ = 5)', r'$\sigma_{\Omega}$ [sr]', 'Median$\{\sigma_{\Omega}\}$ [sr]', 'MAD$\{\sigma_{\Omega}\}$ [sr]']
 fig_labels = ['a)', 'b)', 'c)', 'd)']
-n_pts = 1500 # Points on sphere
+n_pts = 500 # Points on sphere
 n_pts_sphere = 50000 # Points on sphere
 n_grid_pts = 25
 inch_fig = 5
@@ -112,7 +112,7 @@ def plot_2d_regions(ax, cax, pts, data, special_pt=(-1,-1)):
                     va='center', ha='center', fontsize=fontsize,
                     annotation_clip=False, rotation=rotation, zorder=13)
 
-    my_annotate(ax, 'Dose${}_1$/Dose${}_2$', (0.5, -0.13), fontsize=14)
+    my_annotate(ax, 'Exposure${}_1$/Exposure${}_2$', (0.5, -0.13), fontsize=14)
     my_annotate(ax, '$\\alpha_{1}$', (-0.18, 0.5), fontsize=14, rotation=90)
     my_annotate(ax, '$\\alpha_{2}$', (1.17, 0.5), fontsize=14, rotation=-90)
 
@@ -157,7 +157,7 @@ na1 = 1.33*np.sin(np.deg2rad(alpha1))
 na2 = n*np.sin(np.pi/2 - np.arcsin(na1/n))
 theta1 = np.pi/2 - np.arcsin(na1/n)
 theta2 = -(np.pi/2 - np.arcsin(na2/n))
-dose_rat_plot = 1
+dose_rat_plot = 0.6985
 dose_ratio = 10**dose_rat_plot
 total_photons = 500
 dose2 = total_photons/(1 + dose_ratio)
@@ -205,7 +205,7 @@ scene_string += line_string
 util.draw_scene(scene_string, my_ax=ax0, dpi=dpi)
 util.plot_sphere(directions=exp.directions, data=exp.sa_uncert,
                  color_norm='log', linthresh=1e-4,
-                 color_max=2e-2, color_min=2e-3,
+                 color_max=1e-2, color_min=1e-3,
                  my_ax=ax1, my_cax=cax1)
     
 # Plots last two columns

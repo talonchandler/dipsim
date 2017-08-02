@@ -202,13 +202,15 @@ factor $D$.
 
 Finally, we'll confirm that the excitation efficiency reduces to Malus' law when $\Theta = \pi/2$ and as $\alpha \rightarrow 0$.
 \begin{align*}
-  &=\lim_{\alpha\rightarrow 0} \eta_{\text{exc},0}(\pi/2, \Phi, \alpha)\\
-  &= \lim_{\alpha\rightarrow 0}D(A + B + C\cos{2 \Phi})\\
-  &= \lim_{\alpha\rightarrow 0} \left(\frac{4}{3(1-\cos\alpha)}\right)\left(\frac{1}{4} - \frac{3}{16} \cos{\alpha } - \frac{1}{16} \cos^{3}{\alpha } + \left(\frac{7}{32} - \frac{3}{32} \cos{\alpha } - \frac{3}{32} \cos^{2}{\alpha } - \frac{1}{32} \cos^{3}{\alpha}\right)\cos 2\Phi\right)\\
-  &= \lim_{\alpha\rightarrow 0} \frac{\frac{1}{4} - \frac{1}{4} \cos{\alpha } - \frac{1}{12} \cos^{3}{\alpha } + \left(\frac{7}{24} - \frac{1}{8} \cos{\alpha } - \frac{1}{8} \cos^{2}{\alpha } - \frac{1}{24} \cos^{3}{\alpha}\right)\cos 2\Phi}{1 - \cos\alpha}\\
+  &=\lim_{\alpha\rightarrow 0} \eta_{\text{exc},0}(\Theta, \Phi, \alpha)\\
+  &= \lim_{\alpha\rightarrow 0}D(A + B\sin^2\Theta + C\sin^2\Theta\cos{2 \Phi})\\
+  &= \lim_{\alpha\rightarrow 0} \left(\frac{4}{3(1-\cos\alpha)}\right)\bigg(\frac{1}{4} - \frac{3}{8} \cos{\alpha } + \frac{1}{8} \cos^{3}{\alpha } + \left(\frac{3}{16}\cos\alpha - \frac{3}{16}\cos^3\alpha\right)\sin^2\Theta\\ \ \ \ \ \ &+ \left(\frac{7}{32} - \frac{3}{32} \cos{\alpha } - \frac{3}{32} \cos^{2}{\alpha } - \frac{1}{32} \cos^{3}{\alpha}\right)\sin^2\Theta\cos 2\Phi\bigg)\\
+  &= \lim_{\alpha\rightarrow 0} \frac{\frac{1}{3} - \frac{1}{2} \cos{\alpha } + \frac{1}{6} \cos^{3}{\alpha } + \left(\frac{1}{4}\cos\alpha - \frac{1}{4}\cos^3\alpha\right)\sin^2\Theta + \left(\frac{7}{24} - \frac{1}{8} \cos{\alpha } - \frac{1}{8} \cos^{2}{\alpha } - \frac{1}{24} \cos^{3}{\alpha}\right)\sin^2\Theta\cos 2\Phi}{1 - \cos\alpha}\\
   \intertext{Applying L'Hospital's rule gives}
-  &= \lim_{\alpha\rightarrow 0} \frac{\frac{1}{4} \sin{\alpha } + \frac{1}{4}\sin\alpha\cos^{2}{\alpha } + \left(\frac{1}{8} \sin{\alpha } + \frac{1}{4}\sin \alpha \cos{\alpha } + \frac{1}{8} \sin\alpha\cos^{2}{\alpha}\right)\cos 2\Phi}{\sin\alpha}\\
-  &= \frac{1}{2} + \frac{1}{2}\cos2\Phi = \boxed{\cos^2{\Phi}}.
+  &= \lim_{\alpha\rightarrow 0} \frac{\frac{1}{2} \sin{\alpha } - \frac{1}{2}\sin\alpha\cos^{2}{\alpha } + \left(-\frac{1}{4}\sin\alpha + \frac{3}{4}\sin\alpha\cos^2\alpha\right)\sin^2\Theta + \left(\frac{1}{8} \sin{\alpha } + \frac{1}{4}\sin \alpha \cos{\alpha } + \frac{1}{8} \sin\alpha\cos^{2}{\alpha}\right)\sin^2\Theta\cos 2\Phi}{\sin\alpha}\\
+    &= \lim_{\alpha\rightarrow 0} \frac{1}{2} - \frac{1}{2}\cos^{2}{\alpha } + \left(-\frac{1}{4} + \frac{3}{4}\cos^2\alpha\right)\sin^2\Theta + \left(\frac{1}{8} + \frac{1}{4}\cos{\alpha } + \frac{1}{8}\cos^{2}{\alpha}\right)\sin^2\Theta\cos 2\Phi\\
+  &= \frac{1}{2}\sin^2\Theta + \frac{1}{2}\sin^2\Theta\cos 2\Phi\\
+  &= \boxed{\sin^2\Theta\cos^2{\Phi}}.
 \end{align*}
 
 \section{Epi-illumination and Epi-detection Forward Model}

@@ -205,7 +205,7 @@ scene_string += line_string
 util.draw_scene(scene_string, my_ax=ax0, dpi=dpi)
 util.plot_sphere(directions=exp.directions, data=exp.sa_uncert,
                  color_norm='log', linthresh=1e-4,
-                 color_max=1e-2, color_min=1e-3,
+                 color_max=1e-2, color_min=1e-3, tick_pos='e',
                  my_ax=ax1, my_cax=cax1)
     
 # Plots last two columns

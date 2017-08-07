@@ -43,8 +43,8 @@ for cax in [cax1, cax2, cax3]:
     cax.tick_params(axis='both', labelsize=14)
 
 # Calculate a list of points to sample in region
-n = 1.33
-NA_ill = np.linspace(0, 1.33, num=1000)
+n = 0.94
+NA_ill = np.linspace(0, 0.94, num=1000)
 NA_det = NA_ill
 pts = np.mgrid[n/n_grid_pts/2:n-n/n_grid_pts/2:n_grid_pts*1j,n/n_grid_pts/2:n-n/n_grid_pts/2:n_grid_pts*1j].reshape((2, n_grid_pts**2)).T.tolist()
 
@@ -86,10 +86,10 @@ def plot_2d_regions(ax, cax, pts, data, special_pt=(-1,-1)):
 
     # Set y ticks
     from matplotlib.ticker import FuncFormatter, FixedLocator
-    ax.set_yticks([0, 0.25, 0.5, 0.75, 1.0, 1.33])
-    ax.set_yticklabels(['0', '0.25', '0.5', '0.75', '1.0', '1.33'])
-    ax.set_xticks([0, 0.25, 0.5, 0.75, 1.0, 1.33])
-    ax.set_xticklabels(['0', '0.25', '0.5', '0.75', '1.0', '1.33'])
+    ax.set_yticks([0, 0.25, 0.5, 0.75, 0.94])
+    ax.set_yticklabels(['0', '0.25', '0.5', '0.75', '0.94'])
+    ax.set_xticks([0, 0.25, 0.5, 0.75, 0.94])
+    ax.set_xticklabels(['0', '0.25', '0.5', '0.75', '0.94'])
 
     # Annotation
     def my_annotate(ax, annotation, xy, fontsize=9, rotation=0):
@@ -103,7 +103,7 @@ def plot_2d_regions(ax, cax, pts, data, special_pt=(-1,-1)):
     # Calculate colors
     color_map='coolwarm'
     color_norm='log'
-    color_min=1e-5
+    color_min=1e-4
     color_max=1e-1
     if color_norm == 'linear':
         norm = matplotlib.colors.Normalize(vmin=color_min, vmax=color_max)
@@ -134,7 +134,7 @@ def plot_2d_regions(ax, cax, pts, data, special_pt=(-1,-1)):
 
     # Mask around lines
     ax.fill_between(NA_ill, NA_det, 0, color='white', zorder=2)
-    ax.set(xlim=[0, 1.33], ylim=[0, 1.33])
+    ax.set(xlim=[0, 0.94], ylim=[0, 0.94])
 
 # Plot first two columns
 na_ill = 0.6

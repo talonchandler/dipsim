@@ -7,39 +7,43 @@ import os; import time; start = time.time(); print('Running...')
 import matplotlib.gridspec as gridspec
 
 # Main input parameters
-col_labels = ['Geometry (NA = 0.6, $\\beta=80{}^{\circ}$)', r'$\sigma_{\Omega}$ [sr]', 'Median$\{\sigma_{\Omega}\}$ [sr]', 'MAD$\{\sigma_{\Omega}\}$ [sr]']
-fig_labels = ['a)', 'b)', 'c)', 'd)']
-n_pts = 500 # Points on sphere
+col_labels = ['Geometry (NA = 0.6, $\\beta=80{}^{\circ}$)', r'$\sigma_{\Omega}$ [sr]', 'Median$\{\sigma_{\Omega}\}$ [sr]', 'MAD$\{\sigma_{\Omega}\}$ [sr]', '', '']
+fig_labels = ['a)', 'b)', 'c)', 'd)', 'e)', 'f)']
+n_pts = 5000 #Points on sphere
 n_pts_sphere = 50000 # Points on sphere
 n_grid_pts = 21
+n_line_pts = 50
 n_rows, n_cols = 1, len(col_labels)
 inch_fig = 5
 dpi = 300
 
 # Setup figure and axes
-fig = plt.figure(figsize=(2.2*inch_fig, 2*inch_fig))
-gs0 = gridspec.GridSpec(2, 2, wspace=0.4, hspace=0.1)
+fig = plt.figure(figsize=(2.2*inch_fig, 3.0*inch_fig))
+gs0 = gridspec.GridSpec(3, 2, wspace=0.4, hspace=0.2)
 gs00 = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs0[0,0], width_ratios=[1, 0.05], wspace=0.1)
 gs10 = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs0[1,0], width_ratios=[1, 0.05], wspace=0.1)
 gs01 = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs0[0,1], width_ratios=[1, 0.05], wspace=0.1)
 gs11 = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs0[1,1], width_ratios=[1, 0.05], wspace=0.1)
+gs20 = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs0[2,0], width_ratios=[1, 0.05], wspace=0.1)
+gs21 = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs0[2,1], width_ratios=[1, 0.05], wspace=0.1)
 ax0 = plt.subplot(gs00[0])
 ax1 = plt.subplot(gs01[0])
 ax2 = plt.subplot(gs10[0])
 ax3 = plt.subplot(gs11[0])
+ax4 = plt.subplot(gs20[0])
+ax5 = plt.subplot(gs21[0])
 cax0 = plt.subplot(gs00[1]); cax0.axis('off');
 cax1 = plt.subplot(gs01[1])
 cax2 = plt.subplot(gs10[1])
 cax3 = plt.subplot(gs11[1])
 
-
-for ax, col_label, fig_label  in zip([ax0, ax1, ax2, ax3], col_labels, fig_labels):
+for ax, col_label, fig_label  in zip([ax0, ax1, ax2, ax3, ax4, ax5], col_labels, fig_labels):
     ax.annotate(col_label, xy=(0,0), xytext=(0.5, 1.05), textcoords='axes fraction',
                 va='center', ha='center', fontsize=14, annotation_clip=False)
     ax.annotate(fig_label, xy=(0,0), xytext=(0, 1.05), textcoords='axes fraction',
                 va='center', ha='center', fontsize=14, annotation_clip=False)
     
-for ax in [ax0, ax1, ax2, ax3]:
+for ax in [ax0, ax1, ax2, ax3, ax4, ax5]:
     ax.tick_params(axis='both', labelsize=14)
 for cax in [cax1, cax2, cax3]:
     cax.tick_params(axis='both', labelsize=14)
@@ -86,7 +90,8 @@ for i, pt in enumerate(pts.T):
     mad.append(x[1])
 
 # Plot 2D regions
-def plot_2d_regions(ax, cax, pts, data, special_pt=(-1,-1)):
+def plot_2d_regions(ax, cax, pts, data, special_pt=(-1,-1),
+                    line_pt0=None, line_pt1=None):
     ax.plot(NA, lens_bound, 'k-', zorder=11)
     ax.plot(NA, cover_bound, 'k-', zorder=11)
 
@@ -98,8 +103,8 @@ def plot_2d_regions(ax, cax, pts, data, special_pt=(-1,-1)):
     ax.yaxis.set_major_formatter(FuncFormatter(degrees))
 
     from matplotlib.ticker import FuncFormatter, FixedLocator
-    ax.set_yticks([0, 0.25, 0.5, 0.75, 1.0, 1.33])
-    ax.set_yticklabels(['0', '0.25', '0.5', '0.75', '1.0', '1.33'])
+    ax.set_xticks([0, 0.25, 0.5, 0.75, 1.0, 1.33])
+    ax.set_xticklabels(['0', '0.25', '0.5', '0.75', '1.0', '1.33'])
 
     # Annotation
     def my_annotate(ax, annotation, xy, fontsize=9, rotation=0):
@@ -107,7 +112,7 @@ def plot_2d_regions(ax, cax, pts, data, special_pt=(-1,-1)):
                     va='center', ha='center', fontsize=fontsize,
                     annotation_clip=False, rotation=rotation, zorder=13)
 
-    my_annotate(ax, 'NA', (0.5, -0.10), fontsize=14)
+    my_annotate(ax, 'NA', (0.5, -0.12), fontsize=14)
     my_annotate(ax, '$\\beta$, Angle Between Objectives', (-0.18, 0.5), fontsize=14, rotation=90)
     my_annotate(ax, 'Objectives collide\nwith cover slip', (0.65, 0.85), fontsize=14)
     my_annotate(ax, 'Objectives collide\nwith each other', (0.65, 0.15), fontsize=14)
@@ -135,8 +140,10 @@ def plot_2d_regions(ax, cax, pts, data, special_pt=(-1,-1)):
     # Plot scatter for colorbar
     sc = ax.scatter(pts[0,:], pts[1,:], c=data, s=0, cmap=cmap, norm=norm,
                     marker='s', lw=0)
-
+    
+    ax.plot([line_pt0[0], line_pt1[0]], [line_pt0[1], line_pt1[1]], '-g')
     ax.plot(special_pt[0], special_pt[1], 'kx', markersize=5)
+
 
     # Plot patches
     width = n/(n_grid_pts)
@@ -149,11 +156,36 @@ def plot_2d_regions(ax, cax, pts, data, special_pt=(-1,-1)):
     fig.colorbar(sc, cax=cax, orientation='vertical')
 
     # Mask around lines
-    ax.fill_between(NA, lens_bound, 0, color='white', zorder=10)
-    ax.fill_between(NA, cover_bound, 180, color='white', zorder=10)
+    ax.fill_between(NA, lens_bound, 0, color='white', zorder=2)
+    ax.fill_between(NA, cover_bound, 180, color='white', zorder=2)
 
     ax.set(xlim=[0, 1.33], ylim=[0, 180])
 
+# Plot 1D region
+def plot_1d_regions(ax, pts, data, special_pt=(-1,-1), y_pos=None, y_lim=None):
+    # Set y ticks
+    from matplotlib.ticker import FuncFormatter, FixedLocator
+    def degrees(x, pos):
+        return str(int(x)) + '${}^{\circ}$'
+    ax.xaxis.set_major_locator(FixedLocator([53, 90, 135, 127]))
+    ax.xaxis.set_major_formatter(FuncFormatter(degrees))
+
+    from matplotlib.ticker import FuncFormatter, FixedLocator
+    ax.set_yticks(y_pos)
+    ax.set_yticklabels(["{:.0e}".format(x).replace('e-0', 'e-') for x in y_pos])
+
+    # Annotation
+    def my_annotate(ax, annotation, xy, fontsize=9, rotation=0):
+        ax.annotate(annotation, xy=(0,0), xytext=xy, textcoords='axes fraction',
+                    va='center', ha='center', fontsize=fontsize,
+                    annotation_clip=False, rotation=rotation, zorder=13)
+
+    my_annotate(ax, '$\\beta$, Angle Between Objectives', (0.5, -0.12), fontsize=14)
+    my_annotate(ax, 'Median$\{\sigma_{\Omega}\}$ [sr]', (-0.18, 0.5), fontsize=14, rotation=90)
+
+    ax.set(xlim=[53, 127], ylim=y_lim)
+    ax.plot(pts, data, '-g')
+    
 # Plot first two columns
 angle = 80
 na = 0.6
@@ -181,11 +213,31 @@ util.plot_sphere(directions=exp.directions, data=exp.sa_uncert,
                  color_norm='log', linthresh=1e-4,
                  color_min=None, color_max=None,
                  my_ax=ax1, my_cax=cax1)
-    
+
+# Find profile points
+line_na = 0.6
+min_beta = np.rad2deg(2*np.arcsin(line_na/n))
+max_beta = 180 - np.rad2deg(2*np.arcsin(line_na/n))
+
 # Plots last two columns
-plot_2d_regions(ax2, cax2, pts, med, special_pt=(na, angle))
-plot_2d_regions(ax3, cax3, pts, mad, special_pt=(na, angle))
-    
+plot_2d_regions(ax2, cax2, pts, med, special_pt=(na, angle), line_pt0=(line_na, min_beta), line_pt1=(line_na, max_beta))
+plot_2d_regions(ax3, cax3, pts, mad, special_pt=(na, angle), line_pt0=(line_na, min_beta), line_pt1=(line_na, max_beta))
+
+# Calculate and plot profile
+line_beta = np.linspace(min_beta, max_beta, n_line_pts)
+line_na = 0.6*np.ones(line_beta.shape)
+line_pts = np.vstack([line_na, line_beta])
+line_med = []
+line_mad = []
+for i, pt in enumerate(line_pts.T):
+    print('Calculating microscope '+str(i+1)+'/'+str(line_pts.shape[1]))
+    x = calc_stats(pt)
+    line_med.append(x[0])
+    line_mad.append(x[1])
+
+plot_1d_regions(ax4, line_beta, line_med, special_pt=angle, y_pos=[4.5e-3, 5e-3, 5.5e-3], y_lim=[4.4e-3, 5.6e-3])
+plot_1d_regions(ax5, line_beta, line_mad, special_pt=angle, y_pos=[1e-3, 1.5e-3, 2e-3], y_lim=[8e-4, 2e-3])
+
 # Label axes and save
 print('Saving final figure.')    
 fig.savefig('../paper/symmetric-widefield.pdf', dpi=250)

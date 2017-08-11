@@ -104,7 +104,7 @@ def plot_2d_regions(ax, cax, pts, data, special_pt=(-1,-1)):
     color_map='coolwarm'
     color_norm='log'
     color_min=1e-4
-    color_max=1e-1
+    color_max=1e1
     if color_norm == 'linear':
         norm = matplotlib.colors.Normalize(vmin=color_min, vmax=color_max)
     elif color_norm == 'log':
@@ -152,7 +152,7 @@ scene_string = exp.scene_string()
 util.draw_scene(scene_string, my_ax=ax0, dpi=dpi)
 util.plot_sphere(directions=exp.directions, data=exp.sa_uncert,
                  color_norm='log', linthresh=1e-4,
-                 color_min=None, color_max=None,
+                 color_min=1e-4, color_max=1e1,
                  my_ax=ax1, my_cax=cax1)
     
 # Plots last two columns

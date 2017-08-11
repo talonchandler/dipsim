@@ -41,7 +41,7 @@ def fibonacci_sphere(n):
     return np.vstack((theta, phi)).T
 
 def plot_sphere(filename=None, directions=None, data=None, interact=False,
-                color_norm='linear', color_min=0, color_max=None, tick_pos=None,
+                color_norm='linear', color_min=0, color_max=None,
                 gamma=0.25, color_map='coolwarm', linthresh=1e-3,
                 my_ax=None, my_cax=None, dpi=500, vis_px=1000,
                 save_file=False):
@@ -103,9 +103,6 @@ def plot_sphere(filename=None, directions=None, data=None, interact=False,
             cmap = ax.imshow(im, interpolation='none', cmap=color_map, norm=norm)
             f.colorbar(cmap, cax=cax, orientation='vertical')
 
-        if tick_pos != None:
-            cax.yaxis.set_ticklabels(['$10^{-3}$']+8*['']+['$10^{-2}$'])            
-            
         # Save
         if save_file:
             f.savefig(filename, dpi=dpi)

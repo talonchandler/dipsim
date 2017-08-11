@@ -6,7 +6,7 @@ import os; import time; start = time.time(); print('Running...')
 
 # Main input parameters
 row_labels = ['Geometry', r'$\sigma_{\Omega}$']
-col_labels = ['Single-view (NA${}_\\textrm{ill}$=0, NA${}_\\textrm{det}$=1.1', 'Dual-view oblique symmetric widefield (NA=0.6, $\beta$=53${}^{\circ}$', 'Dual-view orthogonal symmetric light-sheet (NA=0.94)']
+col_labels = ['Single-view (NA${}_\\textrm{ill}$=0, NA${}_\\textrm{det}$=1.1', 'Dual-view oblique symmetric widefield (NA=0.6, $\beta$=53${}^{\circ}$', 'Dual-view orthogonal symmetric light-sheet (NA=0.8)', 'Dual-view orthogonal symmetric light-sheet (NA=0.94)']
 
 n_pts = 10000
 n_cols = len(col_labels)
@@ -28,12 +28,19 @@ m2 = multiframe.MultiFrameMicroscope(ill_thetas=[angle, -angle], det_thetas=[-an
                                     n_pts=n_pts, max_photons=500, n_samp=1.33)
 
 m3 = multiframe.MultiFrameMicroscope(ill_thetas=[np.pi/4, -np.pi/4], det_thetas=[-np.pi/4, np.pi/4],
+                                    ill_nas=2*[0], det_nas=2*[0.8],
+                                    ill_types=2*['sheet'], det_types=2*['lens'],
+                                    colors=['(1,0,0)','(0,0,1)'], n_frames=4,
+                                    n_pts=n_pts, max_photons=500, n_samp=1.33)
+
+
+m4 = multiframe.MultiFrameMicroscope(ill_thetas=[np.pi/4, -np.pi/4], det_thetas=[-np.pi/4, np.pi/4],
                                     ill_nas=2*[0], det_nas=2*[1.33*np.sin(np.pi/4)],
                                     ill_types=2*['sheet'], det_types=2*['lens'],
                                     colors=['(1,0,0)','(0,0,1)'], n_frames=4,
                                     n_pts=n_pts, max_photons=500, n_samp=1.33)
 
-experiments = [m1, m2, m3]
+experiments = [m1, m2, m3, m4]
 
 # Generate axes
 size = (inch_fig*n_cols, inch_fig*n_rows)

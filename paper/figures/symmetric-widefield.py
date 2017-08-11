@@ -121,8 +121,8 @@ def plot_2d_regions(ax, cax, pts, data, special_pt=(-1,-1),
     # Calculate colors
     color_map='coolwarm'
     color_norm='log'
-    color_min=1e-3
-    color_max=1e0
+    color_min=1e-4
+    color_max=1e1
     if color_norm == 'linear':
         norm = matplotlib.colors.Normalize(vmin=color_min, vmax=color_max)
     elif color_norm == 'log':
@@ -162,7 +162,7 @@ def plot_2d_regions(ax, cax, pts, data, special_pt=(-1,-1),
     ax.set(xlim=[0, 1.33], ylim=[0, 180])
 
 # Plot 1D region
-def plot_1d_regions(ax, pts, data, special_pt=(-1,-1), y_pos=None, y_lim=None):
+def plot_1d_regions(ax, pts, data, special_pt=(-1,-1), y_pos=None, y_lim=None, xtitle=None):
     # Set y ticks
     from matplotlib.ticker import FuncFormatter, FixedLocator
     def degrees(x, pos):
@@ -181,7 +181,7 @@ def plot_1d_regions(ax, pts, data, special_pt=(-1,-1), y_pos=None, y_lim=None):
                     annotation_clip=False, rotation=rotation, zorder=13)
 
     my_annotate(ax, '$\\beta$, Angle Between Objectives', (0.5, -0.12), fontsize=14)
-    my_annotate(ax, 'Median$\{\sigma_{\Omega}\}$ [sr]', (-0.18, 0.5), fontsize=14, rotation=90)
+    my_annotate(ax, xtitle, (-0.18, 0.5), fontsize=14, rotation=90)
 
     ax.set(xlim=[53, 127], ylim=y_lim)
     ax.plot(pts, data, '-g')
@@ -211,7 +211,7 @@ scene_string += arc_string
 util.draw_scene(scene_string, my_ax=ax0, dpi=dpi)
 util.plot_sphere(directions=exp.directions, data=exp.sa_uncert,
                  color_norm='log', linthresh=1e-4,
-                 color_min=None, color_max=None,
+                 color_min=1e-4, color_max=1e1,
                  my_ax=ax1, my_cax=cax1)
 
 # Find profile points
@@ -235,8 +235,8 @@ for i, pt in enumerate(line_pts.T):
     line_med.append(x[0])
     line_mad.append(x[1])
 
-plot_1d_regions(ax4, line_beta, line_med, special_pt=angle, y_pos=[4.5e-3, 5e-3, 5.5e-3], y_lim=[4.4e-3, 5.6e-3])
-plot_1d_regions(ax5, line_beta, line_mad, special_pt=angle, y_pos=[1e-3, 1.5e-3, 2e-3], y_lim=[8e-4, 2e-3])
+plot_1d_regions(ax4, line_beta, line_med, special_pt=angle, y_pos=[4.5e-3, 5e-3, 5.5e-3], y_lim=[4.4e-3, 5.6e-3], xtitle='Median$\{\sigma_{\Omega}\}$ [sr]')
+plot_1d_regions(ax5, line_beta, line_mad, special_pt=angle, y_pos=[1e-3, 1.5e-3, 2e-3], y_lim=[8e-4, 2e-3], xtitle='MAD$\{\sigma_{\Omega}\}$ [sr]')
 
 # Label axes and save
 print('Saving final figure.')    

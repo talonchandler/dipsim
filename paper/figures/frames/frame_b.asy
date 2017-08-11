@@ -35,7 +35,7 @@ real f = 0.3*pi; //phi
 triple A = r*expi(q,f);
 
 // Draw other lines
-draw(L=Label("$\mathbf{\hat{e}_{\text{exc}}}$", position=Relative(1.1), align=E), O--expi(pi/2,f), thinblack, Arrow3);
+draw(L=Label("$\mathbf{\hat{p}_{\text{exc}}}$", position=Relative(1.1), align=E), O--expi(pi/2,f), thinblack, Arrow3);
 draw(O--expi(pi/2,f), thinblack+dashed);
 draw("$\phi_{\text{exc}}$", arc(O,0.15*X,0.15*expi(pi/2,f)), thinblack);
 shipout(scale(4.0)*currentpicture.fit());

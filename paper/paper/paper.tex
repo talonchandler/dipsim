@@ -9,12 +9,12 @@
 \providecommand{\intinf}{\int_{-\infty}^{\infty}}
 
 \begin{document}
-\title{Single-molecule orientation determination with multiview polarized
+\title{Single-fluorophore orientation determination with multiview polarized
   illumination: modeling and microscope design}
 
 \author{Talon Chandler,\authormark{1,*} Shalin Mehta,\authormark{2} Hari Shroff,\authormark{3,4} Rudolf Oldenbourg,\authormark{2, 5} and Patrick J. La Rivi\`ere\authormark{1, 4}}
 \address{\authormark{1}University of Chicago, Department of Radiology, Chicago, Illinois 60637, USA\\
-  \authormark{2}Marine Biological Laboratory, Bell Center for Regenerative Medicine, Woods Hole, Massachusetts, USA\\
+  \authormark{2}Marine Biological Laboratory, Bell Center, Woods Hole, Massachusetts, USA\\
   \authormark{3}Section on High Resolution Optical Imaging, National Institute
   of Biomedical Imaging and Bioengineering, National Institutes of Health,
   Bethesda, Maryland 20892, USA\\
@@ -27,9 +27,9 @@
 %%%%%%%%%%%%%%%%%%% abstract and OCIS codes %%%%%%%%%%%%%%%%
 \begin{abstract*}
   We investigate the use of polarized illumination in multiview microscopes for
-  determining the orientation of single molecules. First, we relate the
-  orientation of single molecules to measurable intensities in multiview
-  microscopes and develop an information theoretic metric---the solid angle
+  determining the orientation of single fluorescent molecules. First, we relate
+  the orientation of single molecules to measurable intensities in multiview
+  microscopes and develop an information-theoretic metric---the solid-angle
   uncertainty---to compare the ability of multiview microscopes to estimate the
   orientation of single molecules. Next, we compare a broad class of microscopes
   using this metric---single- and dual-view microscopes with varying
@@ -57,25 +57,25 @@
 % \end{thebibliography}
 
 \section{Introduction}
-The orientation of single molecules is a valuable reporter for biological
-processes. By imaging biological samples with fluorescent probes that are fixed
-to known structures, researchers have studied the dynamics of motor proteins
-\cite{peterman2001, forkey2003}, DNA \cite{backer2016}, actin \cite{mehta2016},
-septin \cite{demay2011, mcquilken2017}, and membranes \cite{anantharam2010}. The
-number of techniques available to biologists for measuring the orientation of
-single molecules in live cells is continually expanding. A recent review
-\cite{backlund2014} identified three major categories of single molecule
-orientation determination techniques:
+The orientation of single molecules is a valuable reporter for
+biological processes. By imaging biological samples with fluorescent probes that
+are fixed to known structures, researchers have studied the dynamics of motor
+proteins \cite{peterman2001, forkey2003}, DNA \cite{backer2016}, actin
+\cite{mehta2016}, septin \cite{demay2011, mcquilken2017}, and membranes
+\cite{anantharam2010}. The number of techniques available to biologists for
+measuring the orientation of single molecules in live cells is continually
+expanding. A recent review \cite{backlund2014} identified three major categories
+of single-molecule orientation determination techniques:
 
-\textbf{Spatial variation of emission} techniques image single molecules and use
-the spatial distribution of intensity in the back focal plane \cite{lieb2004} or
+\textbf{Spatial/angular variation of emission} techniques image single molecules
+and use the distribution of intensity in the back focal plane \cite{lieb2004} or
 in the image plane \cite{backer2014} to estimate their orientation. The best
 techniques in this category use defocusing or phase masks in the back focal
 plane to encode orientation and position information in the image
-\cite{agrawal2012}. These techniques can estimate the orientation of
-molecules in all orientations and only require a single frame, but they
+\cite{agrawal2012}. These techniques can estimate the orientation of molecules
+in all orientations and only require a single intensity measurement, but they
 require complex reconstruction algorithms, expensive high numerical aperture
-(NA) optics, and sensitive detectors. 
+(NA) optics, and sensitive detectors.
 
 \textbf{Spatial variation of illumination polarization} techniques vary the
 polarization and intensity in the illumination path to excite molecules in
@@ -84,31 +84,37 @@ techniques can accurately estimate the orientation of molecules in all
 orientations, they require scanning which makes these techniques too slow for
 live cell imaging.
 
-\textbf{Polarized illumination or detection} techniques exploit the anisotropic
-absorption and emission pattern of single molecules to estimate their
-orientation. By measuring the total intensity in the detector plane while
-varying polarizer orientations on the illumination or detection path, the
-orientation of the molecule can be estimated. These techniques are easy to
-implement---changing the illumination or detection polarization is simple with a
-polarization splitter \cite{mehta2016} or universal compensator
-\cite{oldenbourg1995}---and the reconstruction methods are straightforward
-\cite{fourkas2001, mehta2016, backer2016}. The main drawback is that these
-techniques require several polarization frames to estimate the orientation of a
-single molecule. Despite the requirement for multiple frames, polarized
-illumination or detection methods are good choices for live cell imaging because
-of their good combination of speed and ease of implementation.
+\textbf{Polarized illumination or detection} techniques vary the polarization of
+light in the illumination or detection paths and exploit the anisotropic
+absorption and emission patterns of single molecules to estimate their
+orientation. By illuminating and detecting from the entire sample, not just the
+focal volume, these techniques can estimate the orientation of many molecules in
+parallel without scanning. These techniques are easy to implement---changing the
+illumination or detection polarization is simple with a polarization splitter
+\cite{mehta2016} or universal compensator/polarizer \cite{shribak2003}---and the
+reconstruction methods are straightforward \cite{fourkas2001, mehta2016,
+  backer2016}. The main drawback is that these techniques require several
+intensity measurements under different polarization orientations to estimate the
+orientation of a single molecule. Despite the requirement for multiple
+measurements, polarized illumination or detection methods are good choices for
+live cell imaging because of their combination of speed and ease of
+implementation.
 
-The choice remains---is it best to put polarizers on the illumination path or
-the detection path? Placing a polarizer in the illumination path lengthens
-acquisition time because the polarizer needs to be changed for each polarization
-frame, but polarized illumination provides the largest intensity differences
-between molecules in different orientations. Placing polarizers in the detection
-path doesn't slow down acquisition (multiple polarization frames can be
-collected at once with a polarization splitter), but polarized detection
-provides a smaller difference in intensity between molecules in different
-orientations than polarized illumination. We are most interested in finding the
-orientation of molecules with high precision, so polarized illumination is the
-method we consider and extend in this paper.
+To develop a polarized illumination or detection technique we need to choose a
+method for varying the polarization and place it in the illumination or
+detection path. The simplest and most inexpensive way to vary the polarization
+is with a division-of-time (DoT) polarizer using a rotating polarizer or a
+universal compensator/polarizer. Other polarization methods
+(divison-of-amplitude, division-of-focal-plane) are more expensive and require
+additional alignment or interpolation \cite{tyo2006}. The simplicity of DoT
+polarization comes at the expense of temporal resolution---intensity
+measurements are made one after the other which increases the acquisition
+time. If we place the DoT polarizer in the detection path, we will block
+valuable photons from reaching the detector which unnecessarily increases
+exposure to the sample \cite{demay2011}. By placing the DoT polarizer in the
+illumination arm we minimize exposure to the sample. We focus on DoT polarized
+illumination in this paper because of its combination of simplicity and low
+sample exposure.
 
 All single molecule orientation determination methods suffer from some degree of
 anisotropic orientation uncertainty, i.e., some molecular orientations cannot be
@@ -117,24 +123,26 @@ determined at all---the forward model can be degenerate for specific dipole
 orientations \cite{fourkas2001, lu2008}. We feel that the importance of
 isotropic orientation uncertainty has been underappreciated. To our knowledge,
 the only authors who have considered anisotropic orientation uncertainty have
-only analyzed a small set of molecular orientations instead of all orientations
-\cite{agrawal2012}. Our view is that an ideal technique for determining the
-orientation of single molecules can reconstruct the orientation with a small and
-nearly uniform uncertainty for all molecule orientations.
+only analyzed a subset of molecular orientations \cite{agrawal2012}. Our view is
+that an ideal technique for determining the orientation of single molecules can
+reconstruct the orientation with a small and nearly uniform uncertainty for all
+molecule orientations.
 
 Recently, there has been increasing interest in multiview microscopy techniques
 for biological imaging \cite{wu2013, keller2015, wu2016, wu2017}. Multiview
 microscopes offer two major advantages over single-view microscopes. First,
 multiview microscopes can achieve nearly isotropic resolution compared to the
-poor axial resolution of single-view microscopes. Second, multiview microscopes
-can use light-sheet illumination to reduce phototoxicity without requiring
-dedicated illumination optics. For example, if two orthogonal objectives are
-focused on the same point, then both objectives can alternate roles as the
-light-sheet illumination path and as the detection path. Light-sheet
-illumination offers a major reduction of phototoxicity because a light sheet
-only illuminates in focus regions while single-view microscopes illuminate out
-of focus regions. Together, these advantages make multiview microscopes good
-candidates for imaging live biological specimens for long periods.
+anisotropic resolution of single-view microscopes whose axial resolution is
+reduced by at least a factor of two compared to lateral resolution. Second,
+multiview microscopes can use light-sheet illumination to reduce phototoxicity
+without requiring dedicated illumination optics. For example, if two orthogonal
+objectives are focused on the same point, then the objectives can alternate
+roles as the light-sheet illumination path and as the detection
+path. Light-sheet illumination offers a major reduction of phototoxicity because
+a light sheet only illuminates in-focus regions while other widefield and
+confocal approaches inevitably illuminate out-of-focus regions. Together, these
+advantages make multiview microscopes good candidates for imaging live
+biological specimens for long periods.
 
 In this work we explore the use of polarized illumination in multiview
 microscopes for determining the orientation of single molecules. Existing
@@ -142,30 +150,24 @@ multiview microscopes can easily be outfitted with fast-switching polarizers
 that do not degrade image quality, so polarized illumination is a natural way to
 augment multiview microscopes for measuring the orientation of single
 molecules. Furthermore, multiview microscopes can achieve nearly isotropic
-resolution while delivering selective illumination. We hypothesize that
-multiview microscopes will also provide a small and uniform orientation
-uncertainty for single molecules in all orientations. In section \ref{methods}
-we develop the required theory for polarized illumination microscopy and develop
-information theoretic metrics to compare multiview microscopes. In section
-\ref{results} we compare the results for a wide range of multiview microscope
-designs. Finally, in section \ref{discussion} we discuss the results and their
-impact on polarized multiview microscope design.
+resolution while delivering selective illumination. We find that multiview
+microscopes also provide a small and uniform orientation uncertainty for single
+molecules in all orientations. In section \ref{methods} we develop the theory
+required to model polarized illumination microscopes, and we develop metrics to
+compare microscope designs. In section \ref{results} we compare the results for
+a wide range of multiview microscope designs. Finally, in section
+\ref{discussion} we discuss the results and their impact on polarized multiview
+microscope design.
 
 \section{Methods}\label{methods}
 In this section we develop a method to compare multiview polarized illumination
 microscopes for the task of reconstructing molecular orientations. In sections
-\ref{excitation}--\ref{forward} we develop the forward model for single-frame
-microscopes with a fixed illumination and detection configuration. In section
-\ref{designs} we list a variety of ways that single-frame microscopes can be
-combined to create experimentally realizable multi-frame microscopes. Finally,
-in section \ref{metrics} we develop metrics that we will use to compare
-multi-frame microscopes.
-
-Note our distinction between a \emph{frame} and a \emph{view}. A frame refers to
-a single intensity measurement with a fixed polarizer setting, illumination
-path, and detection path. Acquiring additional frames entails varying the
-polarizer setting, illumination path, or detection path. A view refers to a
-detection path, and multiview microscopes use multiple detection paths.
+\ref{excitation}--\ref{forward} we develop a model for the intensity collected
+with a fixed illumination and detection configuration as a function of the
+molecule orientation. In section \ref{designs} we list a variety of ways to
+combine these intensity measurements into experimentally realizable polarized
+illumination microscopes. Finally, in section \ref{metrics} we develop metrics
+that we will use to compare these microscopes.
 
 We use roman type for scalars, e.g., $\phi$, $\theta$; bold lowercase type for
 vectors, e.g., $\mb{r}, \bs{\mu}$; hats for unit vectors, e.g.,
@@ -183,7 +185,8 @@ calculate the absorption efficiency instead of the detection efficiency.
 \caption{Coordinate systems for a) the absorption dipole moment
   $\hat{\bs{\mu}}_{\text{abs}}$, b) the polarizer transmission axis
   $\hat{\mb{e}}_{\text{exc}}$, and c) the dummy integration vector
-  $\hat{\mb{r}}$.}
+  $\hat{\mb{r}}$. d) The scene consists of a single molecule at the focal point
+  of an objective lens with a polarizer in the aperture plane.}
 \label{fig:coordinates}
 \end{figure}
 
@@ -193,27 +196,28 @@ and $\Phi$ (see Figure \ref{fig:coordinates}a)) as
 \begin{align}
   \hat{\bs{\mu}}_{\text{abs}}(\Theta, \Phi) = \sin\Theta\cos\Phi\hat{\mb{x}} + \sin\Theta\sin\Phi\hat{\mb{y}} + \cos\Theta\hat{\mb{z}} \label{eq:mu}.
 \end{align}
-We place the molecule at the focal point of an ideal, aplanatic,
-polarization-preserving objective with the optical axis aligned with the
-$\mh{z}$ axis. Finally, we place a polarizer behind the objective with a
-variable transmission axis $\hat{\mb{e}}_{\text{exc}}$ that we express as
+We place the molecule in the focal plane of an ideal, aplanatic,
+polarization-preserving objective lens with its optical axis aligned with the
+$\mh{z}$ axis. Next, we place a polarizer in the aperture plane with a variable
+transmission axis $\hat{\mb{p}}_{\text{exc}}$ that we express as
 \begin{align}
- \hat{\mb{e}}_{\text{exc}}(\phi_{\text{exc}}) = \cos\phi_{\text{exc}}\hat{\mb{x}} +
+ \hat{\mb{p}}_{\text{exc}}(\phi_{\text{exc}}) = \cos\phi_{\text{exc}}\hat{\mb{x}} +
 \sin\phi_{\text{exc}}\hat{\mb{y}},\label{eq:excfield}
 \end{align}
 where $\phi_{\text{exc}}$ is the angle between the transmission axis of the
 polarizer and the positive $\mh{x}$ axis (see Figure
-\ref{fig:coordinates}b)). We illuminate the polarizer with a beam of collimated
-light propagating along the optical axis, so the electric field incident on the
-objective is parallel with the transmission axis of the polarizer.
-
-We denote the illuminated region of the objective by $\Omega$. If we use
-unit vectors $\hat{\mb{r}}$ expressed in spherical coordinates $\theta$ and
-$\phi$ (see Figure \ref{fig:coordinates}c)) as
+\ref{fig:coordinates}b)). Finally, we place a spatially incoherent light source
+(or its image) in the aperture plane to establish widefield illumination. In
+this geometry each point in the sample is illuminated by a range of angles that
+can be changed by adjusting the radius of the stop in the aperture plane. We
+denote the set of illuminated angles by $\Omega$ (see Figure
+\ref{fig:coordinates}d)). If we use unit vectors $\hat{\mb{r}}$ expressed in
+spherical coordinates $\theta$ and $\phi$ (see Figure \ref{fig:coordinates}c))
+as
   \begin{align}
    \hat{\mb{r}}(\theta, \phi) = \sin\theta\cos\phi\hat{\mb{x}} + \sin\theta\sin\phi\hat{\mb{y}} + \cos\theta\hat{\mb{z}}, 
   \end{align}
-  then the region $\Omega$ can be expressed as
+  then the set of angles $\Omega$ can be expressed as
   \begin{align}
   \Omega = \{\phi, \theta\ |\ 0 < \phi \leq 2\pi, 0 < \theta \leq \alpha\},
   \end{align}
@@ -224,28 +228,28 @@ $\phi$ (see Figure \ref{fig:coordinates}c)) as
   \end{align}
   where $n$ is the index of refraction of the sample medium. Note that the NA of
   the objective is always greater than or equal to the illumination NA because
-  we can under fill the back aperture of the objective.
+  we can underfill the aperture plane.
   
-  The objective focuses the collimated illumination by applying a position-dependent
-  rotation to the electric field which we model by multiplying the incident electric
-  field $\hat{\mb{e}}$ by a position-dependent rotation matrix
+  The objective focuses the light by applying a position-dependent rotation to
+  the electric field which we model by multiplying the incident electric field
+  $\hat{\mb{p}}_{\text{exc}}$ by a position-dependent rotation matrix
   \begin{align}
   \mb{R}(\mh{r}) &= \begin{bmatrix} \cos\theta\cos^2\phi + \sin^2\phi & (\cos\theta -1)\sin\phi\cos\phi & -\sin\theta\cos\phi\\ (\cos\theta - 1)\sin\phi\cos\phi & \cos\theta\sin^2\phi + \cos^2\phi & -\sin\theta\sin\phi \\ \sin\theta\cos\phi& \sin\theta\sin\phi & \cos\theta \end{bmatrix} \label{eq:rot_mat}.
   \end{align}
 
   To find the absorption efficiency $\eta_{\text{abs}}$ of a single molecule if
   it were illuminated by a single ray, we take the unit incident electric field
-  $\hat{\mb{e}}$, take the dot product with the absorption dipole moment, then
-  take the modulus squared
+  $\hat{\mb{p}}_{\text{exc}}$, take the dot product with the absorption dipole
+  moment, then take the modulus squared
     \begin{align}
-      \eta_{\text{abs}} &= |\hat{\bs{\mu}}_{\text{abs}}\cdot\mh{e}_{\text{exc}}|^2. \label{eq:singleray}
+      \eta_{\text{abs}}^{\text{ray}} &= |\hat{\bs{\mu}}_{\text{abs}}\cdot\mh{p}_{\text{exc}}|^2. \label{eq:singleray}
     \end{align}
 
-    To find the absorption efficiency of a single molecule under incoherent
-    focused light, we integrate over all rays and divide by the total incident
-    power which gives the vector expression
+    To find the absorption efficiency of a single molecule under widefield
+    illumination, we integrate over all illumination rays and divide by the
+    total incident power which gives the vector expression
 \begin{align}
-  \eta_{\text{abs}} = \frac{\int_{\Omega}d\mh{r}|\hat{\bs{\mu}}_{\text{abs}}\cdot\mb{R}(\mh{r})\mh{e}_{\text{exc}}|^2}{\int_{\Omega}d\mh{r}}\label{eq:abs}. 
+  \eta_{\text{abs}} = \frac{\int_{\Omega}d\mh{r}|\hat{\bs{\mu}}_{\text{abs}}\cdot\mb{R}(\mh{r})\mh{p}_{\text{exc}}|^2}{\int_{\Omega}d\mh{r}}\label{eq:abs}. 
 \end{align}
 
 We substitute equations \ref{eq:mu}--\ref{eq:rot_mat} into equation
@@ -264,28 +268,25 @@ where
 \end{align}\label{eq:coefficients}%
 \end{subequations}
 
-At the beginning of this section we assumed that the molecule was located at the
-focal point of the condenser. If the illumination objective is aplanatic and we
-use K\"ohler illumination, then we can relax this assumption and the above
-expressions are valid for molecules anywhere in the focal plane.
-
-We also assumed that we used incoherent illumination, but we can extend these
-results to light-sheet illumination that uses a scanned coherent laser. If we
-illuminate the back aperture with a weakly focused laser beam and scan the laser
-beam slowly---if the scan velocity is much less than the beam waist radius
-divided by the coherence time---we can ignore longitudinal excitation and the
-molecule will be excited as if a single plane wave was incident. Therefore, we
-can find the absorption efficiency of a molecule under weakly focused scanned
-laser illumination by taking the limit of equation \ref{eq:scalarabs} as
+We can extend these results to light-sheet illumination created by scanning a
+laser. If we shine a narrow collimated laser beam onto a galvanometer in the
+aperture plane and scan the galvanometer, we create a weakly focused light sheet
+in the sample. If we underfill the aperture plane and scan the beam in the
+sample with a velocity much less than the beam waist radius divided by the
+coherence time, we can ignore longitudinal excitation and molecules in the
+sample will be excited as if a single plane wave was incident. Therefore, we can
+find the absorption efficiency of a molecule under weakly focused scanned laser
+illumination by taking the limit of equation \ref{eq:scalarabs} as
 $\alpha \rightarrow 0$ (or by plugging equation \ref{eq:mu} and
 \ref{eq:excfield} into equation \ref{eq:singleray}) giving
 \begin{align}
-  \eta_{\text{abs}} &= \sin^2\Theta\cos^2(\Phi - \phi_{\text{exc}}),
+  \eta_{\text{abs}}^{\text{ray}} &= \sin^2\Theta\cos^2(\Phi - \phi_{\text{exc}}),
 \end{align}
 which is recognizable as Malus' law generalized to three dimensions. This means
-that light-sheet illumination is approximately equivalent to widefield
-illumination with a low NA. Notice that the absorption efficiency can take its
-maximum range of values ($\eta_{\text{abs}} \in [0, 1]$) when $\alpha=0$.
+that light-sheet illumination is approximately equivalent to low-NA widefield
+illumination with respect to the molecular orientations they excite. Notice that
+the absorption efficiency can take its maximum range of values
+($\eta_{\text{abs}} \in [0, 1]$) when $\alpha=0$.
 
 \subsection{Detection Efficiency}\label{detection}
 Fourkas calculated the detection efficiency of a single molecule when an
@@ -305,7 +306,7 @@ Fourkas' expressions were incorrectly normalized (the limit of
 $\eta_{\text{det}}$ as $\alpha\rightarrow \pi/2$ should be 1), and the extra
 factor of $\frac{3}{2}$ corrects the error. This correction does not affect
 Fourkas' orientation reconstruction but it does mean that Fourkas' algorithm
-under predicts the total emitted intensity by a factor of $\frac{3}{2}$.
+underpredicts the total emitted intensity by a factor of $\frac{3}{2}$.
 
 Also note that the detection efficiency can take its maximum range of values
 when $B$ takes its maximum value, i.e. when
@@ -316,8 +317,8 @@ In sections \ref{excitation} and \ref{detection} we assumed that both the
 illumination and detection objectives had $\mh{z}$ aligned optical axes, i.e.,
 the same objective was used for illumination and detection. To extend the
 forward model to oblique optical axes which allows for non-coincident
-illumination and detection objectives, we express the dipole orientation in
-rotated coordinates using the following expressions
+illumination and detection objectives, we express the dipole orientation in a
+rotated coordinate frame using the following expressions
 \begin{align}
     \Theta' &= \arccos\left(\sin\psi\cos\Phi\sin\Theta + \cos\psi\cos\Theta\right)\label{eq:thetap}\\
   \Phi' &=
@@ -329,54 +330,54 @@ rotated coordinates using the following expressions
 where $\psi$ is the angle of a right handed rotation about the $\mh{y}$ axis
 that maps the $\mh{z}$ axis onto the new optical axis.
 
-\subsection{Single-Frame Microscopes}\label{forward}
+\subsection{Intensity Measurements}\label{forward}
 The detected intensity is the product of the the sample exposure
 $I_{\text{tot}}$, the absorption efficiency, and the detection efficiency
 \begin{align}
   I = I_{\text{tot}}\eta_{\text{abs}}\eta_{\text{det}}\label{eq:forward_frame}.
 \end{align}
-Equation \ref{eq:forward_frame} is the forward model for a \emph{single-frame
-  microscope}. Figure \ref{fig:single-frame} shows the efficiencies from three
-representative examples of single-frame microscopes.
+Equation \ref{eq:forward_frame} is the forward model for a single intensity
+measurement. Figure \ref{fig:single-frame} shows the efficiencies in three
+representative geometries.
 
-The intensity measured by a single-frame microscope does not give us enough
-information to reconstruct the orientation of a single molecule. Next, we
-will consider combining several single-frame microscopes to create
-\emph{multi-frame microscopes.}
+A single intensity measurement does not give us enough information to
+reconstruct the orientation of a single molecule. Next, we will consider
+combining several intensity measurements to create complete polarized
+illumination microscopes.
 
 \begin{figure}[H]
 \centering\includegraphics[width=\textwidth]{single-frame}
-\caption{Representative examples of single-frame microscopes.\newline \newline
-  \textbf{Columns left to right:} 1) schematics of single-frame microscopes
-  where the solid line encloses the illumination solid angle, the dashed line
-  encloses the detection solid angle, and the arrow indicates the transmission
-  axis of the illumination polarizer; 2) the absorption efficiency, see equation
-  \ref{eq:scalarabs}; 3) the detection efficiency, see equation
-  \ref{eq:scalardet}; (4) the total efficiency, the product of the absorption
-  and detection efficiencies.\newline \newline \textbf{Rows top to bottom:} 1)
-  coincident illumination ($\text{NA} = 1.1$ with $x$-polarized light) and
-  detection (NA = 1.1); 2) non-coincident orthogonal illumination
-  ($\text{NA} = 0.8$) and detection ($\text{NA} = 0.8$); 3) non-coincident
-  135${}^{\circ}$-separated illumination ($\text{NA} = 0.8$) and detection
-  ($\text{NA} = 0.8$). All simulations use $n=1.33$.}
+\caption{Representative examples of single intensity measurements.\newline
+  \newline \textbf{Columns left to right:} 1) schematics where the solid line
+  encloses the illumination solid angle, the dashed line encloses the detection
+  solid angle, and the arrow indicates the transmission axis of the illumination
+  polarizer; 2) the absorption efficiency, see equation \ref{eq:scalarabs}; 3)
+  the detection efficiency, see equation \ref{eq:scalardet}; (4) the total
+  efficiency, the product of the absorption and detection efficiencies.\newline
+  \newline \textbf{Rows top to bottom:} 1) coincident illumination
+  ($\text{NA} = 1.1$ with $x$-polarized light) and detection (NA = 1.1); 2)
+  non-coincident orthogonal illumination ($\text{NA} = 0.8$) and detection
+  ($\text{NA} = 0.8$); 3) non-coincident 135${}^{\circ}$-separated illumination
+  ($\text{NA} = 0.8$) and detection ($\text{NA} = 0.8$). All simulations use
+  $n=1.33$.}
   \label{fig:single-frame}
 \end{figure}
 
+\subsection{Polarized Illumination Microscope Configurations}\label{designs}
+One way to collect multiple intensity measurements is to add a universal
+compensator/polarizer to the illumination arm and rapidly select the incident
+polarization by changing $\phi_{\text{exc}}$ \cite{shribak2003}. All of the
+microscopes we will consider in this paper use four polarizations per
+illumination path with the polarization orientations separated by
+45${}^{\circ}$.
 
-\subsection{Multi-Frame Microscopes}\label{designs}
-One way to collect multiple frames is to add a universal compensator to the
-illumination arm and rapidly select the incident polarization by changing
-$\phi_{\text{exc}}$ \cite{oldenbourg1995}. All of the multi-frame microscopes we
-will consider in this paper use four frames per view with the illumination
-polarization separated by 45${}^{\circ}$.
-
-We also consider several dual-view designs. We evaluate two-view designs that
+We also consider several dual-view designs. We evaluate dual-view designs that
 allow for illumination and detection from both objectives (see \cite{wu2013} for
 a dual-view design). In all cases we consider the effect of varying the
 illumination and detection numerical aperture. We also consider asymmetric NA
 designs (see \cite{wu2017} for an asymmetric NA design) and the effect of
 asymmetric sample exposures. Note that we use the word \emph{symmetry} to refer
-to dual-view designs with objectives that are identical and the word
+to dual-view designs with identical objectives and sample exposures and the word
 \emph{asymmetry} to refer to dual-view designs with objectives that have a
 different NA or sample exposure.
 
@@ -387,15 +388,14 @@ designs that meet these criteria.
 \subsection{Evaluation Metrics}\label{metrics}
 Our goal is to evaluate the ability of a microscope design to estimate the
 orientation of a single molecule (via parameters $\Theta$ and $\Phi$) from
-intensity data.
-
-A common way to evaluate the ability to estimate the parameters $\Theta$ and
-$\Phi$ from the data is to calculate the Cramer-Rao lower bound (CRLB) for each
-parameter \cite{kay1993}. The CRLBs are given by the diagonal elements of the
-inverse of the Fisher information matrix, and they give the minimum variance of
-an unbiased estimator for each parameter. For each microscope design and
-molecule orientation we calculate the Fisher information matrix. If the
-intensity is Poisson distributed the Fisher information matrix is given by
+intensity data. A common way to evaluate the ability to estimate the parameters
+$\Theta$ and $\Phi$ from the data is to calculate the Cram\'er-Rao lower bound
+(CRLB) for each parameter \cite{kay1993}. The CRLBs are given by the diagonal
+elements of the inverse of the Fisher information matrix, and they give the
+minimum variance of an unbiased estimator for each parameter. For each
+microscope design and molecule orientation we calculate the Fisher information
+matrix. We assume that the detected intensities are Poisson distributed, so the
+Fisher information matrix is given by
 \begin{align}
   \mb{F} &= \sum_{k=1}^N \frac{1}{I_k}
   \begin{bmatrix}
@@ -403,9 +403,9 @@ intensity is Poisson distributed the Fisher information matrix is given by
     \dfrac{\partial I_k}{\partial \Theta}\dfrac{\partial I_k}{\partial \Phi}&\dfrac{\partial I_k}{\partial \Phi}\dfrac{\partial I_k}{\partial \Phi}\\    
   \end{bmatrix}
 \end{align}
-where $I_k$ is the intensity measured in the $k$th frame of an $N$-frame
-microscope. Agrawal et. al. used the square root of the product of the CRLBs
-multiplied by the Jacobian determinant,
+where $I_k$ is the $k$th intensity measurement in a microscope that uses $N$
+intensity measurements. Agrawal et. al. used the square root of the product of
+the CRLBs multiplied by the Jacobian determinant,
 $\sin\Theta\sqrt{\mb{F}^{-1}_{0,0}\mb{F}^{-1}_{1,1}}$, to find the area of
 uncertainty in parameter space \cite{agrawal2012}.
 
@@ -423,7 +423,7 @@ multiply by the Jacobian determinant, $\sin\Theta$. We call $\sigma_{\Omega}$
 the \emph{solid-angle uncertainty} because it has units of steradians and is a
 parametrization independent measure of the orientation uncertainty.
 
-For each multi-frame microscope we calculate $\sigma_{\Omega}$ at 10,000
+For each microscope we calculate $\sigma_{\Omega}$ at 10,000
 approximately equally spaced points on the unit sphere. A desirable microscope
 design will have a small solid-angle uncertainty that is uniform for all
 molecule orientations. The most straightforward way to find the location and
@@ -434,8 +434,8 @@ sample points, we use the median and median absolute deviation (MAD)---the
 median of the data's absolute difference from the median---as robust
 alternatives to the mean and variance.
 
-To compare multi-frame microscopes with different numbers of frames fairly, we
-kept the total exposure to the sample constant by choosing
+To compare microscopes with different numbers of intensity measurements fairly,
+we kept the total exposure to the sample constant by choosing
 $I_{\text{tot}} = \frac{4000}{N}$. Note that $I_{\text{tot}}$ is a measure of
 exposure to the sample, not the detected intensity or the total intensity
 emitted by the molecule.
@@ -450,32 +450,33 @@ $\alpha \approx 57.4^{\circ}$. A small illumination NA maximizes the range of
 absorption efficiencies, while a large detection NA maximizes the number of
 detected photons and the range of the detection efficiencies. Note the relative
 importance of illumination and detection NAs---reducing the illumination NA (an
-inexpensive modification requiring under filling the back aperture) improves the
-solid angle uncertainty much less than increasing the detection NA (an expensive
-modification requiring a higher NA objective). Also note in Figure
+inexpensive modification requiring underfilling the aperture plane) improves the
+solid-angle uncertainty much less than increasing the detection NA (an expensive
+modification requiring a higher-NA objective). Also note in Figure
 \ref{fig:single-arm}b) that single-view designs suffer from high orientation
 uncertainty when the molecules are oriented along the optical axis (the
-molecules are not efficiently excited), near the transverse plane (it is
+molecules are not efficiently excited or detected), near the transverse plane (it is
 ambiguous whether the molecule is oriented above or below the transverse plane),
 and near the polarizer orientations (it is ambiguous whether the molecule is on
 either side of the polarizer orientation).
 
 \begin{figure}[htbp]
 \centering\includegraphics[width=\textwidth]{single-arm}
-\caption{Single-view microscope with varying illumination and detection
-  NA. a) Schematic of a single-arm four-frame epi-illumination microscope. The
+\caption{Single-view microscope with varying illumination and detection NA. a)
+  Schematic of a single-view four-polarization epi-illumination microscope. The
   red arrows indicate the four illumination polarization orientations---one for
-  each frame. b) Solid angle uncertainty for the microscope in a). c) Median of
-  the solid-angle uncertainty as a function of illumination and detection NA. d)
-  MAD of the solid-angle uncertainty as a function of illumination and detection
-  NA. The microscope in a) and b) is indicated by a cross in c) and d).}
+  each intensity measurement. b) Solid-angle uncertainty for the microscope in
+  a). c) Median of the solid-angle uncertainty as a function of illumination and
+  detection NA. d) MAD of the solid-angle uncertainty as a function of
+  illumination and detection NA. The microscope in a) and b) is indicated by a
+  cross in c) and d).}
 \label{fig:single-arm}
 \end{figure}
 
 Figures \ref{fig:symmetric-widefield} and \ref{fig:double-arm} show our results
 for dual-view symmetric widefield designs. We illuminate from one objective and
-detect from the other for four polarization frames, then we repeat the
-polarization frames with the same objectives in reversed roles. In Figure
+detect from the other for four polarization orientations, then we repeat the
+polarization orientations with the same objectives in reversed roles. In Figure
 \ref{fig:symmetric-widefield} we sweep through the NA of both objectives and the
 angle between the objectives while considering steric constraints. Note how
 adding a second view removes the high uncertainty region in the transverse
@@ -496,7 +497,7 @@ the regions of high orientation uncertainty from each view do not overlap.
   objectives. a) Schematic of the microscope. We illuminate with the first objective
   (red solid) and detect from the second objective (red dashed). Then we
   illuminate from the second objective (blue solid) and detect from the first
-  objective (blue dashed). b) Solid angle uncertainty for the microscope in
+  objective (blue dashed). b) Solid-angle uncertainty for the microscope in
   a). c) Median of the solid-angle uncertainty as a function of NA and the angle
   between the objectives. d) MAD of the solid-angle uncertainty as a function of NA
   and the angle between the objectives. The microscope in a) and b) is indicated
@@ -510,15 +511,18 @@ the regions of high orientation uncertainty from each view do not overlap.
 Figure \ref{fig:double-arm} shows our results when we used a dual-view symmetric
 orthogonal widefield design and varied the illumination and detection NA. Our
 results are similar to the single-view case in Figure \ref{fig:single-arm}. We
-find that the best designs use a small illumination NA (like light-sheet
-illumination) and a large detection NA where $\alpha \approx 57.4^{\circ}$. This
-means that dual-view light-sheet illumination geometries are an excellent choice
-for uniformly reconstructing the orientation of single molecules.
+find that the best designs use a small illumination NA and a large detection NA
+where $\alpha \approx 57.4^{\circ}$. As we discussed in Section
+\ref{excitation}, low-NA widefield illumination is approximately equivalent to
+light-sheet illumination for the task of estimating the orientation of
+molecules. Therefore, the preference for low-NA widefield illumination also
+implies that dual-view light-sheet illumination geometries are an excellent
+choice for uniformly reconstructing the orientation of single molecules.
 
 \begin{figure}[htbp]
 \centering\includegraphics[width=\textwidth]{double-arm}
 \caption{Dual-view symmetric orthogonal widefield designs with varying
-  illumination and detection NA. a) Schematic of the microscope. b) Solid angle
+  illumination and detection NA. a) Schematic of the microscope. b) Solid-angle
   uncertainty for the microscope in a). c) Median of the solid-angle uncertainty
   as a function of illumination and detection NA. d) MAD of the solid-angle
   uncertainty as a function of illumination and detection NA. The microscope in
@@ -529,10 +533,11 @@ for uniformly reconstructing the orientation of single molecules.
 Figure \ref{fig:asymmetric-double} shows our results for dual-view asymmetric
 light-sheet illumination designs. We used light-sheet illumination on both sides
 and kept the objectives orthogonal so that the light sheet from one objective
-illuminates the focal plane of the other objective. We made the objectives
-as large as possible so that both objectives would touch the cover slip and each
-other ($\alpha_1 + \alpha_2 = 90$ in Figure \ref{fig:asymmetric-double}a)). We
-swept through the NA asymmetry and the sample exposure asymmetry while keeping
+illuminates the focal plane of the other objective. Then, we swept through the
+NA of one objective while maximizing the NA of the other objective so that both
+objectives would touch the cover slip and each other
+($\alpha_1 + \alpha_2 = 90^{\circ}$ in Figure \ref{fig:asymmetric-double}a)). We
+swept through the NA asymmetry and the sample-exposure asymmetry while keeping
 the total sample exposure constant, and found that symmetric designs are at a
 local minimum of the median and MAD of the solid-angle uncertainty. We also
 found that at extreme asymmetries where the exposure from the low NA arm is much
@@ -549,7 +554,7 @@ the sample exposure ratio.
 \begin{figure}[htbp]
   \centering\includegraphics[width=\textwidth]{asymmetric-double}
   \caption{Dual-view asymmetric light-sheet illumination designs with varying NA and
-    sample exposure asymmetry. a) Schematic of the microscope. b) Solid angle
+    sample exposure asymmetry. a) Schematic of the microscope. b) Solid-angle
     uncertainty for the microscope in a). c) Median of the solid-angle
     uncertainty as a function of NA and sample exposure asymmetry. d) MAD of the
     solid-angle uncertainty as a function of NA and sample exposure
@@ -558,23 +563,23 @@ the sample exposure ratio.
 \label{fig:asymmetric-double}
 \end{figure}
 
-Table 1 shows a summary of our evaluation metrics for the best microscopes in
-each class. The single-view widefield microscope with a large illumination NA
-and high detection NA has the lowest solid-angle uncertainty median but the
-largest max. The dual-view oblique symmetric widefield with an intermediate NA
-performs reasonably well on all three metrics, while the dual-view orthogonal
-symmetric light sheet with the largest possible detection NA performs very well
-on all three metrics.
+Table 1 shows a summary of our evaluation metrics for microscopes in each
+class. The single-view widefield microscope with a large illumination NA and
+high detection NA has the lowest solid-angle uncertainty median but the largest
+max. The dual-view oblique symmetric widefield with an intermediate NA performs
+reasonably well on all three metrics, while the dual-view orthogonal symmetric
+light-sheet microscopes with large NA perform very well on all three metrics.
 
 \begin{table}[ht!]
 \centering
-\caption{Comparison of the best designs in each class of microscope. All values
-  are in steradians.}
+\caption{Comparison of designs in each class of microscope. All values are in
+  steradians.}
 \begin{tabular}{llll}
   \toprule
 Microscope Type&Max\{$\sigma_{\Omega}$\}&Median\{$\sigma_{\Omega}$\}&MAD\{$\sigma_{\Omega}$\}\\ \midrule
-Single-view widefield (NA${}_\textrm{ill}$=0, NA${}_\textrm{det}$=1.1)&3.04$\times 10^{0}$&8.20$\times 10^{-4}$&1.40$\times 10^{-4}$ \\ 
-Dual-view oblique symmetric widefield (NA=0.6, $\beta$=53${}^{\circ}$)&1.35$\times 10^{-1}$&4.49$\times 10^{-3}$&9.17$\times 10^{-4}$\\
+Single-view widefield (NA${}_\textrm{ill}$=0, NA${}_\textrm{det}$=1.1)&3.04$\times 10^{0}$&8.20$\times 10^{-4}$&1.48$\times 10^{-4}$ \\ 
+  Dual-view oblique symmetric widefield (NA=0.6, $\beta$=53${}^{\circ}$)&1.35$\times 10^{-1}$&4.49$\times 10^{-3}$&9.17$\times 10^{-4}$\\
+Dual-view orthogonal symmetric light-sheet (NA=0.8)&6.23$\times 10^{-3}$&1.79$\times 10^{-3}$&1.65$\times 10^{-4}$\\  
 Dual-view orthogonal symmetric light-sheet (NA=0.94)&3.13$\times 10^{-3}$&1.28$\times 10^{-3}$&1.14$\times 10^{-4}$\\
 \bottomrule
 \end{tabular}
@@ -609,7 +614,7 @@ molecules in homogeneous environments. We ignore light reflected from the cover
 slip and any other inhomogeneities in the sample. If we considered light
 reflected from the cover slip we expect that the results would put a lower
 weighting on large detection NAs because we would collect more light. Second, we
-only considered ideal, polarization preserving, aplanatic objectives. In
+only considered ideal, aplanatic, polarization-preserving objectives. In
 practice, these conditions are not always satisfied and the power from high NA
 rays is apodized by a factor of $\frac{n}{\cos\Theta}$
 \cite{nov2006}. Therefore, our results are most accurate for low NA rays and get
@@ -617,15 +622,24 @@ progressively worse for high NA rays, although our major conclusions would not
 change if we included this apodization factor. The main advantage of ignoring
 apodization is the tractability of the problem---we have provided approximate
 closed-form solutions for the illumination and detection efficiencies that have
-allowed us to draw useful design conclusions.
+allowed us to draw useful design conclusions. Third, we have used a Poisson
+noise model which ignores noise introduced by the detector. Detector noise can
+be a large fraction of the total noise at low intensities, so including detector
+noise would increase the informational value of high intensity
+measurements. Therefore, we expect that including the effects of detector noise
+would favor microscopes with a large detection NA. Finally, we have focused on
+the task of estimating the orientation of molecules and ignored the equally
+important task of estimating their location. The task of jointly estimating the
+orientation and location of single molecules from multiple views is a topic for
+future work.
 
 To compare the microscopes in this paper we used a fixed sample exposure. We
 think that this is the fairest way to compare microscopes with different numbers
-of frames. However, in cases where sample exposure and time are not an issue it
-may be more useful to compare microscopes with the same detection exposure per
-frame. This comparison would favor multiple frame microscopes even more that the
-results in this paper, because equal detection exposure per frame would improve
-photon counting statistics.
+of intensity measurements. However, in cases where sample exposure and time are
+not an issue it may be more useful to compare microscopes with the same total
+detection exposure per measurement. This comparison would favor microscopes with
+many intensity measurements even more that the results in this paper because
+equal detection exposure would improve photon counting statistics.
 
 We have considered single- and dual-view microscopes in a variety of cases, but
 more multiview microscopes can be analyzed with the framework we have
@@ -638,8 +652,7 @@ Although we have only considered single-molecule orientation determination in
 this work, polarized illumination techniques can be applied to find the
 distribution of ensembles of molecules \cite{mehta2016, backer2016}. In future
 work we will investigate the ability of multiview polarized illumination
-microscopes to estimate the orientation and distribution of ensembles of
-molecules.
+microscopes to estimate the orientation distribution of ensembles of molecules.
 
 We have only considered polarized illumination. In the introduction
 we discussed why we prefer polarized illumination to polarized detection, but
@@ -652,6 +665,7 @@ We conclude that multiview microscopes are useful tools for determining the
 orientation of single molecules. Using simple design heuristics, we can design
 polarized illumination multiview microscopes that can determine the orientation
 of single molecules with a small and uniform orientation uncertainty.
+
 
 \section*{Funding}
 TODO

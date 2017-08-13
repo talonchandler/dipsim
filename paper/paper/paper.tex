@@ -37,9 +37,9 @@
   obliquity, asymmetry, and exposure. We find that multiview microscopes are
   better at determining the orientation of single molecules than single-view
   microscopes. We also find that choosing a small illumination NA and a large
-  detection NA are good design choices, that multiview widefield microscopes can
-  benefit from oblique illumination and detection, and that asymmetric NA
-  microscopes can benefit from exposure asymmetry.
+  detection NA are good design choices, that multiview K\"ohler illumination
+  microscopes can benefit from oblique illumination and detection, and that
+  asymmetric NA microscopes can benefit from exposure asymmetry.
 \end{abstract*}
 
 \ocis{(110.0110) Imaging systems; (180.2520) Fluorescence microscopy; (180.0180)
@@ -81,8 +81,8 @@ require complex reconstruction algorithms, expensive high numerical aperture
 polarization and intensity in the illumination path to excite molecules in
 specific orientations in the focal volume \cite{debarre2004}. Although these
 techniques can accurately estimate the orientation of molecules in all
-orientations, they require scanning which makes these techniques too slow for
-live cell imaging.
+orientations, they require scanning which makes acquisition time a concern in
+live-cell imaging.
 
 \textbf{Polarized illumination or detection} techniques vary the polarization of
 light in the illumination or detection paths and exploit the anisotropic
@@ -110,11 +110,10 @@ additional alignment or interpolation \cite{tyo2006}. The simplicity of DoT
 polarization comes at the expense of temporal resolution---intensity
 measurements are made one after the other which increases the acquisition
 time. If we place the DoT polarizer in the detection path, we will block
-valuable photons from reaching the detector which unnecessarily increases
-exposure to the sample \cite{demay2011}. By placing the DoT polarizer in the
-illumination arm we minimize exposure to the sample. We focus on DoT polarized
-illumination in this paper because of its combination of simplicity and low
-sample exposure.
+valuable photons from reaching the detector which leads to unnecessary exposure
+to the sample \cite{demay2011}. By placing the DoT polarizer in the illumination
+arm we minimize exposure to the sample. We focus on DoT polarized illumination
+in this paper because of its combination of simplicity and low sample exposure.
 
 All single molecule orientation determination methods suffer from some degree of
 anisotropic orientation uncertainty, i.e., some molecular orientations cannot be
@@ -135,7 +134,7 @@ multiview microscopes can achieve nearly isotropic resolution compared to the
 anisotropic resolution of single-view microscopes whose axial resolution is
 reduced by at least a factor of two compared to lateral resolution. Second,
 multiview microscopes can use light-sheet illumination to reduce phototoxicity
-without requiring dedicated illumination optics. For example, if two orthogonal
+without requiring a dedicated illumination path. For example, if two orthogonal
 objectives are focused on the same point, then the objectives can alternate
 roles as the light-sheet illumination path and as the detection
 path. Light-sheet illumination offers a major reduction of phototoxicity because
@@ -206,11 +205,11 @@ transmission axis $\hat{\mb{p}}_{\text{exc}}$ that we express as
 \end{align}
 where $\phi_{\text{exc}}$ is the angle between the transmission axis of the
 polarizer and the positive $\mh{x}$ axis (see Figure
-\ref{fig:coordinates}b)). Finally, we place a spatially incoherent light source
-(or its image) in the aperture plane to establish widefield illumination. In
-this geometry each point in the sample is illuminated by a range of angles that
-can be changed by adjusting the radius of the stop in the aperture plane. We
-denote the set of illuminated angles by $\Omega$ (see Figure
+\ref{fig:coordinates}b)). Finally, we place a spatially incoherent and spatially
+uniform light source (or its image) in the aperture plane to establish K\"ohler
+illumination. In this geometry each point in the sample is illuminated by a
+range of angles that can be changed by adjusting the radius of the stop in the
+aperture plane. We denote the set of illuminated angles by $\Omega$ (see Figure
 \ref{fig:coordinates}d)). If we use unit vectors $\hat{\mb{r}}$ expressed in
 spherical coordinates $\theta$ and $\phi$ (see Figure \ref{fig:coordinates}c))
 as
@@ -245,7 +244,7 @@ as
       \eta_{\text{abs}}^{\text{ray}} &= |\hat{\bs{\mu}}_{\text{abs}}\cdot\mh{p}_{\text{exc}}|^2. \label{eq:singleray}
     \end{align}
 
-    To find the absorption efficiency of a single molecule under widefield
+    To find the absorption efficiency of a single molecule under K\"ohler
     illumination, we integrate over all illumination rays and divide by the
     total incident power which gives the vector expression
 \begin{align}
@@ -273,17 +272,18 @@ laser. If we shine a narrow collimated laser beam onto a galvanometer in the
 aperture plane and scan the galvanometer, we create a weakly focused light sheet
 in the sample. If we underfill the aperture plane and scan the beam in the
 sample with a velocity much less than the beam waist radius divided by the
-coherence time, we can ignore longitudinal excitation and molecules in the
-sample will be excited as if a single plane wave was incident. Therefore, we can
-find the absorption efficiency of a molecule under weakly focused scanned laser
-illumination by taking the limit of equation \ref{eq:scalarabs} as
-$\alpha \rightarrow 0$ (or by plugging equation \ref{eq:mu} and
-\ref{eq:excfield} into equation \ref{eq:singleray}) giving
+coherence time, we can ignore the excitation caused by fields aligned with the
+optical axis. In this case, molecules in the sample will be excited as if a
+single plane wave was incident. Therefore, we can find the absorption efficiency
+of a molecule under weakly focused scanned laser illumination by taking the
+limit of equation \ref{eq:scalarabs} as $\alpha \rightarrow 0$ (or by plugging
+equation \ref{eq:mu} and \ref{eq:excfield} into equation \ref{eq:singleray})
+giving
 \begin{align}
   \eta_{\text{abs}}^{\text{ray}} &= \sin^2\Theta\cos^2(\Phi - \phi_{\text{exc}}),
 \end{align}
 which is recognizable as Malus' law generalized to three dimensions. This means
-that light-sheet illumination is approximately equivalent to low-NA widefield
+that light-sheet illumination is approximately equivalent to low-NA K\"ohler
 illumination with respect to the molecular orientations they excite. Notice that
 the absorption efficiency can take its maximum range of values
 ($\eta_{\text{abs}} \in [0, 1]$) when $\alpha=0$.
@@ -338,28 +338,27 @@ $I_{\text{tot}}$, the absorption efficiency, and the detection efficiency
 \end{align}
 Equation \ref{eq:forward_frame} is the forward model for a single intensity
 measurement. Figure \ref{fig:single-frame} shows the efficiencies in three
-representative geometries.
-
-A single intensity measurement does not give us enough information to
-reconstruct the orientation of a single molecule. Next, we will consider
-combining several intensity measurements to create complete polarized
-illumination microscopes.
+representative geometries. Note that in all cases there are multiple
+orientations that give the same intensity measurement. This means that a single
+intensity measurement does not give us enough information to reconstruct the
+orientation of a single molecule. Next, we will consider combining several
+intensity measurements to create complete polarized illumination microscopes.
 
 \begin{figure}[H]
 \centering\includegraphics[width=\textwidth]{single-frame}
-\caption{Representative examples of single intensity measurements.\newline
-  \newline \textbf{Columns left to right:} 1) schematics where the solid line
-  encloses the illumination solid angle, the dashed line encloses the detection
-  solid angle, and the arrow indicates the transmission axis of the illumination
-  polarizer; 2) the absorption efficiency, see equation \ref{eq:scalarabs}; 3)
-  the detection efficiency, see equation \ref{eq:scalardet}; (4) the total
-  efficiency, the product of the absorption and detection efficiencies.\newline
-  \newline \textbf{Rows top to bottom:} 1) coincident illumination
-  ($\text{NA} = 1.1$ with $x$-polarized light) and detection (NA = 1.1); 2)
-  non-coincident orthogonal illumination ($\text{NA} = 0.8$) and detection
-  ($\text{NA} = 0.8$); 3) non-coincident 135${}^{\circ}$-separated illumination
-  ($\text{NA} = 0.8$) and detection ($\text{NA} = 0.8$). All simulations use
-  $n=1.33$.}
+\caption{Representative examples of single intensity measurements. Black dots
+  indicate where the Cartesian unit vectors intersect the unit sphere. \newline \newline \textbf{Columns left to right:} 1) schematics where
+  the solid line encloses the illumination solid angle, the dashed line encloses
+  the detection solid angle, and the arrow indicates the transmission axis of
+  the illumination polarizer; 2) the absorption efficiency, see equation
+  \ref{eq:scalarabs}; 3) the detection efficiency, see equation
+  \ref{eq:scalardet}; (4) the total efficiency, the product of the absorption
+  and detection efficiencies.\newline \newline \textbf{Rows top to bottom:} 1)
+  coincident illumination ($\text{NA} = 1.1$ with $x$-polarized light) and
+  detection (NA = 1.1); 2) non-coincident orthogonal illumination
+  ($\text{NA} = 0.8$) and detection ($\text{NA} = 0.8$); 3) non-coincident
+  135${}^{\circ}$-separated illumination ($\text{NA} = 0.8$) and detection
+  ($\text{NA} = 0.8$). All simulations use $n=1.33$.}
   \label{fig:single-frame}
 \end{figure}
 
@@ -474,7 +473,7 @@ either side of the polarizer orientation).
 \end{figure}
 
 Figures \ref{fig:symmetric-widefield} and \ref{fig:double-arm} show our results
-for dual-view symmetric widefield designs. We illuminate from one objective and
+for dual-view symmetric K\"ohler designs. We illuminate from one objective and
 detect from the other for four polarization orientations, then we repeat the
 polarization orientations with the same objectives in reversed roles. In Figure
 \ref{fig:symmetric-widefield} we sweep through the NA of both objectives and the
@@ -493,7 +492,7 @@ the regions of high orientation uncertainty from each view do not overlap.
 
 \begin{figure}[htbp]
 \centering\includegraphics[width=\textwidth]{symmetric-widefield}
-\caption{Dual-view symmetric widefield designs with varying NA and angle between
+\caption{Dual-view symmetric K\"ohler designs with varying NA and angle between
   objectives. a) Schematic of the microscope. We illuminate with the first objective
   (red solid) and detect from the second objective (red dashed). Then we
   illuminate from the second objective (blue solid) and detect from the first
@@ -504,24 +503,24 @@ the regions of high orientation uncertainty from each view do not overlap.
   by a cross in c) and d). e) Median of the solid-angle uncertainty as a
   function of the angle between the objectives when NA=0.6. f) MAD of the
   solid-angle uncertainty as a function of the angle between the objectives when
-  NA=0.6. The profile in e) and f) is taken along the green line in c) and d).}
+  NA=0.6. The profile in e) and f) is taken along the orange line in c) and d).}
 \label{fig:symmetric-widefield}
 \end{figure}
 
 Figure \ref{fig:double-arm} shows our results when we used a dual-view symmetric
-orthogonal widefield design and varied the illumination and detection NA. Our
+orthogonal K\"ohler design and varied the illumination and detection NA. Our
 results are similar to the single-view case in Figure \ref{fig:single-arm}. We
 find that the best designs use a small illumination NA and a large detection NA
 where $\alpha \approx 57.4^{\circ}$. As we discussed in Section
-\ref{excitation}, low-NA widefield illumination is approximately equivalent to
+\ref{excitation}, low-NA K\"ohler illumination is approximately equivalent to
 light-sheet illumination for the task of estimating the orientation of
-molecules. Therefore, the preference for low-NA widefield illumination also
+molecules. Therefore, the preference for low-NA K\"ohler illumination also
 implies that dual-view light-sheet illumination geometries are an excellent
 choice for uniformly reconstructing the orientation of single molecules.
 
 \begin{figure}[htbp]
 \centering\includegraphics[width=\textwidth]{double-arm}
-\caption{Dual-view symmetric orthogonal widefield designs with varying
+\caption{Dual-view symmetric orthogonal K\"ohler designs with varying
   illumination and detection NA. a) Schematic of the microscope. b) Solid-angle
   uncertainty for the microscope in a). c) Median of the solid-angle uncertainty
   as a function of illumination and detection NA. d) MAD of the solid-angle
@@ -540,16 +539,18 @@ objectives would touch the cover slip and each other
 swept through the NA asymmetry and the sample-exposure asymmetry while keeping
 the total sample exposure constant, and found that symmetric designs are at a
 local minimum of the median and MAD of the solid-angle uncertainty. We also
-found that at extreme asymmetries where the exposure from the low NA arm is much
-larger than the exposure from the high NA arm (top-left and bottom-right corners
+found that at extreme asymmetries where the exposure from the low-NA arm is much
+larger than the exposure from the high-NA arm (top-left and bottom-right corners
 of Figures \ref{fig:asymmetric-double}c) and d)) the median and MAD are
 comparable to the symmetric light-sheet microscope. This means that if a very
-high NA objective is available and a low NA objective can provide light sheet
+high-NA objective is available and a low-NA objective can provide light sheet
 illumination, this microscope will perform comparably with a dual-view
-microscope with two objectives of medium NA. Figure \ref{fig:asymmetric-double}
-also shows that designs with slightly asymmetric NA can trade off a low
-solid-angle uncertainty median for a low solid-angle uncertainty MAD by changing
-the sample exposure ratio.
+microscope with two medium-NA objectives. Note that this asymmetric exposure
+configuration maximizes the use of the high-NA detection objective---if a
+high-NA objective is available it should be used for detection as much as
+possible. Figure \ref{fig:asymmetric-double} also shows that designs with
+slightly asymmetric NA can trade off a low solid-angle uncertainty median for a
+low solid-angle uncertainty MAD by changing the sample exposure ratio.
 
 \begin{figure}[htbp]
   \centering\includegraphics[width=\textwidth]{asymmetric-double}
@@ -564,9 +565,9 @@ the sample exposure ratio.
 \end{figure}
 
 Table 1 shows a summary of our evaluation metrics for microscopes in each
-class. The single-view widefield microscope with a large illumination NA and
+class. The single-view K\"ohler microscope with a small illumination NA and
 high detection NA has the lowest solid-angle uncertainty median but the largest
-max. The dual-view oblique symmetric widefield with an intermediate NA performs
+max. The dual-view oblique symmetric K\"ohler with an intermediate NA performs
 reasonably well on all three metrics, while the dual-view orthogonal symmetric
 light-sheet microscopes with large NA perform very well on all three metrics.
 
@@ -577,8 +578,8 @@ light-sheet microscopes with large NA perform very well on all three metrics.
 \begin{tabular}{llll}
   \toprule
 Microscope Type&Max\{$\sigma_{\Omega}$\}&Median\{$\sigma_{\Omega}$\}&MAD\{$\sigma_{\Omega}$\}\\ \midrule
-Single-view widefield (NA${}_\textrm{ill}$=0, NA${}_\textrm{det}$=1.1)&3.04$\times 10^{0}$&8.20$\times 10^{-4}$&1.48$\times 10^{-4}$ \\ 
-  Dual-view oblique symmetric widefield (NA=0.6, $\beta$=53${}^{\circ}$)&1.35$\times 10^{-1}$&4.49$\times 10^{-3}$&9.17$\times 10^{-4}$\\
+Single-view K\"ohler (NA${}_\textrm{ill}$=0, NA${}_\textrm{det}$=1.1)&3.04$\times 10^{0}$&8.20$\times 10^{-4}$&1.48$\times 10^{-4}$ \\ 
+  Dual-view oblique symmetric K\"ohler (NA=0.6, $\beta$=53${}^{\circ}$)&1.35$\times 10^{-1}$&4.49$\times 10^{-3}$&9.17$\times 10^{-4}$\\
 Dual-view orthogonal symmetric light-sheet (NA=0.8)&6.23$\times 10^{-3}$&1.79$\times 10^{-3}$&1.65$\times 10^{-4}$\\  
 Dual-view orthogonal symmetric light-sheet (NA=0.94)&3.13$\times 10^{-3}$&1.28$\times 10^{-3}$&1.14$\times 10^{-4}$\\
 \bottomrule
@@ -599,7 +600,7 @@ orientation microscopes:
 \item Dual-view microscopes outperform single-view microscopes, and dual-view
   microscopes remove the high uncertainty region in the transverse plane of
   single-view microscopes.
-\item High NA dual-view widefield microscopes are best when the two views are
+\item High-NA dual-view K\"ohler microscopes are best when the two views are
   oblique. Oblique views are complementary because their high uncertainty
   transverse planes do not overlap.
 \item Symmetric NA dual-view orthogonal light-sheet microscopes provide a good
@@ -615,10 +616,10 @@ slip and any other inhomogeneities in the sample. If we considered light
 reflected from the cover slip we expect that the results would put a lower
 weighting on large detection NAs because we would collect more light. Second, we
 only considered ideal, aplanatic, polarization-preserving objectives. In
-practice, these conditions are not always satisfied and the power from high NA
+practice, these conditions are not always satisfied and the power from high-NA
 rays is apodized by a factor of $\frac{n}{\cos\Theta}$
-\cite{nov2006}. Therefore, our results are most accurate for low NA rays and get
-progressively worse for high NA rays, although our major conclusions would not
+\cite{nov2006}. Therefore, our results are most accurate for low-NA rays and get
+progressively worse for high-NA rays, although our major conclusions would not
 change if we included this apodization factor. The main advantage of ignoring
 apodization is the tractability of the problem---we have provided approximate
 closed-form solutions for the illumination and detection efficiencies that have
@@ -666,9 +667,9 @@ orientation of single molecules. Using simple design heuristics, we can design
 polarized illumination multiview microscopes that can determine the orientation
 of single molecules with a small and uniform orientation uncertainty.
 
-
 \section*{Funding}
-TODO
+Support for this work was provided by the Intramural Research Programs of the
+National Institute of Biomedical Imaging and Bioengineering.
 
 \section*{Disclosures}
 The authors declare that there are no conflicts of interest related to this article.

@@ -113,7 +113,7 @@ def plot_2d_regions(ax, cax, pts, data, special_pt=(-1,-1),
                     annotation_clip=False, rotation=rotation, zorder=13)
 
     my_annotate(ax, 'NA', (0.5, -0.12), fontsize=14)
-    my_annotate(ax, '$\\beta$, Angle Between Objectives', (-0.18, 0.5), fontsize=14, rotation=90)
+    my_annotate(ax, '$\\beta$, Angle Between Objectives', (-0.25, 0.5), fontsize=14, rotation=90)
     my_annotate(ax, 'Objectives collide\nwith cover slip', (0.65, 0.85), fontsize=14)
     my_annotate(ax, 'Objectives collide\nwith each other', (0.65, 0.15), fontsize=14)
     my_annotate(ax, 'Feasible', (0.3, 0.5), fontsize=14)
@@ -141,7 +141,7 @@ def plot_2d_regions(ax, cax, pts, data, special_pt=(-1,-1),
     sc = ax.scatter(pts[0,:], pts[1,:], c=data, s=0, cmap=cmap, norm=norm,
                     marker='s', lw=0)
     
-    ax.plot([line_pt0[0], line_pt1[0]], [line_pt0[1], line_pt1[1]], '-g')
+    ax.plot([line_pt0[0], line_pt1[0]], [line_pt0[1], line_pt1[1]], '-', color='darkmagenta', lw=3, zorder=1)
     ax.plot(special_pt[0], special_pt[1], 'kx', markersize=5)
 
 
@@ -172,7 +172,7 @@ def plot_1d_regions(ax, pts, data, special_pt=(-1,-1), y_pos=None, y_lim=None, x
 
     from matplotlib.ticker import FuncFormatter, FixedLocator
     ax.set_yticks(y_pos)
-    ax.set_yticklabels(["{:.0e}".format(x).replace('e-0', 'e-') for x in y_pos])
+    ax.set_yticklabels(["{:.1e}".format(x).replace('e-0', 'e-') for x in y_pos])
 
     # Annotation
     def my_annotate(ax, annotation, xy, fontsize=9, rotation=0):
@@ -181,10 +181,10 @@ def plot_1d_regions(ax, pts, data, special_pt=(-1,-1), y_pos=None, y_lim=None, x
                     annotation_clip=False, rotation=rotation, zorder=13)
 
     my_annotate(ax, '$\\beta$, Angle Between Objectives', (0.5, -0.12), fontsize=14)
-    my_annotate(ax, xtitle, (-0.18, 0.5), fontsize=14, rotation=90)
+    my_annotate(ax, xtitle, (-0.25, 0.5), fontsize=14, rotation=90)
 
     ax.set(xlim=[53, 127], ylim=y_lim)
-    ax.plot(pts, data, '-g')
+    ax.plot(pts, data, '-', color='darkmagenta', lw=3, zorder=1)
     
 # Plot first two columns
 angle = 80

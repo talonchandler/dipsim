@@ -134,14 +134,14 @@ multiview microscopes can achieve nearly isotropic resolution compared to the
 anisotropic resolution of single-view microscopes whose axial resolution is
 reduced by at least a factor of two compared to lateral resolution. Second,
 multiview microscopes can use light-sheet illumination to reduce phototoxicity
-without requiring a dedicated illumination path. For example, if two orthogonal
-objectives are focused on the same point, then the objectives can alternate
-roles as the light-sheet illumination path and as the detection
-path. Light-sheet illumination offers a major reduction of phototoxicity because
-a light sheet only illuminates in-focus regions while other widefield and
-confocal approaches inevitably illuminate out-of-focus regions. Together, these
-advantages make multiview microscopes good candidates for imaging live
-biological specimens for long periods.
+while reusing parts of the optical path for both illumination and detection. For
+example, if two orthogonal objectives are focused on the same point, then the
+objectives can alternate roles as the light-sheet illumination path and as the
+detection path. Light-sheet illumination offers a major reduction of
+phototoxicity because a light sheet only illuminates in-focus regions while
+other widefield and confocal approaches inevitably illuminate out-of-focus
+regions. Together, these advantages make multiview microscopes good candidates
+for imaging live biological specimens for long periods.
 
 In this work we explore the use of polarized illumination in multiview
 microscopes for determining the orientation of single molecules. Existing
@@ -332,9 +332,9 @@ that maps the $\mh{z}$ axis onto the new optical axis.
 
 \subsection{Intensity Measurements}\label{forward}
 The detected intensity is the product of the the sample exposure
-$I_{\text{tot}}$, the absorption efficiency, and the detection efficiency
+$I_{\text{exp}}$, the absorption efficiency, and the detection efficiency
 \begin{align}
-  I = I_{\text{tot}}\eta_{\text{abs}}\eta_{\text{det}}\label{eq:forward_frame}.
+  I = I_{\text{exp}}\eta_{\text{abs}}\eta_{\text{det}}\label{eq:forward_frame}.
 \end{align}
 Equation \ref{eq:forward_frame} is the forward model for a single intensity
 measurement. Figure \ref{fig:single-frame} shows the efficiencies in three
@@ -435,7 +435,7 @@ alternatives to the mean and variance.
 
 To compare microscopes with different numbers of intensity measurements fairly,
 we kept the total exposure to the sample constant by choosing
-$I_{\text{tot}} = \frac{4000}{N}$. Note that $I_{\text{tot}}$ is a measure of
+$I_{\text{exp}} = \frac{4000}{N}$. Note that $I_{\text{exp}}$ is a measure of
 exposure to the sample, not the detected intensity or the total intensity
 emitted by the molecule.
 

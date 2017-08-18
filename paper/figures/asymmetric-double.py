@@ -113,8 +113,8 @@ def plot_2d_regions(ax, cax, pts, data, special_pt=(-1,-1)):
                     annotation_clip=False, rotation=rotation, zorder=13)
 
     my_annotate(ax, 'Exposure${}_1$/Exposure${}_2$', (0.5, -0.13), fontsize=14)
-    my_annotate(ax, '$\\alpha_{1}$', (-0.18, 0.5), fontsize=14, rotation=90)
-    my_annotate(ax, '$\\alpha_{2}$', (1.17, 0.5), fontsize=14, rotation=-90)
+    my_annotate(ax, '$\\alpha_{1}$, Objective 1 Half Angle', (-0.18, 0.5), fontsize=14, rotation=90)
+    my_annotate(ax, '$\\alpha_{2}$, Objective 2 Half Angle', (1.17, 0.5), fontsize=14, rotation=-90)
 
     # Calculate colors
     color_map='coolwarm'

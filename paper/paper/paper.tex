@@ -69,13 +69,14 @@ of single-molecule orientation determination techniques:
 
 \textbf{Spatial/angular variation of emission} techniques image single molecules
 and use the distribution of intensity in the back focal plane \cite{lieb2004} or
-in the image plane \cite{backer2014} to estimate their orientation. The best
-techniques in this category use defocusing or phase masks in the back focal
-plane to encode orientation and position information in the image
-\cite{agrawal2012}. These techniques can estimate the orientation of molecules
-in all orientations and only require a single intensity measurement, but they
-require complex reconstruction algorithms, expensive high numerical aperture
-(NA) optics, and sensitive detectors.
+in the image plane \cite{backer2014} to estimate their
+orientation. Information-theoretically optimal techniques in this category use
+defocusing or phase masks in the back focal plane to encode orientation and
+position information in the image \cite{agrawal2012}. These techniques can
+estimate the orientation of molecules in all orientations and only require a
+single intensity measurement, but they require complex reconstruction
+algorithms, expensive high numerical aperture (NA) optics, and sensitive
+detectors.
 
 \textbf{Spatial variation of illumination polarization} techniques vary the
 polarization and intensity in the illumination path to excite molecules in
@@ -268,17 +269,19 @@ where
 \end{subequations}
 
 We can extend these results to light-sheet illumination created by scanning a
-laser. If we shine a narrow collimated laser beam onto a galvanometer in the
+laser. If we shine a narrow, collimated, laser beam onto a galvanometer in the
 aperture plane and scan the galvanometer, we create a weakly focused light sheet
-in the sample. If we underfill the aperture plane and scan the beam in the
-sample with a velocity much less than the beam waist radius divided by the
-coherence time, we can ignore the excitation caused by fields aligned with the
-optical axis. In this case, molecules in the sample will be excited as if a
-single plane wave was incident. Therefore, we can find the absorption efficiency
-of a molecule under weakly focused scanned laser illumination by taking the
-limit of equation \ref{eq:scalarabs} as $\alpha \rightarrow 0$ (or by plugging
-equation \ref{eq:mu} and \ref{eq:excfield} into equation \ref{eq:singleray})
-giving
+in the sample. If we scan the beam in the sample with a velocity much less than
+the beam waist radius divided by the coherence time, then we can ignore the
+coherence effects of scanning---the light sheet is effectively composed of many
+incoherent beams. If we also ensure that the laser beam is weakly focused, we
+can ignore the excitation caused by the small fields aligned with the optical
+axis. Under slowly-scanned and weakly-focused light-sheet illumination,
+molecules in the sample will be excited as if a single plane wave was
+incident. Therefore, we can find the absorption efficiency of a molecule in this
+case by taking the limit of equation \ref{eq:scalarabs} as
+$\alpha \rightarrow 0$ (or by plugging equation \ref{eq:mu} and
+\ref{eq:excfield} into equation \ref{eq:singleray}) giving
 \begin{align}
   \eta_{\text{abs}}^{\text{ray}} &= \sin^2\Theta\cos^2(\Phi - \phi_{\text{exc}}),
 \end{align}
@@ -422,16 +425,17 @@ multiply by the Jacobian determinant, $\sin\Theta$. We call $\sigma_{\Omega}$
 the \emph{solid-angle uncertainty} because it has units of steradians and is a
 parametrization independent measure of the orientation uncertainty.
 
-For each microscope we calculate $\sigma_{\Omega}$ at 10,000
-approximately equally spaced points on the unit sphere. A desirable microscope
-design will have a small solid-angle uncertainty that is uniform for all
-molecule orientations. The most straightforward way to find the location and
-scale of the solid-angle uncertainty is to use the mean and variance,
-respectively. However, because the solid-angle uncertainty admits extremely
-large values that can change the mean and variance dramatically depending on the
-sample points, we use the median and median absolute deviation (MAD)---the
-median of the data's absolute difference from the median---as robust
-alternatives to the mean and variance.
+For each microscope we calculate $\sigma_{\Omega}$ at 10,000 approximately
+equally spaced points on the unit sphere. A desirable microscope design will
+have a small solid-angle uncertainty that is uniform for all molecule
+orientations. The most straightforward way to find the location and scale of the
+solid-angle uncertainty is to use the mean and variance, respectively. However,
+the solid-angle uncertainty can take extremely large values, e.g., when a
+fluorescent dipole is aligned with the optical axis of a single excitation
+objective. Such large values can change the mean and variance dramatically
+depending on the sample points, so we use the median and median absolute
+deviation (MAD)---the median of the data's absolute difference from the
+median---as robust alternatives to the mean and variance.
 
 To compare microscopes with different numbers of intensity measurements fairly,
 we kept the total exposure to the sample constant by choosing
@@ -445,19 +449,22 @@ single objective is used for illumination and detection. We swept through the
 illumination and detection NA while keeping the sample exposure constant, and we
 found that the lowest median and MAD of the solid-angle uncertainty occurs with
 a small illumination NA and a large detection NA where
-$\alpha \approx 57.4^{\circ}$. A small illumination NA maximizes the range of
-absorption efficiencies, while a large detection NA maximizes the number of
-detected photons and the range of the detection efficiencies. Note the relative
-importance of illumination and detection NAs---reducing the illumination NA (an
-inexpensive modification requiring underfilling the aperture plane) improves the
-solid-angle uncertainty much less than increasing the detection NA (an expensive
+$\alpha \approx 65^{\circ}$ (see Figure \ref{fig:single-arm}d) at
+NA${}_{\text{det}} \approx 1.2$). A small illumination NA maximizes the range of
+absorption efficiencies, while a large detection NA optimizes the number of
+detected photons and the range of the detection efficiencies. The optimal
+detection NA is slightly larger than $\alpha = 57.4^{\circ}$ because increasing
+the detection NA reduces the effect of shot noise. Note the relative importance
+of illumination and detection NAs---reducing the illumination NA (an inexpensive
+modification requiring underfilling the aperture plane) improves the solid-angle
+uncertainty much less than increasing the detection NA (an expensive
 modification requiring a higher-NA objective). Also note in Figure
 \ref{fig:single-arm}b) that single-view designs suffer from high orientation
 uncertainty when the molecules are oriented along the optical axis (the
-molecules are not efficiently excited or detected), near the transverse plane (it is
-ambiguous whether the molecule is oriented above or below the transverse plane),
-and near the polarizer orientations (it is ambiguous whether the molecule is on
-either side of the polarizer orientation).
+molecules are not efficiently excited or detected), near the transverse plane
+(it is ambiguous whether the molecule is oriented above or below the transverse
+plane), and near the polarizer orientations (it is ambiguous whether the
+molecule is on either side of the polarizer orientation).
 
 \begin{figure}[htbp]
 \centering\includegraphics[width=\textwidth]{single-arm}
@@ -467,8 +474,8 @@ either side of the polarizer orientation).
   each intensity measurement. b) Solid-angle uncertainty for the microscope in
   a). c) Median of the solid-angle uncertainty as a function of illumination and
   detection NA. d) MAD of the solid-angle uncertainty as a function of
-  illumination and detection NA. The microscope in a) and b) is indicated by a
-  cross in c) and d).}
+  illumination and detection NA. The microscope configuration in a) and b) is
+  indicated by a cross in c) and d).}
 \label{fig:single-arm}
 \end{figure}
 
@@ -484,7 +491,7 @@ optical axes, but the uncertainty is reduced by almost two orders of magnitude
 compared to the single-view microscope. We find that the lowest median of the
 solid-angle uncertainty occurs with the largest possible NA objectives. We also
 find that increasing NA always lowers the MAD, but orthogonal arms are not
-always best. At large NA, it is advantageous to move the objectives together or
+always optimal. At large NA, it is advantageous to move the objectives together or
 against the cover slip. Given the high uncertainty in the transverse plane for a
 single-view shown in Figure \ref{fig:single-arm}b), we can see why oblique views
 perform better than orthogonal views---oblique views are complementary because
@@ -493,30 +500,31 @@ the regions of high orientation uncertainty from each view do not overlap.
 \begin{figure}[htbp]
 \centering\includegraphics[width=\textwidth]{symmetric-widefield}
 \caption{Dual-view symmetric K\"ohler designs with varying NA and angle between
-  objectives. a) Schematic of the microscope. We illuminate with the first objective
-  (red solid) and detect from the second objective (red dashed). Then we
-  illuminate from the second objective (blue solid) and detect from the first
+  objectives. a) Schematic of the microscope. We illuminate with the first
+  objective (red solid) and detect from the second objective (red dashed). Then
+  we illuminate from the second objective (blue solid) and detect from the first
   objective (blue dashed). b) Solid-angle uncertainty for the microscope in
   a). c) Median of the solid-angle uncertainty as a function of NA and the angle
-  between the objectives. d) MAD of the solid-angle uncertainty as a function of NA
-  and the angle between the objectives. The microscope in a) and b) is indicated
-  by a cross in c) and d). e) Median of the solid-angle uncertainty as a
-  function of the angle between the objectives when NA=0.6. f) MAD of the
-  solid-angle uncertainty as a function of the angle between the objectives when
-  NA=0.6. The profile in e) and f) is taken along the orange line in c) and d).}
+  between the objectives. d) MAD of the solid-angle uncertainty as a function of
+  NA and the angle between the objectives. The microscope configuration in a)
+  and b) is indicated by a cross in c) and d). e) Median of the solid-angle
+  uncertainty as a function of the angle between the objectives when NA=0.6. f)
+  MAD of the solid-angle uncertainty as a function of the angle between the
+  objectives when NA=0.6. The profile in e) and f) is taken along the purple
+  line in c) and d).}
 \label{fig:symmetric-widefield}
 \end{figure}
 
 Figure \ref{fig:double-arm} shows our results when we used a dual-view symmetric
 orthogonal K\"ohler design and varied the illumination and detection NA. Our
 results are similar to the single-view case in Figure \ref{fig:single-arm}. We
-find that the best designs use a small illumination NA and a large detection NA
-where $\alpha \approx 57.4^{\circ}$. As we discussed in Section
-\ref{excitation}, low-NA K\"ohler illumination is approximately equivalent to
-light-sheet illumination for the task of estimating the orientation of
-molecules. Therefore, the preference for low-NA K\"ohler illumination also
-implies that dual-view light-sheet illumination geometries are an excellent
-choice for uniformly reconstructing the orientation of single molecules.
+find that optimal designs use a small illumination NA and a large detection
+NA. As we discussed in Section \ref{excitation}, low-NA K\"ohler illumination is
+approximately equivalent to light-sheet illumination for the task of estimating
+the orientation of molecules. Therefore, the preference for low-NA K\"ohler
+illumination also implies that dual-view light-sheet illumination geometries are
+an excellent choice for uniformly reconstructing the orientation of single
+molecules.
 
 \begin{figure}[htbp]
 \centering\includegraphics[width=\textwidth]{double-arm}
@@ -524,8 +532,8 @@ choice for uniformly reconstructing the orientation of single molecules.
   illumination and detection NA. a) Schematic of the microscope. b) Solid-angle
   uncertainty for the microscope in a). c) Median of the solid-angle uncertainty
   as a function of illumination and detection NA. d) MAD of the solid-angle
-  uncertainty as a function of illumination and detection NA. The microscope in
-  a) and b) is indicated by a cross in c) and d).}
+  uncertainty as a function of illumination and detection NA. The microscope
+  configuration in a) and b) is indicated by a cross in c) and d).}
 \label{fig:double-arm}
 \end{figure}
 
@@ -554,13 +562,13 @@ low solid-angle uncertainty MAD by changing the sample exposure ratio.
 
 \begin{figure}[htbp]
   \centering\includegraphics[width=\textwidth]{asymmetric-double}
-  \caption{Dual-view asymmetric light-sheet illumination designs with varying NA and
-    sample exposure asymmetry. a) Schematic of the microscope. b) Solid-angle
-    uncertainty for the microscope in a). c) Median of the solid-angle
-    uncertainty as a function of NA and sample exposure asymmetry. d) MAD of the
+  \caption{Dual-view asymmetric light-sheet illumination designs with varying NA
+    and sample exposure asymmetry. a) Schematic of the microscope. b)
+    Solid-angle uncertainty for the microscope in a). c) Median of the
     solid-angle uncertainty as a function of NA and sample exposure
-    asymmetry. The microscope in a) and b) is indicated by a cross in c) and
-    d).}
+    asymmetry. d) MAD of the solid-angle uncertainty as a function of NA and
+    sample exposure asymmetry. The microscope configuration in a) and b) is
+    indicated by a cross in c) and d).}
 \label{fig:asymmetric-double}
 \end{figure}
 
@@ -595,12 +603,12 @@ range of microscope designs. Our main result is a short list of design
 heuristics that can be used to design polarized-illumination single-molecule
 orientation microscopes:
 \begin{itemize}
-\item All microscopes benefit from a small illumination NA and a large detection
-  NA with $\alpha \approx 57.4^{\circ}$.
+\item Single-view microscopes benefit from a small illumination NA and a large
+  detection NA with $\alpha \approx 65^{\circ}$.
 \item Dual-view microscopes outperform single-view microscopes, and dual-view
   microscopes remove the high uncertainty region in the transverse plane of
   single-view microscopes.
-\item High-NA dual-view K\"ohler microscopes are best when the two views are
+\item High-NA dual-view K\"ohler microscopes are optimal when the two views are
   oblique. Oblique views are complementary because their high uncertainty
   transverse planes do not overlap.
 \item Symmetric NA dual-view orthogonal light-sheet microscopes provide a good

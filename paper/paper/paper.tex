@@ -12,15 +12,18 @@
 \title{Single-fluorophore orientation determination with multiview polarized
   illumination: modeling and microscope design}
 
-\author{Talon Chandler,\authormark{1,*} Shalin Mehta,\authormark{2} Hari Shroff,\authormark{3,4} Rudolf Oldenbourg,\authormark{2, 5} and Patrick J. La Rivi\`ere\authormark{1, 4}}
+\author{Talon Chandler,\authormark{1,*} Shalin Mehta,\authormark{1,2,3} Hari
+  Shroff,\authormark{4,5} Rudolf Oldenbourg,\authormark{2, 6} and Patrick J. La
+  Rivi\`ere\authormark{1, 5}}
 \address{\authormark{1}University of Chicago, Department of Radiology, Chicago, Illinois 60637, USA\\
-  \authormark{2}Marine Biological Laboratory, Bell Center, Woods Hole, Massachusetts, USA\\
-  \authormark{3}Section on High Resolution Optical Imaging, National Institute
+  \authormark{2}Marine Biological Laboratory, Bell Center, Woods Hole, Massachusetts 02543, USA\\
+  \authormark{3}Chan Zuckerberg Biohub, San Francisco, California 94158, USA\\
+  \authormark{4}Section on High Resolution Optical Imaging, National Institute
   of Biomedical Imaging and Bioengineering, National Institutes of Health,
   Bethesda, Maryland 20892, USA\\
-  \authormark{4}Whitman Center, Marine Biological Laboratory, Woods Hole,
+  \authormark{5}Marine Biological Laboratory, Whitman Center, Woods Hole,
   Massachusetts 02543, USA\\
-  \authormark{5}Brown University, Department of Physics, Providence, Rhode
+  \authormark{6}Brown University, Department of Physics, Providence, Rhode
   Island 02912, USA}
 \email{*talonchandler@talonchandler.com} %% email address is required
 
@@ -74,9 +77,11 @@ orientation. Information-theoretically optimal techniques in this category use
 defocusing or phase masks in the back focal plane to encode orientation and
 position information in the image \cite{agrawal2012}. These techniques can
 estimate the orientation of molecules in all orientations and only require a
-single intensity measurement, but they require complex reconstruction
+single frame of intensity measurements, but they require complex reconstruction
 algorithms, expensive high numerical aperture (NA) optics, and sensitive
-detectors.
+detectors. Furthermore, these techniques spread the signal from a single
+molecule over a large area on the detector, so they suffer from a poor
+signal-to-noise ratio \cite{toprak2006}.
 
 \textbf{Spatial variation of illumination polarization} techniques vary the
 polarization and intensity in the illumination path to excite molecules in
@@ -94,12 +99,14 @@ parallel without scanning. These techniques are easy to implement---changing the
 illumination or detection polarization is simple with a polarization splitter
 \cite{mehta2016} or universal compensator/polarizer \cite{shribak2003}---and the
 reconstruction methods are straightforward \cite{fourkas2001, mehta2016,
-  backer2016}. The main drawback is that these techniques require several
-intensity measurements under different polarization orientations to estimate the
-orientation of a single molecule. Despite the requirement for multiple
-measurements, polarized illumination or detection methods are good choices for
-live cell imaging because of their combination of speed and ease of
-implementation.
+  backer2016}. Also, these techniques keep the signal from a single molecule
+localized on the detector, so they have a signal-to-noise ratio advantage over
+defocusing and phase masking techniques. The main drawback is that these
+techniques require several intensity measurements under different polarization
+orientations to estimate the orientation of a single molecule. Despite the
+requirement for multiple measurements, polarized illumination or detection
+methods are good choices for live cell imaging because of their combination of
+speed and ease of implementation.
 
 To develop a polarized illumination or detection technique we need to choose a
 method for varying the polarization and place it in the illumination or

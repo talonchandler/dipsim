@@ -178,14 +178,31 @@ def draw_scene(scene_string, filename='out.png', my_ax=None, dpi=500,
       }
     }
 
+    void ellipse(real Theta, real Phi, real a, real b, real theta, bool dash, triple color) {
+      triple normal = expi(Theta, Phi);
+      real a_scaled = a/max(a, b);
+      real b_scaled = b/max(a, b);      
+      path3 mycircle = rotate(degrees(Phi), Z)*rotate(degrees(Theta), Y)*shift(Z)*rotate(degrees(theta), Z)*scale(a_scaled, b_scaled, 1)*circle(c=O, r=0.05, normal=Z);
+      if (dash) {
+        draw(mycircle, p=linetype(new real[] {8,8}, offset=xpart(color))+rgb(xpart(color), ypart(color), zpart(color)));
+      } else {
+        draw(mycircle, p=rgb(xpart(color), ypart(color), zpart(color)));
+      }
+    }
+
     void mydot(real Theta, triple color) {
       triple normal = expi(Theta, 0);
       dot(normal, p=rgb(xpart(color), ypart(color), zpart(color)));
     }
 
-    void arrow(real Theta, real Phi_Pol, triple color) {
-      draw(rotate(Theta, Y)*rotate(Phi_Pol, Z)*(Z--(Z+0.2*X)), p=rgb(xpart(color), ypart(color), zpart(color)), arrow=Arrow3(emissive(rgb(xpart(color), ypart(color), zpart(color)))));
-      draw(rotate(Theta, Y)*rotate(Phi_Pol, Z)*(Z--(Z-0.2*X)), p=rgb(xpart(color), ypart(color), zpart(color)), arrow=Arrow3(emissive(rgb(xpart(color), ypart(color), zpart(color)))));
+    void arrow(real Theta, real Phi_Pol, triple color, bool dash) {
+      if (dash) {
+        draw(rotate(Theta, Y)*rotate(Phi_Pol, Z)*(Z--(Z+0.2*X)), p=linetype(new real[] {4,4}, offset=xpart(color))+rgb(xpart(color), ypart(color), zpart(color)), arrow=Arrow3(emissive(rgb(xpart(color), ypart(color), zpart(color)))));
+        draw(rotate(Theta, Y)*rotate(Phi_Pol, Z)*(Z--(Z-0.2*X)), p=linetype(new real[] {4,4}, offset=xpart(color))+rgb(xpart(color), ypart(color), zpart(color)), arrow=Arrow3(emissive(rgb(xpart(color), ypart(color), zpart(color)))));
+      } else {
+        draw(rotate(Theta, Y)*rotate(Phi_Pol, Z)*(Z--(Z+0.2*X)), p=rgb(xpart(color), ypart(color), zpart(color)), arrow=Arrow3(emissive(rgb(xpart(color), ypart(color), zpart(color)))));
+        draw(rotate(Theta, Y)*rotate(Phi_Pol, Z)*(Z--(Z-0.2*X)), p=rgb(xpart(color), ypart(color), zpart(color)), arrow=Arrow3(emissive(rgb(xpart(color), ypart(color), zpart(color)))));
+      }
     }
 
     // Sphere

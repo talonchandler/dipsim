@@ -450,13 +450,42 @@ $I_{\text{exp}} = \frac{4000}{N}$. Note that $I_{\text{exp}}$ is a measure of
 exposure to the sample, not the detected intensity or the total intensity
 emitted by the molecule.
 
+We also use the Fisher information matrix to calculate uncertainty ellipses for
+each microscope and fluorophore orientation. The general equation of an ellipse
+with axis radii $a$ and $b$ and rotation angle $\gamma$ is
+\begin{align}
+  \frac{(x\cos\gamma + y\sin\gamma)^2}{a^2} + \frac{(x\cos\gamma - y\sin\gamma)^2}{b^2} =1. 
+\end{align}
+We calculate the ellipse parameters in terms of the Fisher information matrix
+using the following set of equations
+\begin{align}
+  \sigma_x &= \sqrt{\mb{F}^{-1}_{0,0}} \label{eq:first}\\
+  \sigma_y &= \sin\Theta\sqrt{\mb{F}^{-1}_{1,1}} \label{eq:second}\\ 
+  \sigma_{xy} &= \sin\Theta\sqrt{\mb{F}^{-1}_{1,0}} \label{eq:third}\\  
+  a^2 &= \frac{\sigma_x^2 + \sigma_y^2}{2} + \sqrt{\frac{(\sigma_x^2 - \sigma_y^2)^2}{4} + \sigma_{xy}^2}\\
+  b^2 &= \frac{\sigma_x^2 + \sigma_y^2}{2} - \sqrt{\frac{(\sigma_x^2 - \sigma_y^2)^2}{4} + \sigma_{xy}^2}\\
+  \gamma &= \frac{1}{2}\text{arctan}\left(\frac{2\sigma_{xy}}{\sigma_x^2 - \sigma_y^2}\right). \label{eq:last}
+\end{align}
+Equations \ref{eq:first}--\ref{eq:last} are identical to those found in
+\cite{coe2009} with an additional factor of $\sin\Theta$ on equations
+\ref{eq:second} and \ref{eq:third} to account for the non-Euclidean geometry of
+the sphere. Instead of plotting ellipses with widely varying radii on the same
+figure, we chose a constant major axis radius. This means that the uncertainty
+ellipses indicate the relative size of uncertainty in different directions, not
+the absolute size of the uncertainty.
+
+We used NumPy \cite{walt2011} for numerical computation, SymPy \cite{meurer2017}
+for symbolic computation, Matplotlib \cite{hunter2007} for high-level plotting,
+VisPy \cite{vispy} for 3D rendered plots, and Asymptote \cite{bowman2008} for 3D line plots.
+
+
 \section{Results}\label{results}
 Figure \ref{fig:single-arm} shows our results for single-view designs where a
 single objective is used for illumination and detection. We swept through the
 illumination and detection NA while keeping the sample exposure constant, and we
 found that the lowest median and MAD of the solid-angle uncertainty occurs with
 a small illumination NA and a large detection NA where
-$\alpha \approx 65^{\circ}$ (see Figure \ref{fig:single-arm}d) at
+$\alpha \approx 65^{\circ}$ (see Figure \ref{fig:single-arm}e) at
 NA${}_{\text{det}} \approx 1.2$). A small illumination NA maximizes the range of
 absorption efficiencies, while a large detection NA optimizes the number of
 detected photons and the range of the detection efficiencies. The optimal
@@ -466,23 +495,28 @@ of illumination and detection NAs---reducing the illumination NA (an inexpensive
 modification requiring underfilling the aperture plane) improves the solid-angle
 uncertainty much less than increasing the detection NA (an expensive
 modification requiring a higher-NA objective). Also note in Figure
-\ref{fig:single-arm}b) that single-view designs suffer from high orientation
+\ref{fig:single-arm}c) that single-view designs suffer from high orientation
 uncertainty when the molecules are oriented along the optical axis (the
 molecules are not efficiently excited or detected), near the transverse plane
 (it is ambiguous whether the molecule is oriented above or below the transverse
-plane), and near the polarizer orientations (it is ambiguous whether the
-molecule is on either side of the polarizer orientation).
+plane, see Figure \ref{fig:single-arm}b)), and near the polarizer orientations
+(it is ambiguous whether the molecule is on either side of the polarizer
+orientation, see Figure \ref{fig:single-arm}b)).
 
 \begin{figure}[htbp]
 \centering\includegraphics[width=\textwidth]{single-arm}
 \caption{Single-view microscope with varying illumination and detection NA. a)
   Schematic of a single-view four-polarization epi-illumination microscope. The
   red arrows indicate the four illumination polarization orientations---one for
-  each intensity measurement. b) Solid-angle uncertainty for the microscope in
-  a). c) Median of the solid-angle uncertainty as a function of illumination and
-  detection NA. d) MAD of the solid-angle uncertainty as a function of
-  illumination and detection NA. The microscope configuration in a) and b) is
-  indicated by a cross in c) and d).}
+  each intensity measurement. b) Uncertainty ellipses for the microscope in
+  a). The ellipses indicate the relative size of the uncertainty in different
+  directions, not the absolute size of the uncertainty. c) Solid-angle
+  uncertainty for the microscope in a). The solid-angle uncertainty is a measure
+  of the absolute size of the uncertainty in all directions. d) Median of the
+  solid-angle uncertainty as a function of illumination and detection NA. e) MAD
+  of the solid-angle uncertainty as a function of illumination and detection
+  NA. The microscope configuration in a), b), and c) is indicated by a cross in
+  d) and e).}
 \label{fig:single-arm}
 \end{figure}
 
@@ -500,7 +534,7 @@ solid-angle uncertainty occurs with the largest possible NA objectives. We also
 find that increasing NA always lowers the MAD, but orthogonal arms are not
 always optimal. At large NA, it is advantageous to move the objectives together or
 against the cover slip. Given the high uncertainty in the transverse plane for a
-single-view shown in Figure \ref{fig:single-arm}b), we can see why oblique views
+single-view shown in Figure \ref{fig:single-arm}c), we can see why oblique views
 perform better than orthogonal views---oblique views are complementary because
 the regions of high orientation uncertainty from each view do not overlap.
 
@@ -510,15 +544,18 @@ the regions of high orientation uncertainty from each view do not overlap.
   objectives. a) Schematic of the microscope. We illuminate with the first
   objective (red solid) and detect from the second objective (red dashed). Then
   we illuminate from the second objective (blue solid) and detect from the first
-  objective (blue dashed). b) Solid-angle uncertainty for the microscope in
-  a). c) Median of the solid-angle uncertainty as a function of NA and the angle
-  between the objectives. d) MAD of the solid-angle uncertainty as a function of
-  NA and the angle between the objectives. The microscope configuration in a)
-  and b) is indicated by a cross in c) and d). e) Median of the solid-angle
-  uncertainty as a function of the angle between the objectives when NA=0.6. f)
-  MAD of the solid-angle uncertainty as a function of the angle between the
-  objectives when NA=0.6. The profile in e) and f) is taken along the purple
-  line in c) and d).}
+  objective (blue dashed). b) Uncertainty ellipses for the microscope in a). The
+  ellipses indicate the relative size of the uncertainty in different
+  directions, not the absolute size of the uncertainty. c) Solid-angle
+  uncertainty for the microscope in a). The solid-angle uncertainty is a measure
+  of the absolute size of the uncertainty in all directions. d) Median of the
+  solid-angle uncertainty as a function of NA and the angle between the
+  objectives. e) MAD of the solid-angle uncertainty as a function of NA and the
+  angle between the objectives. The microscope configuration in a), b), and c)
+  is indicated by a cross in d) and e). f) Median of the solid-angle uncertainty
+  as a function of the angle between the objectives when NA=0.6. g) MAD of the
+  solid-angle uncertainty as a function of the angle between the objectives when
+  NA=0.6. The profile in f) and g) is taken along the purple line in d) and e).}
 \label{fig:symmetric-widefield}
 \end{figure}
 
@@ -536,11 +573,15 @@ molecules.
 \begin{figure}[htbp]
 \centering\includegraphics[width=\textwidth]{double-arm}
 \caption{Dual-view symmetric orthogonal K\"ohler designs with varying
-  illumination and detection NA. a) Schematic of the microscope. b) Solid-angle
-  uncertainty for the microscope in a). c) Median of the solid-angle uncertainty
-  as a function of illumination and detection NA. d) MAD of the solid-angle
-  uncertainty as a function of illumination and detection NA. The microscope
-  configuration in a) and b) is indicated by a cross in c) and d).}
+  illumination and detection NA. a) Schematic of the microscope. b) Uncertainty
+  ellipses for the microscope in a). The ellipses indicate the relative size of
+  the uncertainty in different directions, not the absolute size of the
+  uncertainty. c) Solid-angle uncertainty for the microscope in a). The
+  solid-angle uncertainty is a measure of the absolute size of the uncertainty
+  in all directions. d) Median of the solid-angle uncertainty as a function of
+  illumination and detection NA. e) MAD of the solid-angle uncertainty
+  as a function of illumination and detection NA. The microscope configuration
+  in a), b), and c) is indicated by a cross in d) and e).}
 \label{fig:double-arm}
 \end{figure}
 
@@ -556,7 +597,7 @@ the total sample exposure constant, and found that symmetric designs are at a
 local minimum of the median and MAD of the solid-angle uncertainty. We also
 found that at extreme asymmetries where the exposure from the low-NA arm is much
 larger than the exposure from the high-NA arm (top-left and bottom-right corners
-of Figures \ref{fig:asymmetric-double}c) and d)) the median and MAD are
+of Figures \ref{fig:asymmetric-double}d) and e)) the median and MAD are
 comparable to the symmetric light-sheet microscope. This means that if a very
 high-NA objective is available and a low-NA objective can provide light sheet
 illumination, this microscope will perform comparably with a dual-view
@@ -571,11 +612,14 @@ low solid-angle uncertainty MAD by changing the sample exposure ratio.
   \centering\includegraphics[width=\textwidth]{asymmetric-double}
   \caption{Dual-view asymmetric light-sheet illumination designs with varying NA
     and sample exposure asymmetry. a) Schematic of the microscope. b)
-    Solid-angle uncertainty for the microscope in a). c) Median of the
-    solid-angle uncertainty as a function of NA and sample exposure
-    asymmetry. d) MAD of the solid-angle uncertainty as a function of NA and
-    sample exposure asymmetry. The microscope configuration in a) and b) is
-    indicated by a cross in c) and d).}
+    Uncertainty ellipses for the microscope in a). The ellipses indicate the
+    relative size of the uncertainty in different directions, not the absolute
+    size of the uncertainty. c) Solid-angle uncertainty for the microscope in
+    a). The solid-angle uncertainty is a measure of the absolute size of the
+    uncertainty in all directions. d) Median of the solid-angle uncertainty as a
+    function of NA and sample exposure asymmetry. e) MAD of the solid-angle
+    uncertainty as a function of NA and sample exposure asymmetry. The
+    microscope configuration in a), b), and c) is indicated by a cross in d) and e).}
 \label{fig:asymmetric-double}
 \end{figure}
 

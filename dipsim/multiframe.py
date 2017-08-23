@@ -12,32 +12,37 @@ class MultiFrameMicroscope:
     NoiseModel.
     """
     def __init__(self, ill_thetas, det_thetas, ill_nas, det_nas, ill_types,
-                 det_types, colors, n_frames=4, n_pts=1000, max_photons=1000,
-                 n_samp=1.33, **kwargs):
+                 det_types, colors, n_frames=4, n_det_frames=1,
+                 n_pts=1000, max_photons=1000, n_samp=1.33, **kwargs):
+        
         self.n_frames = n_frames
+        self.n_det_frames = n_det_frames
         self.n_pts = n_pts
 
         m = []
         for i, det_theta in enumerate(det_thetas):
-            # Specify detection
-            det = detector.Detector(theta_optical_axis=det_thetas[i],
-                                    det_type=det_types[i],
-                                    na=det_nas[i], n=n_samp)
+            # Cycle through detection polarizations
+            for k in range(self.n_det_frames):
+                phi_det = np.pi*k/self.n_det_frames
+                det = detector.Detector(theta_optical_axis=det_thetas[i],
+                                        det_type=det_types[i],
+                                        na=det_nas[i], n=n_samp,
+                                        phi_pol=phi_det)
 
-            # Cycle through polarizations
-            for n in range(self.n_frames):
-                phi = np.pi*n/self.n_frames
-                ill = illuminator.Illuminator(theta_optical_axis=ill_thetas[i],
-                                              illum_type=ill_types[i],
-                                              na=ill_nas[i], n=n_samp,
-                                              phi_pol=phi)
+                # Cycle through illumination polarizations
+                for n in range(self.n_frames):
+                    phi_ill = np.pi*n/self.n_frames
+                    ill = illuminator.Illuminator(theta_optical_axis=ill_thetas[i],
+                                                  illum_type=ill_types[i],
+                                                  na=ill_nas[i], n=n_samp,
+                                                  phi_pol=phi_ill)
 
-                if type(max_photons) == list:
-                    max_photon = max_photons[i]
-                else:
-                    max_photon = max_photons
-                    
-                m.append(microscope.Microscope(illuminator=ill, detector=det, max_photons=max_photon, color=colors[i]))
+                    if type(max_photons) == list:
+                        max_photon = max_photons[i]
+                    else:
+                        max_photon = max_photons
+
+                    m.append(microscope.Microscope(illuminator=ill, detector=det, max_photons=max_photon, color=colors[i]))
 
         self.microscopes = m
         self.noise_model = stats.NoiseModel(self.calc_total_intensities, **kwargs)
@@ -78,8 +83,8 @@ class MultiFrameMicroscope:
             fi = self.noise_model.calc_fi(pt, 2*[self.sphere_dx])
             fi_inv = np.linalg.pinv(fi)
             sigx = np.sqrt(fi_inv[0,0])
-            sigxy = np.sqrt(pt[0])*fi_inv[1,0]
-            sigy = np.sqrt(pt[0])*np.sqrt(fi_inv[1,1])
+            sigxy = np.sin(pt[0])*fi_inv[1,0]
+            sigy = np.sin(pt[0])*np.sqrt(fi_inv[1,1])
             a = np.sqrt(0.5*(sigx**2+sigy**2) + np.sqrt(0.25*((sigx**2-sigy**2)**2) + sigxy**2))
             b = np.sqrt(0.5*(sigx**2+sigy**2) - np.sqrt(0.25*((sigx**2-sigy**2)**2) + sigxy**2))
             theta = 0.5*np.arctan2(2*sigxy,sigx**2-sigy**2)

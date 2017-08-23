@@ -7,8 +7,8 @@ import os; import time; start = time.time(); print('Running...')
 import matplotlib.gridspec as gridspec
 
 # Main input parameters
-col_labels = ['Geometry\n($\\alpha_{1}$ = 60${}^{\circ}$,\n Exposure${}_1$/Exposure${}_2$ = 5)', r'$\sigma_{\Omega}$ [sr]', 'Median$\{\sigma_{\Omega}\}$ [sr]', 'MAD$\{\sigma_{\Omega}\}$ [sr]']
-fig_labels = ['a)', 'b)', 'c)', 'd)']
+col_labels = ['Geometry\n($\\alpha_{1}$ = 60${}^{\circ}$,\n Exposure${}_1$/Exposure${}_2$ = 5)', 'Uncertainty Ellipses', r'$\sigma_{\Omega}$ [sr]', 'Median$\{\sigma_{\Omega}\}$ [sr]', 'MAD$\{\sigma_{\Omega}\}$ [sr]']
+fig_labels = ['a)', 'b)', 'c)', 'd)', 'e)']
 n_pts = 500 # Points on sphere
 n_pts_sphere = 50000 # Points on sphere
 n_grid_pts = 25
@@ -16,30 +16,30 @@ inch_fig = 5
 dpi = 300
 
 # Setup figure and axes
-fig = plt.figure(figsize=(2.4*inch_fig, 2*inch_fig))
-gs0 = gridspec.GridSpec(2, 2, wspace=0.3, hspace=0.1)
-gs00 = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs0[0,0], width_ratios=[1, 0.05], wspace=0.45)
-gs10 = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs0[1,0], width_ratios=[1, 0.05], wspace=0.45)
-gs01 = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs0[0,1], width_ratios=[1, 0.05], wspace=0.45)
-gs11 = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs0[1,1], width_ratios=[1, 0.05], wspace=0.45)
-ax0 = plt.subplot(gs00[0])
-ax1 = plt.subplot(gs01[0])
-ax2 = plt.subplot(gs10[0])
-ax3 = plt.subplot(gs11[0])
-cax0 = plt.subplot(gs00[1]); cax0.axis('off');
-cax1 = plt.subplot(gs01[1])
-cax2 = plt.subplot(gs10[1])
-cax3 = plt.subplot(gs11[1])
+fig = plt.figure(figsize=(2.6*inch_fig, 2*inch_fig))
+gs0 = gridspec.GridSpec(2, 1, wspace=0, hspace=0.1, height_ratios=[1,1])
+gs_up = gridspec.GridSpecFromSubplotSpec(1, 4, subplot_spec=gs0[0], width_ratios=[1, 1, 1, 0.06], wspace=0.2)
+gs_down = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs0[1], width_ratios=[1, 1], wspace=0.45)
+gs_down_left = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs_down[0], width_ratios=[1, 0.05], wspace=0.55)
+gs_down_right = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs_down[1], width_ratios=[1, 0.05], wspace=0.55)
+ax0 = plt.subplot(gs_up[0])
+ax1 = plt.subplot(gs_up[1])
+ax2 = plt.subplot(gs_up[2])
+cax2 = plt.subplot(gs_up[3])
+ax3 = plt.subplot(gs_down_left[0])
+cax3 = plt.subplot(gs_down_left[1])
+ax4 = plt.subplot(gs_down_right[0])
+cax4 = plt.subplot(gs_down_right[1])
 
-for ax, col_label, fig_label  in zip([ax0, ax1, ax2, ax3], col_labels, fig_labels):
+for ax, col_label, fig_label  in zip([ax0, ax1, ax2, ax3, ax4], col_labels, fig_labels):
     ax.annotate(col_label, xy=(0,0), xytext=(0.5, 1.05), textcoords='axes fraction',
                 va='bottom', ha='center', fontsize=14, annotation_clip=False)
     ax.annotate(fig_label, xy=(0,0), xytext=(0, 1.05), textcoords='axes fraction',
                 va='bottom', ha='center', fontsize=14, annotation_clip=False)
     
-for ax in [ax0, ax1, ax2, ax3]:
+for ax in [ax0, ax1, ax2, ax3, ax4]:
     ax.tick_params(axis='both', labelsize=14)
-for cax in [cax1, cax2, cax3]:
+for cax in [cax2, cax3, cax4]:
     cax.tick_params(axis='both', labelsize=14)
 
 # Calculate a list of points to sample in region
@@ -203,14 +203,15 @@ line_string = line_string.replace('theta2', str(np.deg2rad(-alpha1)))
 scene_string += line_string
 
 util.draw_scene(scene_string, my_ax=ax0, dpi=dpi)
+util.draw_scene(exp.ellipse_string(n_pts=250), my_ax=ax1, dpi=dpi)
 util.plot_sphere(directions=exp.directions, data=exp.sa_uncert,
                  color_norm='log', linthresh=1e-4,
                  color_max=1e1, color_min=1e-4,
-                 my_ax=ax1, my_cax=cax1)
+                 my_ax=ax2, my_cax=cax2)
     
 # Plots last two columns
-plot_2d_regions(ax2, cax2, pts, med, special_pt=(dose_rat_plot, alpha1))
-plot_2d_regions(ax3, cax3, pts, mad, special_pt=(dose_rat_plot, alpha1))
+plot_2d_regions(ax3, cax3, pts, med, special_pt=(dose_rat_plot, alpha1))
+plot_2d_regions(ax4, cax4, pts, mad, special_pt=(dose_rat_plot, alpha1))
     
 # Label axes and save
 print('Saving final figure.')    

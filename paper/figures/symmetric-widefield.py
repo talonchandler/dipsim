@@ -7,8 +7,8 @@ import os; import time; start = time.time(); print('Running...')
 import matplotlib.gridspec as gridspec
 
 # Main input parameters
-col_labels = ['Geometry (NA = 0.6, $\\beta=80{}^{\circ}$)', r'$\sigma_{\Omega}$ [sr]', 'Median$\{\sigma_{\Omega}\}$ [sr]', 'MAD$\{\sigma_{\Omega}\}$ [sr]', '', '']
-fig_labels = ['a)', 'b)', 'c)', 'd)', 'e)', 'f)']
+col_labels = ['Geometry\n (NA = 0.6, $\\beta=80{}^{\circ}$)', 'Uncertainty Ellipses', r'$\sigma_{\Omega}$ [sr]', 'Median$\{\sigma_{\Omega}\}$ [sr]', 'MAD$\{\sigma_{\Omega}\}$ [sr]', '', '']
+fig_labels = ['a)', 'b)', 'c)', 'd)', 'e)', 'f)', 'g)']
 n_pts = 5000 #Points on sphere
 n_pts_sphere = 50000 # Points on sphere
 n_grid_pts = 21
@@ -18,34 +18,38 @@ inch_fig = 5
 dpi = 300
 
 # Setup figure and axes
-fig = plt.figure(figsize=(2.2*inch_fig, 3.0*inch_fig))
-gs0 = gridspec.GridSpec(3, 2, wspace=0.4, hspace=0.2)
-gs00 = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs0[0,0], width_ratios=[1, 0.05], wspace=0.1)
-gs10 = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs0[1,0], width_ratios=[1, 0.05], wspace=0.1)
-gs01 = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs0[0,1], width_ratios=[1, 0.05], wspace=0.1)
-gs11 = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs0[1,1], width_ratios=[1, 0.05], wspace=0.1)
-gs20 = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs0[2,0], width_ratios=[1, 0.05], wspace=0.1)
-gs21 = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs0[2,1], width_ratios=[1, 0.05], wspace=0.1)
-ax0 = plt.subplot(gs00[0])
-ax1 = plt.subplot(gs01[0])
-ax2 = plt.subplot(gs10[0])
-ax3 = plt.subplot(gs11[0])
-ax4 = plt.subplot(gs20[0])
-ax5 = plt.subplot(gs21[0])
-cax0 = plt.subplot(gs00[1]); cax0.axis('off');
-cax1 = plt.subplot(gs01[1])
-cax2 = plt.subplot(gs10[1])
-cax3 = plt.subplot(gs11[1])
+fig = plt.figure(figsize=(2.2*inch_fig, 3*inch_fig))
+gs0 = gridspec.GridSpec(3, 1, wspace=0, hspace=0.2, height_ratios=[0.9,1,1])
+gs_up = gridspec.GridSpecFromSubplotSpec(1, 4, subplot_spec=gs0[0], width_ratios=[1, 1, 1, 0.06], wspace=0.1)
+gs_middle = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs0[1], width_ratios=[1, 1], wspace=0.4)
+gs_down = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs0[2], width_ratios=[1, 1], wspace=0.4)
+gs_middle_left = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs_middle[0], width_ratios=[1, 0.05], wspace=0.1)
+gs_middle_right = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs_middle[1], width_ratios=[1, 0.05], wspace=0.1)
+gs_down_left = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs_down[0], width_ratios=[1, 0.05], wspace=0.1)
+gs_down_right = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs_down[1], width_ratios=[1, 0.05], wspace=0.1)
 
-for ax, col_label, fig_label  in zip([ax0, ax1, ax2, ax3, ax4, ax5], col_labels, fig_labels):
-    ax.annotate(col_label, xy=(0,0), xytext=(0.5, 1.05), textcoords='axes fraction',
+ax0 = plt.subplot(gs_up[0])
+ax1 = plt.subplot(gs_up[1])
+ax2 = plt.subplot(gs_up[2])
+cax2 = plt.subplot(gs_up[3])
+ax3 = plt.subplot(gs_middle_left[0])
+cax3 = plt.subplot(gs_middle_left[1])
+ax4 = plt.subplot(gs_middle_right[0])
+cax4 = plt.subplot(gs_middle_right[1])
+ax5 = plt.subplot(gs_down_left[0])
+cax5 = plt.subplot(gs_down_left[1]); cax5.axis('off');
+ax6 = plt.subplot(gs_down_right[0])
+cax6 = plt.subplot(gs_down_right[1]); cax6.axis('off');
+
+for ax, col_label, fig_label  in zip([ax0, ax1, ax2, ax3, ax4, ax5, ax6], col_labels, fig_labels):
+    ax.annotate(col_label, xy=(0,0), xytext=(0.5, 1.06), textcoords='axes fraction',
                 va='center', ha='center', fontsize=14, annotation_clip=False)
-    ax.annotate(fig_label, xy=(0,0), xytext=(0, 1.05), textcoords='axes fraction',
+    ax.annotate(fig_label, xy=(0,0), xytext=(0, 1.06), textcoords='axes fraction',
                 va='center', ha='center', fontsize=14, annotation_clip=False)
     
-for ax in [ax0, ax1, ax2, ax3, ax4, ax5]:
+for ax in [ax0, ax1, ax2, ax3, ax4, ax5, ax6]:
     ax.tick_params(axis='both', labelsize=14)
-for cax in [cax1, cax2, cax3]:
+for cax in [cax2, cax3, cax4]:
     cax.tick_params(axis='both', labelsize=14)
 
 # Calculate a list of points to sample in region
@@ -209,10 +213,11 @@ arc_string = arc_string.replace('theta', str(np.deg2rad(angle/2)))
 scene_string += arc_string
 
 util.draw_scene(scene_string, my_ax=ax0, dpi=dpi)
+util.draw_scene(exp.ellipse_string(n_pts=250), my_ax=ax1, dpi=dpi)
 util.plot_sphere(directions=exp.directions, data=exp.sa_uncert,
                  color_norm='log', linthresh=1e-4,
                  color_min=1e-4, color_max=1e1,
-                 my_ax=ax1, my_cax=cax1)
+                 my_ax=ax2, my_cax=cax2)
 
 # Find profile points
 line_na = 0.6
@@ -220,8 +225,8 @@ min_beta = np.rad2deg(2*np.arcsin(line_na/n))
 max_beta = 180 - np.rad2deg(2*np.arcsin(line_na/n))
 
 # Plots last two columns
-plot_2d_regions(ax2, cax2, pts, med, special_pt=(na, angle), line_pt0=(line_na, min_beta), line_pt1=(line_na, max_beta))
-plot_2d_regions(ax3, cax3, pts, mad, special_pt=(na, angle), line_pt0=(line_na, min_beta), line_pt1=(line_na, max_beta))
+plot_2d_regions(ax3, cax3, pts, med, special_pt=(na, angle), line_pt0=(line_na, min_beta), line_pt1=(line_na, max_beta))
+plot_2d_regions(ax4, cax4, pts, mad, special_pt=(na, angle), line_pt0=(line_na, min_beta), line_pt1=(line_na, max_beta))
 
 # Calculate and plot profile
 line_beta = np.linspace(min_beta, max_beta, n_line_pts)
@@ -235,8 +240,8 @@ for i, pt in enumerate(line_pts.T):
     line_med.append(x[0])
     line_mad.append(x[1])
 
-plot_1d_regions(ax4, line_beta, line_med, special_pt=angle, y_pos=[4.5e-3, 5e-3, 5.5e-3], y_lim=[4.4e-3, 5.6e-3], xtitle='Median$\{\sigma_{\Omega}\}$ [sr]')
-plot_1d_regions(ax5, line_beta, line_mad, special_pt=angle, y_pos=[1e-3, 1.5e-3, 2e-3], y_lim=[8e-4, 2e-3], xtitle='MAD$\{\sigma_{\Omega}\}$ [sr]')
+plot_1d_regions(ax5, line_beta, line_med, special_pt=angle, y_pos=[4.5e-3, 5e-3, 5.5e-3], y_lim=[4.4e-3, 5.6e-3], xtitle='Median$\{\sigma_{\Omega}\}$ [sr]')
+plot_1d_regions(ax6, line_beta, line_mad, special_pt=angle, y_pos=[1e-3, 1.5e-3, 2e-3], y_lim=[8e-4, 2e-3], xtitle='MAD$\{\sigma_{\Omega}\}$ [sr]')
 
 # Label axes and save
 print('Saving final figure.')    

@@ -197,7 +197,7 @@ calculate the absorption efficiency instead of the detection efficiency.
 \label{fig:coordinates}
 \end{figure}
 
-We consider a single molecule with an absorption dipole moment
+We consider a single molecule with a fixed absorption dipole moment
 $\hat{\bs{\mu}}_{\text{abs}}$ that we express in spherical coordinates $\Theta$
 and $\Phi$ (see Figure \ref{fig:coordinates}a)) as
 \begin{align}
@@ -335,7 +335,7 @@ rotated coordinate frame using the following expressions
           \begin{cases}
             \arccos\left(\dfrac{\cos\psi\cos\Phi\sin\Theta - \sin\psi\cos\Theta}{\sqrt{1 - (\sin\psi\cos\Phi\sin\Theta + \cos\psi\cos\Theta)^2}}\right) \ \ \ &0 \leq \Phi < \pi  \\
             -\arccos\left(\dfrac{\cos\psi\cos\Phi\sin\Theta - \sin\psi\cos\Theta}{\sqrt{1 - (\sin\psi\cos\Phi\sin\Theta + \cos\psi\cos\Theta)^2}}\right) \ \ \ &-\pi \leq \Phi < 0\\
-          \end{cases}
+          \end{cases}\label{eq:phip}
 \end{align}
 where $\psi$ is the angle of a right handed rotation about the $\mh{y}$ axis
 that maps the $\mh{z}$ axis onto the new optical axis.
@@ -474,10 +474,24 @@ figure, we chose a constant major axis radius. This means that the uncertainty
 ellipses indicate the relative size of uncertainty in different directions, not
 the absolute size of the uncertainty.
 
-We used NumPy \cite{walt2011} for numerical computation, SymPy \cite{meurer2017}
-for symbolic computation, Matplotlib \cite{hunter2007} for high-level plotting,
-VisPy \cite{vispy} for 3D rendered plots, and Asymptote \cite{bowman2008} for 3D line plots.
+The solid-angle uncertainty and the uncertainty ellipse are good local measures
+of orientation uncertainty, but they are insensitive to degeneracies with
+distant dipole orientations. For example, all of the intensity measurements in
+this paper are identical under inversion of the dipole orientation
+($I(\Theta, \Phi) = I(\Theta + \pi, \Phi)$ in equations \ref{eq:scalarabs},
+\ref{eq:scalardet}, and \ref{eq:forward_frame}), but the solid-angle uncertainty
+and the uncertainty ellipse give no indication of this degeneracy. For this
+reason we also use the number of degeneracies as a measure of a micrsocope's
+ability to estimate the orientation of a dipole from intensity measurements. A
+small number of degeneracies is important for a microscope to find the
+orientation of a molecule---a twofold degenerate microscope can find the
+orientation of a molecule down to the hemisphere while a fourfold symmetric
+microscope can only find the orientation down to the quadrant.
 
+To calculate and display these evaluation metrics we use NumPy \cite{walt2011}
+for numerical computation, SymPy \cite{meurer2017} for symbolic computation,
+Matplotlib \cite{hunter2007} for high-level plotting, VisPy \cite{vispy} for 3D
+rendered plots, and Asymptote \cite{bowman2008} for 3D line plots.
 
 \section{Results}\label{results}
 Figure \ref{fig:single-arm} shows our results for single-view designs where a
@@ -502,6 +516,23 @@ molecules are not efficiently excited or detected), near the transverse plane
 plane, see Figure \ref{fig:single-arm}b)), and near the polarizer orientations
 (it is ambiguous whether the molecule is on either side of the polarizer
 orientation, see Figure \ref{fig:single-arm}b)).
+
+The single-view microscope in Figure \ref{fig:single-arm} is fourfold degenerate
+($I(\Theta, \Phi) = I(\Theta + \pi, \Phi) = I(\Theta, \Phi + \pi) = I(\Theta +
+\pi, \Phi+\pi)$ in equations \ref{eq:scalarabs}, \ref{eq:scalardet}, and
+\ref{eq:forward_frame}). In addition to the usual inversion degeneracy,
+single-view microscopes suffer from a degeneracy when a dipole is reflected
+through the transverse plane. Evidence of this degeneracy is found in Figures
+\ref{fig:single-arm}b) and \ref{fig:single-arm}c) which show the ambiguity of
+whether the molecule is oriented above or below the transverse plane. Near the
+transverse plane this ambiguity is evident in the high solid-angle uncertainty,
+but far from the transverse plane evidence of the ambiguity is lost. Adding a
+second view and taking eight intensity measurements instead of four removes this
+degeneracy (see equations \ref{eq:thetap} and \ref{eq:phip}), so the dual-view
+microscopes we consider in this paper are only twofold degenerate. This means
+that while dual-view microscopes can find the orientation of a molecule up to
+the hemisphere, while single-view microscopes can only find the orientation of a
+molecule up to the quadrant.
 
 \begin{figure}[htbp]
 \centering\includegraphics[width=\textwidth]{single-arm}
@@ -532,11 +563,12 @@ optical axes, but the uncertainty is reduced by almost two orders of magnitude
 compared to the single-view microscope. We find that the lowest median of the
 solid-angle uncertainty occurs with the largest possible NA objectives. We also
 find that increasing NA always lowers the MAD, but orthogonal arms are not
-always optimal. At large NA, it is advantageous to move the objectives together or
-against the cover slip. Given the high uncertainty in the transverse plane for a
-single-view shown in Figure \ref{fig:single-arm}c), we can see why oblique views
-perform better than orthogonal views---oblique views are complementary because
-the regions of high orientation uncertainty from each view do not overlap.
+always optimal. At large NA, it is advantageous to move the objectives together
+or against the cover slip. Given the high uncertainty in the transverse plane
+for a single-view shown in Figure \ref{fig:single-arm}c), we can see why oblique
+views perform better than orthogonal views---oblique views are complementary
+because the regions of high orientation uncertainty from each view do not
+overlap. 
 
 \begin{figure}[htbp]
 \centering\includegraphics[width=\textwidth]{symmetric-widefield}
@@ -624,23 +656,26 @@ low solid-angle uncertainty MAD by changing the sample exposure ratio.
 \end{figure}
 
 Table 1 shows a summary of our evaluation metrics for microscopes in each
-class. The single-view K\"ohler microscope with a small illumination NA and
-high detection NA has the lowest solid-angle uncertainty median but the largest
-max. The dual-view oblique symmetric K\"ohler with an intermediate NA performs
-reasonably well on all three metrics, while the dual-view orthogonal symmetric
-light-sheet microscopes with large NA perform very well on all three metrics.
+class. The single-view K\"ohler microscope with a small illumination NA and high
+detection NA has the lowest solid-angle uncertainty median but the largest max
+and fourfold symmetry. The dual-view oblique symmetric K\"ohler with an
+intermediate NA performs reasonably well on all three metrics, while the
+dual-view orthogonal symmetric light-sheet microscopes with large NA perform
+very well on all three metrics.
 
 \begin{table}[ht!]
 \centering
-\caption{Comparison of designs in each class of microscope. All values are in
-  steradians.}
-\begin{tabular}{llll}
+\caption{Comparison of designs in each class of microscope. All solid-angle
+  uncertainty statistics are in steradians.}
+\begin{tabular}{lllll}
   \toprule
-Microscope Type&Max\{$\sigma_{\Omega}$\}&Median\{$\sigma_{\Omega}$\}&MAD\{$\sigma_{\Omega}$\}\\ \midrule
-Single-view K\"ohler (NA${}_\textrm{ill}$=0, NA${}_\textrm{det}$=1.1)&3.04$\times 10^{0}$&8.20$\times 10^{-4}$&1.48$\times 10^{-4}$ \\ 
-  Dual-view oblique symmetric K\"ohler (NA=0.6, $\beta$=53${}^{\circ}$)&1.35$\times 10^{-1}$&4.49$\times 10^{-3}$&9.17$\times 10^{-4}$\\
-Dual-view orthogonal symmetric light-sheet (NA=0.8)&6.23$\times 10^{-3}$&1.79$\times 10^{-3}$&1.65$\times 10^{-4}$\\  
-Dual-view orthogonal symmetric light-sheet (NA=0.94)&3.13$\times 10^{-3}$&1.28$\times 10^{-3}$&1.14$\times 10^{-4}$\\
+
+  Microscope Type&$n$-fold&Max\{$\sigma_{\Omega}$\}&Median\{$\sigma_{\Omega}$\}&MAD\{$\sigma_{\Omega}$\}\\ 
+    &Degeneracy&&&\\\midrule
+Single-view K\"ohler (NA${}_\textrm{ill}$=0, NA${}_\textrm{det}$=1.1)&4&3.04$\times 10^{0}$&8.20$\times 10^{-4}$&1.48$\times 10^{-4}$ \\ 
+  Dual-view oblique symmetric K\"ohler (NA=0.6, $\beta$=53${}^{\circ}$)&2&1.35$\times 10^{-1}$&4.49$\times 10^{-3}$&9.17$\times 10^{-4}$\\
+Dual-view orthogonal symmetric light-sheet (NA=0.8)&2&6.23$\times 10^{-3}$&1.79$\times 10^{-3}$&1.65$\times 10^{-4}$\\  
+Dual-view orthogonal symmetric light-sheet (NA=0.94)&2&3.13$\times 10^{-3}$&1.28$\times 10^{-3}$&1.14$\times 10^{-4}$\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -656,9 +691,10 @@ orientation microscopes:
 \begin{itemize}
 \item Single-view microscopes benefit from a small illumination NA and a large
   detection NA with $\alpha \approx 65^{\circ}$.
-\item Dual-view microscopes outperform single-view microscopes, and dual-view
-  microscopes remove the high uncertainty region in the transverse plane of
-  single-view microscopes.
+\item Dual-view microscopes outperform single-view microscopes along several
+  metrics. Dual-view microscopes have fewer degeneracies, lower median and MAD
+  solid-angle uncertainty, and no high solid-angle uncertainty region in the
+  transverse plane.
 \item High-NA dual-view K\"ohler microscopes are optimal when the two views are
   oblique. Oblique views are complementary because their high uncertainty
   transverse planes do not overlap.
@@ -708,11 +744,12 @@ below the cover slip\cite{wu2016}. Light-field detection schemes are also a type
 of multiview microscope\cite{levoy2006}, and we plan to extend our analysis to
 this case in future work.
 
-Although we have only considered single-molecule orientation determination in
-this work, polarized illumination techniques can be applied to find the
-distribution of ensembles of molecules \cite{mehta2016, backer2016}. In future
-work we will investigate the ability of multiview polarized illumination
-microscopes to estimate the orientation distribution of ensembles of molecules.
+Although we have only considered the orientation determination of fixed single
+molecules, polarized illumination techniques can be used to study the
+orientation distribution of ensembles of dynamic molecules \cite{mehta2016,
+  backer2016}. In future work we will investigate the ability of multiview
+polarized illumination microscopes to estimate the orientation distribution of
+ensembles of dynamic molecules.
 
 We have only considered polarized illumination. In the introduction
 we discussed why we prefer polarized illumination to polarized detection, but

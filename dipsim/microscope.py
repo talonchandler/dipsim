@@ -68,24 +68,51 @@ class Microscope:
             illum_string = illum_string.replace('alpha', str(ill.alpha))
             illum_string = illum_string.replace('color', str(self.color))        
             asy_string += illum_string
+            
+            pol_string = "arrow(theta, phi_pol, color, false);\n"
+            pol_string = pol_string.replace('theta', str(np.rad2deg(ill.theta_optical_axis)))
+            pol_string = pol_string.replace('phi_pol', str(np.rad2deg(ill.phi_pol)))
+            pol_string = pol_string.replace('color', self.color)        
+            asy_string += pol_string
+            
         elif ill.illum_type == 'sheet':
             illum_string = "mydot(theta, color);\n"
             illum_string = illum_string.replace('theta', str(ill.theta_optical_axis))
             illum_string = illum_string.replace('color', str(self.color))        
             asy_string += illum_string
 
-        # Plot detector
-        detect_string = "circle(theta, alpha, true, color);\n"
-        detect_string = detect_string.replace('theta', str(det.theta_optical_axis))
-        detect_string = detect_string.replace('alpha', str(det.alpha+0.01))
-        detect_string = detect_string.replace('color', self.color)        
-        asy_string += detect_string
+            pol_string = "arrow(theta, phi_pol, color, false);\n"
+            pol_string = pol_string.replace('theta', str(np.rad2deg(ill.theta_optical_axis)))
+            pol_string = pol_string.replace('phi_pol', str(np.rad2deg(ill.phi_pol)))
+            pol_string = pol_string.replace('color', self.color)        
+            asy_string += pol_string
+            
+        elif ill.illum_type == 'unpolarized':
+            illum_string = "circle(theta, alpha, false, color);\n"
+            illum_string = illum_string.replace('theta', str(ill.theta_optical_axis))
+            illum_string = illum_string.replace('alpha', str(ill.alpha))
+            illum_string = illum_string.replace('color', str(self.color))        
+            asy_string += illum_string
+            
 
-        # Plot polarization
-        pol_string = "arrow(theta, phi_pol, color);\n"
-        pol_string = pol_string.replace('theta', str(np.rad2deg(ill.theta_optical_axis)))
-        pol_string = pol_string.replace('phi_pol', str(np.rad2deg(ill.phi_pol)))
-        pol_string = pol_string.replace('color', self.color)        
-        asy_string += pol_string
+        # Plot detector
+        if det.det_type == 'lens':
+            detect_string = "circle(theta, alpha, true, color);\n"
+            detect_string = detect_string.replace('theta', str(det.theta_optical_axis))
+            detect_string = detect_string.replace('alpha', str(det.alpha+0.01))
+            detect_string = detect_string.replace('color', self.color)        
+            asy_string += detect_string
+        elif det.det_type == 'polarized':
+            detect_string = "circle(theta, alpha, true, color);\n"
+            detect_string = detect_string.replace('theta', str(det.theta_optical_axis))
+            detect_string = detect_string.replace('alpha', str(det.alpha+0.01))
+            detect_string = detect_string.replace('color', self.color)        
+            asy_string += detect_string
+            
+            pol_string = "arrow(theta, phi_pol, color, true);\n"
+            pol_string = pol_string.replace('theta', str(np.rad2deg(det.theta_optical_axis)))
+            pol_string = pol_string.replace('phi_pol', str(np.rad2deg(det.phi_pol)+5))
+            pol_string = pol_string.replace('color', self.color)        
+            asy_string += pol_string
 
         return asy_string

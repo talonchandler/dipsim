@@ -13,9 +13,11 @@ class MultiFrameMicroscope:
     """
     def __init__(self, ill_thetas, det_thetas, ill_nas, det_nas, ill_types,
                  det_types, colors, n_frames=4, n_det_frames=1,
-                 n_pts=1000, max_photons=1000, n_samp=1.33, **kwargs):
+                 frame_offsets=None, n_pts=1000, max_photons=1000, n_samp=1.33,
+                 **kwargs):
         
         self.n_frames = n_frames
+        self.frame_offsets = frame_offsets
         self.n_det_frames = n_det_frames
         self.n_pts = n_pts
 
@@ -32,6 +34,10 @@ class MultiFrameMicroscope:
                 # Cycle through illumination polarizations
                 for n in range(self.n_frames):
                     phi_ill = np.pi*n/self.n_frames
+                    if self.frame_offsets != None:
+                        if self.frame_offsets[i]:
+                            phi_ill += np.pi/(2*self.n_frames)
+                            
                     ill = illuminator.Illuminator(theta_optical_axis=ill_thetas[i],
                                                   illum_type=ill_types[i],
                                                   na=ill_nas[i], n=n_samp,
@@ -82,6 +88,8 @@ class MultiFrameMicroscope:
         for pt in pts:
             fi = self.noise_model.calc_fi(pt, 2*[self.sphere_dx])
             fi_inv = np.linalg.pinv(fi)
+            if fi_inv[0,0] < 0:
+                fi_inv[0,0] = 0
             sigx = np.sqrt(fi_inv[0,0])
             sigxy = np.sin(pt[0])*fi_inv[1,0]
             sigy = np.sin(pt[0])*np.sqrt(fi_inv[1,1])

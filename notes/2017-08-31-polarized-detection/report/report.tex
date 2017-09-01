@@ -1,0 +1,298 @@
+\documentclass[11pt]{article}
+
+%%%%%%%%%%%%
+% Packages %
+%%%%%%%%%%%%
+\hyphenpenalty=10000
+\usepackage{array,multirow}
+\usepackage{tocloft}
+\renewcommand\cftsecleader{\cftdotfill{\cftdotsep}}
+\def\undertilde#1{\mathord{\vtop{\ialign{##\crcr
+$\hfil\displaystyle{#1}\hfil$\crcr\noalign{\kern1.5pt\nointerlineskip}
+$\hfil\tilde{}\hfil$\crcr\noalign{\kern1.5pt}}}}}
+\usepackage{cleveref}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{epstopdf}
+\usepackage{braket}
+\usepackage{upgreek}
+\usepackage{caption}
+\usepackage{booktabs}
+\usepackage{subcaption}
+\usepackage{amssymb,latexsym,amsmath,gensymb}
+\usepackage{latexsym}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{pdflscape}
+\usepackage{url}
+\usepackage{tikz, calc}
+\usetikzlibrary{shapes.geometric, arrows, calc}
+\tikzstyle{norm} = [rectangle, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black]
+\tikzstyle{arrow} = [thick, ->, >=stealth]
+
+\providecommand{\e}[1]{\ensuremath{\times 10^{#1}}} 
+\providecommand{\mb}[1]{\mathbf{#1}}
+\providecommand{\mh}[1]{\mathbf{\hat{#1}}}
+\providecommand{\bs}[1]{\boldsymbol{#1}} 
+\providecommand{\intinf}{\int_{-\infty}^{\infty}}
+\providecommand{\fig}[4]{
+  % filename, width, caption, label
+\begin{figure}[h]
+ \captionsetup{width=1.0\linewidth}
+ \centering
+ \includegraphics[width = #2\textwidth]{#1}
+ \caption{#3}
+ \label{fig:#4}
+\end{figure}
+}
+
+\newcommand{\tensor}[1]{\overset{\text{\tiny$\leftrightarrow$}}{\mb{#1}}}
+\newcommand{\tunderbrace}[2]{\underbrace{#1}_{\textstyle#2}}
+\providecommand{\figs}[7]{
+  % filename1, filename2, caption1, caption2, label1, label2, shift
+\begin{figure}[H]
+\centering
+\begin{minipage}[b]{.45\textwidth}
+  \centering
+  \includegraphics[width=1.0\linewidth]{#1}
+  \captionsetup{justification=justified, singlelinecheck=true}
+  \caption{#3}
+  \label{fig:#5}
+\end{minipage}
+\hspace{2em}
+\begin{minipage}[b]{.45\textwidth}
+  \centering
+  \includegraphics[width=1.0\linewidth]{#2}
+  \vspace{#7em}
+  \captionsetup{justification=justified}
+  \caption{#4}
+  \label{fig:#6}
+\end{minipage}
+\end{figure}
+}
+\makeatletter
+
+\providecommand{\code}[1]{
+\begin{center}
+\lstinputlisting{#1}
+\end{center}
+}
+
+\newcommand{\crefrangeconjunction}{--}
+%%%%%%%%%%%
+% Spacing %
+%%%%%%%%%%%
+% Margins
+\usepackage[
+top    = 1.5cm,
+bottom = 1.5cm,
+left   = 1.5cm,
+right  = 1.5cm]{geometry}
+
+% Indents, paragraph space
+%\usepackage{parskip} 
+\setlength{\parskip}{1.5ex}
+
+% Section spacing
+\usepackage{titlesec}
+\titlespacing*{\title}
+{0pt}{0ex}{0ex}
+\titlespacing*{\section}
+{0pt}{0ex}{0ex}
+\titlespacing*{\subsection}
+{0pt}{0ex}{0ex}
+\titlespacing*{\subsubsection}
+{0pt}{0ex}{0ex}
+
+% Line spacing
+\linespread{1.1}
+
+%%%%%%%%%%%%
+% Document %
+%%%%%%%%%%%%
+\begin{document}
+\title{\vspace{-2.5em} More Design Studies of Multiview Polarized \\Illumination
+  and/or Detection Microscopy \vspace{-1em}} \author{Talon
+  Chandler}% and Patrick La Rivi\`ere}
+\date{\vspace{-1em}\today\vspace{-1em}}
+\maketitle
+\section{Introduction}
+In these notes I will use the model and metrics we established in the working
+paper draft to study three more design questions:
+\begin{itemize}
+\item What is the effect of using fewer than four illumination polarization orientation?
+\item Do polarized illumination or polarized detection microscopes provide
+  better orientation reconstructions?
+\item How do microscopes with polarizers on both the illumination and detection
+  paths compare to microscopes with polarizers on only the illumination or
+  detection paths.
+\end{itemize}
+
+\section{Methods}
+Figure \ref{fig:single-frame} shows the efficiencies for single measurements
+taken with polarized illumination and/or detection microscopes. These results
+were created with Fourkas' expressions on the detection side and my expressions
+from the paper on the illumination side. Notice that the dashed arrows indicate
+polarized detectors. Also notice that the detection efficiency range is only
+0-0.25 instead of 0-0.5 in the paper because the polarizer on the detector
+blocks half of the photons.
+
+Unless otherwise stated, all of the designs I will compare in these notes will
+use NA${}_{\text{ill}} = 0$ and NA${}_{\text{det}} = 0.8$, and all 2-view
+microscopes will use orthogonal views.
+
+All designs use the same total sample exposure. This means that
+$I_{\text{exp}} = 4000/N$ where $N$ is the number of intensity
+measurements. Note that $N$ includes polarized detection orientations as well as
+polarized illumination orientations.
+
+\fig{../figures/single-frame.pdf}{1.0}{Representative examples of single
+  intensity measurements. Black dots indicate where the Cartesian unit vectors
+  intersect the unit sphere. \newline \newline \textbf{Columns left to right:}
+  1) schematics where the solid line encloses the illumination solid angle, the
+  dashed line encloses the detection solid angle, the solid arrow indicates the
+  transmission axis of the illumination polarizer, and the dashed arrow
+  indicates the transmission axis of the detection polarizer; 2) the absorption
+  efficiency; 3) the detection efficiency; 4) the total efficiency, the product
+  of the absorption and detection efficiencies.\newline \newline \textbf{Rows
+    top to bottom:} 1) coincident illumination ($\text{NA} = 0.8$ with
+  $x$-polarized light) and detection (NA = 1.1); 2) non-coincident orthogonal
+  illumination ($\text{NA} = 0.8$) and detection ($\text{NA} = 0.8$); 3)
+  non-coincident 135${}^{\circ}$-separated illumination ($\text{NA} = 0.8$) and
+  detection ($\text{NA} = 0.8$). All simulations use $n=1.33$.}{single-frame}
+
+\section{Results \& Discussion}
+Table 1 shows the results for microscopes with varying polarization on the
+detection arm, the illumination arm, and both arms; varying numbers of views;
+and varying numbers of polarization orientations per view.
+
+
+\fig{../figures/compare-illumination.pdf}{0.6}{Comparing polarized illumination
+  microscope designs. Each row in this figure corresponds to a row in the top
+  third of Table 1.}{compare-illumination}
+\fig{../figures/compare-detection.pdf}{0.6}{Comparing polarized detection
+  microscope designs. Each row in this figure corresponds to a row in the middle
+  third of Table 1.}{compare-illumination}
+\fig{../figures/compare-both.pdf}{0.6}{Comparing polarized illumination and
+  detection microscope designs. Each row in this figure corresponds to a row in
+  the bottom third of Table 1. The illumination and detection polarization
+  arrows in the schematic are offset by a few degrees for visualization purposes
+  only---in the simulations the orientations are
+  identical.}{compare-both}
+
+\subsection{Minimum Number of Illumination Polarizations}
+In the paper draft we only considered microscopes with four illumination
+polarizations per view. Figure \ref{fig:compare-illumination} shows a comparison
+of several polarized illumination microscopes and the top third of Table 1 shows
+the summary statistics.
+
+We find that for low-NA illumination with a single view there is no advantage to
+using more than three polarization orientations. Two polarization orientations
+is too few because the system suffers from an extra symmetry. Four polarization
+orientations adds no extra information, and in a real system each polarized
+illumination orientation requires extra switching and data processing time.
+
+We also find that for low-NA illumination with two views that two polarization
+orientations per view is sufficient for an orientation reconstruction.
+
+Recall that these results use a Poisson noise model. I expect that with a
+Poisson+Gaussian model that fewer polarization frames would be even more
+advantageous because each intensity measurement will collect more photons and
+each measurement would avoid the noise floor.
+
+Figures \ref{fig:ill-pol} and \ref{fig:ill-pol-ortho} show how the number of
+polarization frames affects the reconstruction when the illumination NA is
+larger than 0. For large illumination NA, more polarized illumination
+orientations offers slightly better reconstructions. As the illumination NA
+decreases, the benefit of increasing the number of polarization orientations
+vanishes.
+
+\fig{../figures/ill-polarization.pdf}{1.0}{Single-view K\"ohler illumination
+  microscope with varying number of illumination polarization orientations and
+  illumination NA. b) Solid-angle uncertainty for the microscope in a). c)
+  Median of the solid-angle uncertainty as a function of illumination
+  polarization orientation and illumination NA. d) MAD of the solid-angle
+  uncertainty as a function of illumination polarization orientation and
+  illumination NA. The microscope in a) and b) is indicated by a cross in c) and
+  d).}{ill-pol}
+
+\fig{../figures/ill-polarization-ortho.pdf}{1.0}{Dual-view symmetric K\"ohler
+  illumination microscope with varying number of illumination polarization
+  orientations and illumination NA. b) Solid-angle uncertainty for the
+  microscope in a). c) Median of the solid-angle uncertainty as a function of
+  illumination polarization orientation and illumination NA. d) MAD of the
+  solid-angle uncertainty as a function of illumination polarization orientation
+  and illumination NA. The microscope in a) and b) is indicated by a cross in c)
+  and d).}{ill-pol-ortho}
+
+\subsection{Polarized Illumination vs. Polarized Detection}
+In the paper we only considered polarized illumination microscopes and ignored
+polarized detection microscopes. Figure \ref{fig:compare-illumination} shows a
+comparison of several polarized detection microscopes and the middle third of
+Table 1 shows the summary statistics.
+
+Polarized illumination microscopes outperform polarized detection microscopes
+with the same number of frames. The main difference between polarized detection
+and polarized illumination is the size of the intensity signals for the same
+sample exposure. Polarized detection signals are smaller than polarized
+illumination signals because the polarizer blocks half of the photons from the
+detector, so polarized detection signals suffer from a relative uncertainty.
+
+The preference for polarized illumination would be even stronger if we used a
+Poisson+Gaussian noise model because larger intensity measurements would contain
+more information about the fluorophore orientation.
+
+Note that these results only apply if we split the sample exposure equally
+between intensity measurements. If a lossless beam splitter is available, then
+adding the beam splitter is a ``free'' source of information about the
+fluorophore orientation.
+
+\section{Polarized Illumination and Detection}
+Figure \ref{fig:compare-both} shows a comparison of several polarized
+illumination+detection microscopes, and the bottom third of Table
+1 shows the summary statistics.
+
+Polarized illumination outperforms the polarized illumination+detection
+microscopes. Some of the polarizer orientation combinations do not give much
+information about the fluorophore orientation, so they are relatively useless
+measurements. This results shows that more measurements are not always
+beneficial.
+
+Once again, these results only apply if we split the sample exposure equally
+between intensity measurements. Adding a lossless beam splitter is still a good
+choice if you have the option.
+
+\begin{table}[ht!]
+\centering
+\caption{Comparison of designs in each class of microscope. All solid-angle
+  uncertainty statistics are in steradians. }
+\begin{tabular}{lllllll}
+  \toprule
+  Polarized Ill.&Number of &Polarization Settings&$n$-fold&Max\{$\sigma_{\Omega}$\}&Median\{$\sigma_{\Omega}$\}&MAD\{$\sigma_{\Omega}$\}\\ 
+  or Det.&Views&Per View&Degeneracy&&&\\\midrule
+  Illumination&1&2&8&5.10$\times 10^{00}$&1.65$\times 10^{-3}$&3.77$\times 10^{-4}$ \\ 
+                &&3&4&5.10$\times 10^{00}$&1.65$\times 10^{-3}$&3.79$\times 10^{-4}$ \\
+                &&4&4&5.10$\times 10^{00}$&1.65$\times 10^{-3}$&3.77$\times 10^{-4}$ \\\cline{2-7}  
+                &2&2&2&6.23$\times 10^{-3}$&1.79$\times 10^{-3}$&1.66$\times 10^{-4}$\\
+                &&3&2&1.24$\times 10^{-2}$&1.79$\times 10^{-3}$&1.66$\times 10^{-4}$\\  
+                &&4&2&6.23$\times 10^{-3}$&1.79$\times 10^{-3}$&1.65$\times 10^{-4}$\\\hline  
+  Detection&1&2&8&9.16$\times 10^{+2}$&2.62$\times 10^{-3}$&1.08$\times 10^{-3}$\\
+                &&3&4&1.30$\times 10^{+1}$&2.38$\times 10^{-3}$&7.62$\times 10^{-4}$\\
+                &&4&4&1.30$\times 10^{+1}$&2.28$\times 10^{-3}$&6.55$\times 10^{-4}$\\\cline{2-7}      
+                &2&2&8&2.41$\times 10^{+1}$&3.20$\times 10^{-3}$&8.01$\times 10^{-4}$\\
+                &&3&2&8.02$\times 10^{-2}$&2.97$\times 10^{-3}$&7.32$\times 10^{-4}$\\  
+                &&4&2&8.08$\times 10^{-2}$&3.06$\times 10^{-3}$&7.96$\times 10^{-4}$\\\hline
+  Both&1&2 ill. $\times$ 2 det. = 4&8&7.22$\times 10^{00}$&2.66$\times 10^{-3}$&6.63$\times 10^{-4}$\\
+                &&3 ill. $\times$ 3 det. = 9&4&7.21$\times 10^{00}$&2.63$\times 10^{-3}$&6.19$\times 10^{-4}$\\
+                &&2 ill. $\times$ 4 det. = 8&4&7.19$\times 10^{00}$&2.62$\times 10^{-3}$&6.04$\times 10^{-4}$\\\cline{2-7}      
+                &2&2 ill. $\times$ 2 det. = 4&2&7.04$\times 10^{-3}$&2.67$\times 10^{-3}$&3.76$\times 10^{-4}$\\
+                &&3 ill. $\times$ 3 det. = 9&2&1.72$\times 10^{-2}$&2.66$\times 10^{-3}$&4.84$\times 10^{-4}$\\
+                &&2 ill. $\times$ 4 det. = 8&2&7.49$\times 10^{-3}$&2.70$\times 10^{-3}$&5.37$\times 10^{-4}$\\    
+  \bottomrule
+\end{tabular}
+\end{table}
+
+
+\end{document}
+

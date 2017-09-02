@@ -40,9 +40,9 @@
   obliquity, asymmetry, and exposure. We find that multiview microscopes are
   better at determining the orientation of single molecules than single-view
   microscopes. We also find that choosing a small illumination NA and a large
-  detection NA are good design choices, that multiview K\"ohler illumination
-  microscopes can benefit from oblique illumination and detection, and that
-  asymmetric NA microscopes can benefit from exposure asymmetry.
+  detection NA are good design choices, that multiview microscopes can benefit
+  from oblique illumination and detection, and that asymmetric NA microscopes
+  can benefit from exposure asymmetry.
 \end{abstract*}
 
 \ocis{(110.0110) Imaging systems; (180.2520) Fluorescence microscopy; (180.0180)
@@ -159,12 +159,16 @@ augment multiview microscopes for measuring the orientation of single
 molecules. Furthermore, multiview microscopes can achieve nearly isotropic
 resolution while delivering selective illumination. We find that multiview
 microscopes also provide a small and uniform orientation uncertainty for single
-molecules in all orientations. In section \ref{methods} we develop the theory
-required to model polarized illumination microscopes, and we develop metrics to
-compare microscope designs. In section \ref{results} we compare the results for
-a wide range of multiview microscope designs. Finally, in section
-\ref{discussion} we discuss the results and their impact on polarized multiview
-microscope design.
+molecules in all orientations. We also find that single-view microscopes have
+symmetries that can be broken by adding an second view. This reduction of
+degeneracy allows multiview microscopes to uniquely determine the orientation of
+single molecules.
+
+In section \ref{methods} we develop the theory required to model polarized
+illumination microscopes, and we develop metrics to compare microscope
+designs. In section \ref{results} we compare the results for a wide range of
+multiview microscope designs. Finally, in section \ref{discussion} we discuss
+the results and their impact on polarized multiview microscope design.
 
 \section{Methods}\label{methods}
 In this section we develop a method to compare multiview polarized illumination
@@ -214,9 +218,9 @@ transmission axis $\hat{\mb{p}}_{\text{exc}}$ that we express as
 where $\phi_{\text{exc}}$ is the angle between the transmission axis of the
 polarizer and the positive $\mh{x}$ axis (see Figure
 \ref{fig:coordinates}b)). Finally, we place a spatially incoherent and spatially
-uniform light source (or its image) in the aperture plane to establish K\"ohler
-illumination. In this geometry each point in the sample is illuminated by a
-range of angles that can be changed by adjusting the radius of the stop in the
+uniform light source (or its image) in the aperture plane to illuminate the
+focal plane. In this geometry each point in the sample is illuminated by a range
+of angles that can be changed by adjusting the radius of the stop in the
 aperture plane. We denote the set of illuminated angles by $\Omega$ (see Figure
 \ref{fig:coordinates}d)). If we use unit vectors $\hat{\mb{r}}$ expressed in
 spherical coordinates $\theta$ and $\phi$ (see Figure \ref{fig:coordinates}c))
@@ -252,9 +256,9 @@ as
       \eta_{\text{abs}}^{\text{ray}} &= |\hat{\bs{\mu}}_{\text{abs}}\cdot\mh{p}_{\text{exc}}|^2. \label{eq:singleray}
     \end{align}
 
-    To find the absorption efficiency of a single molecule under K\"ohler
-    illumination, we integrate over all illumination rays and divide by the
-    total incident power which gives the vector expression
+    To find the absorption efficiency of a single molecule, we integrate over
+    all illumination rays and divide by the total incident power which gives the
+    vector expression
 \begin{align}
   \eta_{\text{abs}} = \frac{\int_{\Omega}d\mh{r}|\hat{\bs{\mu}}_{\text{abs}}\cdot\mb{R}(\mh{r})\mh{p}_{\text{exc}}|^2}{\int_{\Omega}d\mh{r}}\label{eq:abs}. 
 \end{align}
@@ -279,30 +283,30 @@ We can extend these results to light-sheet illumination created by scanning a
 laser. If we shine a narrow, collimated, laser beam onto a galvanometer in the
 aperture plane and scan the galvanometer, we create a weakly focused light sheet
 in the sample. If we scan the beam in the sample with a velocity much less than
-the beam waist radius divided by the coherence time, then we can ignore the
-coherence effects of scanning---the light sheet is effectively composed of many
-incoherent beams. If we also ensure that the laser beam is weakly focused, we
-can ignore the excitation caused by the small fields aligned with the optical
-axis. Under slowly-scanned and weakly-focused light-sheet illumination,
-molecules in the sample will be excited as if a single plane wave was
-incident. Therefore, we can find the absorption efficiency of a molecule in this
-case by taking the limit of equation \ref{eq:scalarabs} as
+the beam waist radius divided by the coherence time, then the coherence of the
+laser is rendered ineffectual by the scanning---the light sheet is effectively
+composed of many incoherent beams. If we also ensure that the laser beam is
+weakly focused, we can ignore the excitation caused by the small fields aligned
+with the optical axis. Under slowly-scanned and weakly-focused light-sheet
+illumination, molecules in the sample will be excited as if a single plane wave
+was incident. Therefore, we can find the absorption efficiency of a molecule in
+this case by taking the limit of equation \ref{eq:scalarabs} as
 $\alpha \rightarrow 0$ (or by plugging equation \ref{eq:mu} and
 \ref{eq:excfield} into equation \ref{eq:singleray}) giving
 \begin{align}
   \eta_{\text{abs}}^{\text{ray}} &= \sin^2\Theta\cos^2(\Phi - \phi_{\text{exc}}),
 \end{align}
 which is recognizable as Malus' law generalized to three dimensions. This means
-that light-sheet illumination is approximately equivalent to low-NA K\"ohler
-illumination with respect to the molecular orientations they excite. Notice that
-the absorption efficiency can take its maximum range of values
+that light-sheet illumination is approximately equivalent to low-NA illumination
+with respect to the molecular orientations they excite. Notice that the
+absorption efficiency can take its maximum range of values
 ($\eta_{\text{abs}} \in [0, 1]$) when $\alpha=0$.
 
 \subsection{Detection Efficiency}\label{detection}
-Fourkas calculated the detection efficiency of a single molecule when an
-objective with a polarizer is aligned along the $\mh{z}$ axis
-\cite{fourkas2001}. We use his expressions to calculate the detection efficiency
-without a polarizer as
+Fourkas calculated the detection efficiency of a single molecule when an ideal
+objective with its optical axis aligned with the $\mh{z}$ axis is focused on the
+molecule and a polarizer is placed in the aperture plane\cite{fourkas2001}. We
+use his expressions to calculate the detection efficiency without a polarizer as
 \begin{align}
   \eta_{\text{det}} = 2(A + B\sin^2\Theta). \label{eq:scalardet}
 \end{align}
@@ -313,22 +317,27 @@ equal to the emission dipole moment.
 Note that $A$ and $B$ in equation \ref{eq:coefficients} are a factor of
 $\frac{3}{2}$ larger than the expressions given by Fourkas. We found that
 Fourkas' expressions were incorrectly normalized (the limit of
-$\eta_{\text{det}}$ as $\alpha\rightarrow \pi/2$ should be 1), and the extra
-factor of $\frac{3}{2}$ corrects the error. This correction does not affect
-Fourkas' orientation reconstruction but it does mean that Fourkas' algorithm
-underpredicts the total emitted intensity by a factor of $\frac{3}{2}$.
+$\eta_{\text{det}}$ as $\alpha\rightarrow \pi/2$ should be $\frac{1}{2}$), and
+the extra factor of $\frac{3}{2}$ corrects the error. This correction does not
+affect Fourkas' orientation reconstruction, but it does mean that Fourkas'
+algorithm underpredicts the total emitted intensity by a factor of
+$\frac{3}{2}$.
 
 Also note that the detection efficiency can take its maximum range of values
 when $B$ takes its maximum value, i.e. when
-$\alpha=\arccos\left(\frac{1}{\sqrt{3}}\right) \approx 54.7^{\circ}$. 
+$\alpha=\arccos\left(\frac{1}{\sqrt{3}}\right) \approx 54.7^{\circ}$. When
+$\alpha = 90$ the detection efficiency is $\frac{1}{2}$ for all fluorophore
+orientations and when $\alpha = 0$ the detection efficiency is zero for all
+fluorophore orientations, so we expect there to be an intermediate value of
+$\alpha$ where the detection efficiency takes its maximum range.
 
 \subsection{Oblique Illumination and Detection}\label{oblique}
 In sections \ref{excitation} and \ref{detection} we assumed that both the
 illumination and detection objectives had $\mh{z}$ aligned optical axes, i.e.,
-the same objective was used for illumination and detection. To extend the
-forward model to oblique optical axes which allows for non-coincident
-illumination and detection objectives, we express the dipole orientation in a
-rotated coordinate frame using the following expressions
+we used epi- or transmitted light illumination. To extend the forward model to
+oblique optical axes which allows for non-coincident illumination and detection
+objectives, we express the dipole orientation in a rotated coordinate frame
+using the following expressions
 \begin{align}
     \Theta' &= \arccos\left(\sin\psi\cos\Phi\sin\Theta + \cos\psi\cos\Theta\right)\label{eq:thetap}\\
   \Phi' &=
@@ -341,18 +350,20 @@ where $\psi$ is the angle of a right handed rotation about the $\mh{y}$ axis
 that maps the $\mh{z}$ axis onto the new optical axis.
 
 \subsection{Intensity Measurements}\label{forward}
-The detected intensity is the product of the the sample exposure
+The detected intensity is proportional to the product of the sample exposure
 $I_{\text{exp}}$, the absorption efficiency, and the detection efficiency
 \begin{align}
-  I = I_{\text{exp}}\eta_{\text{abs}}\eta_{\text{det}}\label{eq:forward_frame}.
+  I \propto I_{\text{exp}}\eta_{\text{abs}}\eta_{\text{det}}\label{eq:forward_frame},
 \end{align}
-Equation \ref{eq:forward_frame} is the forward model for a single intensity
-measurement. Figure \ref{fig:single-frame} shows the efficiencies in three
-representative geometries. Note that in all cases there are multiple
-orientations that give the same intensity measurement. This means that a single
-intensity measurement does not give us enough information to reconstruct the
-orientation of a single molecule. Next, we will consider combining several
-intensity measurements to create complete polarized illumination microscopes.
+where the proportionality depends on the exposure time, the molecular quantum
+efficiencies, and other constant factors. Equation \ref{eq:forward_frame} is the
+forward model for a single intensity measurement. Figure
+\ref{fig:single-frame} shows the efficiencies in three representative
+geometries. Note that in all cases there are multiple orientations that give the
+same intensity measurement. This means that a single intensity measurement does
+not give us enough information to reconstruct the orientation of a single
+molecule. Next, we will consider combining several intensity measurements to
+create complete polarized illumination microscopes.
 
 \begin{figure}[H]
 \centering\includegraphics[width=\textwidth]{single-frame}
@@ -552,7 +563,7 @@ molecule up to the quadrant.
 \end{figure}
 
 Figures \ref{fig:symmetric-widefield} and \ref{fig:double-arm} show our results
-for dual-view symmetric K\"ohler designs. We illuminate from one objective and
+for dual-view symmetric designs. We illuminate from one objective and
 detect from the other for four polarization orientations, then we repeat the
 polarization orientations with the same objectives in reversed roles. In Figure
 \ref{fig:symmetric-widefield} we sweep through the NA of both objectives and the
@@ -572,7 +583,7 @@ overlap.
 
 \begin{figure}[htbp]
 \centering\includegraphics[width=\textwidth]{symmetric-widefield}
-\caption{Dual-view symmetric K\"ohler designs with varying NA and angle between
+\caption{Dual-view symmetric designs with varying NA and angle between
   objectives. a) Schematic of the microscope. We illuminate with the first
   objective (red solid) and detect from the second objective (red dashed). Then
   we illuminate from the second objective (blue solid) and detect from the first
@@ -592,19 +603,19 @@ overlap.
 \end{figure}
 
 Figure \ref{fig:double-arm} shows our results when we used a dual-view symmetric
-orthogonal K\"ohler design and varied the illumination and detection NA. Our
-results are similar to the single-view case in Figure \ref{fig:single-arm}. We
-find that optimal designs use a small illumination NA and a large detection
-NA. As we discussed in Section \ref{excitation}, low-NA K\"ohler illumination is
+orthogonal design and varied the illumination and detection NA. Our results are
+similar to the single-view case in Figure \ref{fig:single-arm}. We find that
+optimal designs use a small illumination NA and a large detection NA. As we
+discussed in Section \ref{excitation}, low-NA illumination is
 approximately equivalent to light-sheet illumination for the task of estimating
-the orientation of molecules. Therefore, the preference for low-NA K\"ohler
+the orientation of molecules. Therefore, the preference for low-NA
 illumination also implies that dual-view light-sheet illumination geometries are
 an excellent choice for uniformly reconstructing the orientation of single
 molecules.
 
 \begin{figure}[htbp]
 \centering\includegraphics[width=\textwidth]{double-arm}
-\caption{Dual-view symmetric orthogonal K\"ohler designs with varying
+\caption{Dual-view symmetric orthogonal designs with varying
   illumination and detection NA. a) Schematic of the microscope. b) Uncertainty
   ellipses for the microscope in a). The ellipses indicate the relative size of
   the uncertainty in different directions, not the absolute size of the
@@ -656,9 +667,9 @@ low solid-angle uncertainty MAD by changing the sample exposure ratio.
 \end{figure}
 
 Table 1 shows a summary of our evaluation metrics for microscopes in each
-class. The single-view K\"ohler microscope with a small illumination NA and high
+class. The single-view microscope with a small illumination NA and high
 detection NA has the lowest solid-angle uncertainty median but the largest max
-and fourfold symmetry. The dual-view oblique symmetric K\"ohler with an
+and fourfold symmetry. The dual-view oblique symmetric with an
 intermediate NA performs reasonably well on all three metrics, while the
 dual-view orthogonal symmetric light-sheet microscopes with large NA perform
 very well on all three metrics.
@@ -672,8 +683,8 @@ very well on all three metrics.
 
   Microscope Type&$n$-fold&Max\{$\sigma_{\Omega}$\}&Median\{$\sigma_{\Omega}$\}&MAD\{$\sigma_{\Omega}$\}\\ 
     &Degeneracy&&&\\\midrule
-Single-view K\"ohler (NA${}_\textrm{ill}$=0, NA${}_\textrm{det}$=1.1)&4&3.04$\times 10^{0}$&8.20$\times 10^{-4}$&1.48$\times 10^{-4}$ \\ 
-  Dual-view oblique symmetric K\"ohler (NA=0.6, $\beta$=53${}^{\circ}$)&2&1.35$\times 10^{-1}$&4.49$\times 10^{-3}$&9.17$\times 10^{-4}$\\
+Single-view (NA${}_\textrm{ill}$=0, NA${}_\textrm{det}$=1.1)&4&3.04$\times 10^{0}$&8.20$\times 10^{-4}$&1.48$\times 10^{-4}$ \\ 
+  Dual-view oblique symmetric (NA=0.6, $\beta$=53${}^{\circ}$)&2&1.35$\times 10^{-1}$&4.49$\times 10^{-3}$&9.17$\times 10^{-4}$\\
 Dual-view orthogonal symmetric light-sheet (NA=0.8)&2&6.23$\times 10^{-3}$&1.79$\times 10^{-3}$&1.65$\times 10^{-4}$\\  
 Dual-view orthogonal symmetric light-sheet (NA=0.94)&2&3.13$\times 10^{-3}$&1.28$\times 10^{-3}$&1.14$\times 10^{-4}$\\
 \bottomrule
@@ -695,7 +706,7 @@ orientation microscopes:
   metrics. Dual-view microscopes have fewer degeneracies, lower median and MAD
   solid-angle uncertainty, and no high solid-angle uncertainty region in the
   transverse plane.
-\item High-NA dual-view K\"ohler microscopes are optimal when the two views are
+\item High-NA dual-view microscopes are optimal when the two views are
   oblique. Oblique views are complementary because their high uncertainty
   transverse planes do not overlap.
 \item Symmetric NA dual-view orthogonal light-sheet microscopes provide a good

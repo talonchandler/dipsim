@@ -17,6 +17,11 @@ paper/figures/*png
 paper/figures/*pdf
 paper/figures/frames/*pdf
 paper/figures/frames/*png
+notes/**/*.pdf
+*fls
+*out
+*fdb_latexmk
+*zip
 *log
 *aux
 *dvi

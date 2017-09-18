@@ -283,7 +283,7 @@ defocusing and phase masking techniques. The main drawback is that these
 techniques require several intensity measurements under different polarization
 orientations to estimate the orientation of a single molecule. Despite the
 requirement for multiple measurements, polarized illumination or detection
-methods are good choices for live cell imaging because of their combination of
+methods are good choices for live-cell imaging because of their combination of
 speed and ease of implementation.
 
 To develop a polarized illumination or detection technique we need to choose a
@@ -291,7 +291,7 @@ method for varying the polarization and place it in the illumination or
 detection path. The simplest and most inexpensive way to vary the polarization
 is with a division-of-time (DoT) polarizer using a rotating polarizer or a
 universal compensator/polarizer. Other polarization methods
-(divison-of-amplitude, division-of-focal-plane) are more expensive and require
+(division-of-amplitude, division-of-focal-plane) are more expensive and require
 additional alignment or interpolation \cite{tyo2006}. The simplicity of DoT
 polarization comes at the expense of temporal resolution---intensity
 measurements are made one after the other which increases the acquisition
@@ -307,11 +307,11 @@ determined as precisely as others. In some cases the orientation cannot be
 determined at all---the forward model can be degenerate for specific dipole
 orientations \cite{fourkas2001, lu2008}. We feel that the importance of
 isotropic orientation uncertainty has been underappreciated. To our knowledge,
-the only authors who have considered anisotropic orientation uncertainty have
-only analyzed a subset of molecular orientations \cite{agrawal2012}. Our view is
-that an ideal technique for determining the orientation of single molecules can
-reconstruct the orientation with a small and nearly uniform uncertainty for all
-molecule orientations.
+the only authors who have considered anisotropic orientation uncertainty in 3D
+have only analyzed a subset of molecular orientations \cite{agrawal2012}. Our
+view is that an ideal technique for determining the orientation of single
+molecules can reconstruct the orientation with a small and nearly uniform
+uncertainty for all molecular orientations.
 
 Recently, there has been increasing interest in multiview microscopy techniques
 for biological imaging \cite{wu2013, keller2015, wu2016, wu2017}. Multiview
@@ -398,7 +398,7 @@ polarizer and the positive $\mh{x}$ axis (see Figure
 \ref{fig:coordinates}b)). Finally, we place a spatially incoherent and spatially
 uniform light source (or its image) in the aperture plane to illuminate the
 focal plane. In this geometry each point in the sample is illuminated by a range
-of angles that can be changed by adjusting the radius of the stop in the
+of angles that can be changed by adjusting the radius of the diaphragm in the
 aperture plane. We denote the set of illuminated angles by $\Omega$ (see Figure
 \ref{fig:coordinates}d)). If we use unit vectors $\hat{\mb{r}}$ expressed in
 spherical coordinates $\theta$ and $\phi$ (see Figure \ref{fig:coordinates}c))
@@ -481,18 +481,28 @@ absorption efficiency can take its maximum range of values
 ($\eta_{\text{abs}} \in [0, 1]$) when $\alpha=0$.
 
 \subsection{Detection Efficiency}\label{detection}
-Fourkas calculated the detection efficiency of a single molecule when an ideal
-objective with its optical axis aligned with the $\mh{z}$ axis is focused on the
-molecule and a polarizer is placed in the aperture plane\cite{fourkas2001}. We
-use his expressions to calculate the detection efficiency without a polarizer as
+In this section we will calculate the \emph{detection efficiency}---the fraction
+of the power emitted by a single molecule that we detect. Fourkas calculated the
+detection efficiency when an ideal objective with its optical axis aligned with
+the $\mh{z}$ axis is focused on a single molecule and a polarizer is placed in
+the aperture plane \cite{fourkas2001}. He found that
+\begin{align}
+  \eta_{\text{det}}^{\text{pol}} = A + B\sin^2\Theta + C\sin^{2}{\Theta} \cos{[2 (\Phi - \phi_{\text{det}}})], \label{eq:det_pol}
+\end{align}
+where $\phi_{\text{det}}$ is the angle between the transmission axis of the
+detection polarizer and the positive $\mh{x}$ axis. 
+
+To calculate the detection efficiency without a polarizer, we use Equation
+\ref{eq:det_pol} and take the sum of polarized detection efficiencies with
+orthogonal polarizer orientations to find
 \begin{align}
   \eta_{\text{det}} = 2(A + B\sin^2\Theta). \label{eq:scalardet}
 \end{align}
-The detection efficiency only depends on $\Theta$, not $\Phi$, because there is
-no detection polarizer. We have assumed that the absorption dipole moment is
-equal to the emission dipole moment.
+In this case the detection efficiency only depends on $\Theta$, not $\Phi$,
+because there is no detection polarizer. We have assumed that the absorption
+dipole moment is equal to the emission dipole moment.
 
-Note that $A$ and $B$ in equation \ref{eq:coefficients} are a factor of
+Note that $A$, $B$, and $C$ in equation \ref{eq:coefficients} are a factor of
 $\frac{3}{2}$ larger than the expressions given by Fourkas. We found that
 Fourkas' expressions were incorrectly normalized (the limit of
 $\eta_{\text{det}}$ as $\alpha\rightarrow \frac{\pi}{2}$ should be $\frac{1}{2}$), and
@@ -526,10 +536,10 @@ where $\psi$ is the angle of a right handed rotation about the $\mh{y}$ axis
 that maps the $\mh{z}$ axis onto the new optical axis.
 
 \subsection{Intensity Measurements}\label{forward}
-The detected intensity is proportional to the product of the sample exposure
-$I_{\text{exp}}$, the absorption efficiency, and the detection efficiency
+The detected intensity is proportional to the product of the sample irradiance
+$I_{\text{in}}$, the absorption efficiency, and the detection efficiency
 \begin{align}
-  I \propto I_{\text{exp}}\eta_{\text{abs}}\eta_{\text{det}}\label{eq:forward_frame},
+  I \propto I_{\text{in}}\eta_{\text{abs}}\eta_{\text{det}}\label{eq:forward_frame},
 \end{align}
 where the proportionality depends on the exposure time, the molecular quantum
 efficiencies, and other constant factors. Equation \ref{eq:forward_frame} is the
@@ -606,19 +616,19 @@ the CRLBs multiplied by the Jacobian determinant,
 $\sin\Theta\sqrt{\mb{F}^{-1}_{0,0}\mb{F}^{-1}_{1,1}}$, to find the area of
 uncertainty in parameter space \cite{agrawal2012}.
 
-CRLBs and the associated area of uncertainty are parametrization dependent,
+CRLBs and the associated area of uncertainty are parameterization dependent,
 i.e., if we choose a different coordinate system these metrics will change. We
-would like to compare microscope designs without choosing a parametrization, so
+would like to compare microscope designs without choosing a parameterization, so
 instead we use
 \begin{align}
   \sigma_{\Omega} &\equiv \sin\Theta\sqrt{\text{det}\{\mb{F}^{-1}\}}
 \end{align}
 as our evaluation metric. We calculate the determinant of the inverse Fisher
-information matrix---a parametrization-independent value called the
+information matrix---a parameterization-independent value called the
 \emph{generalized variance} \cite{anderson1958}---take the square root, then
 multiply by the Jacobian determinant, $\sin\Theta$. We call $\sigma_{\Omega}$
 the \emph{solid-angle uncertainty} because it has units of steradians and is a
-parametrization independent measure of the orientation uncertainty.
+parameterization independent measure of the orientation uncertainty.
 
 For each microscope we calculate $\sigma_{\Omega}$ at 10,000 approximately
 equally spaced points on the unit sphere. A desirable microscope design will
@@ -633,9 +643,9 @@ deviation (MAD)---the median of the data's absolute difference from the
 median---as robust alternatives to the mean and variance.
 
 To compare microscopes with different numbers of intensity measurements fairly,
-we kept the total exposure to the sample constant by choosing
-$I_{\text{exp}} = \frac{4000}{N}$. Note that $I_{\text{exp}}$ is a measure of
-exposure to the sample, not the detected intensity or the total intensity
+we kept the irradiance incident on the sample constant by choosing
+$I_{\text{in}} = \frac{4000}{N}$. Note that $I_{\text{in}}$ is a measure of
+irradiance to the sample, not the detected intensity or the total intensity
 emitted by the molecule.
 
 We also use the Fisher information matrix to calculate uncertainty ellipses for
@@ -684,9 +694,9 @@ rendered plots, and Asymptote \cite{bowman2008} for 3D line plots.
 \section{Results}\label{results}
 Figure \ref{fig:single-arm} shows our results for single-view designs where a
 single objective is used for illumination and detection. We swept through the
-illumination and detection NA while keeping the sample exposure constant, and we
-found that the lowest median and MAD of the solid-angle uncertainty occurs with
-a small illumination NA and a large detection NA where
+illumination and detection NA while keeping the sample irradiance constant, and
+we found that the lowest median and MAD of the solid-angle uncertainty occurs
+with a small illumination NA and a large detection NA where
 $\alpha \approx 65^{\circ}$ (see Figure \ref{fig:single-arm}e) at
 NA${}_{\text{det}} \approx 1.2$). A small illumination NA maximizes the range of
 absorption efficiencies, while a large detection NA optimizes the number of
@@ -815,7 +825,7 @@ NA of one objective while maximizing the NA of the other objective so that both
 objectives would touch the cover slip and each other
 ($\alpha_1 + \alpha_2 = 90^{\circ}$ in Figure \ref{fig:asymmetric-double}a)). We
 swept through the NA asymmetry and the sample-exposure asymmetry while keeping
-the total sample exposure constant, and found that symmetric designs are at a
+the total sample irradiance constant, and found that symmetric designs are at a
 local minimum of the median and MAD of the solid-angle uncertainty. We also
 found that at extreme asymmetries where the exposure from the low-NA arm is much
 larger than the exposure from the high-NA arm (top-left and bottom-right corners
@@ -896,22 +906,23 @@ orientation microscopes:
 \end{itemize}
 
 Our results are limited in several ways. First, we only consider single
-molecules in homogeneous environments. We ignore light reflected from the cover
-slip and any other inhomogeneities in the sample. If we considered light
-reflected from the cover slip we expect that the results would put a lower
-weighting on large detection NAs because we would collect more light. Second, we
-only considered ideal, aplanatic, polarization-preserving objectives. In
-practice, these conditions are not always satisfied and the power from high-NA
-rays is apodized by a factor of $\frac{n}{\cos\Theta}$
-\cite{nov2006}. Therefore, our results are most accurate for low-NA rays and get
-progressively worse for high-NA rays, although our major conclusions would not
-change if we included this apodization factor. The main advantage of ignoring
-apodization is the tractability of the problem---we have provided approximate
-closed-form solutions for the illumination and detection efficiencies that have
-allowed us to draw useful design conclusions. Third, we have used a Poisson
-noise model which ignores noise introduced by the detector. Detector noise can
-be a large fraction of the total noise at low intensities, so including detector
-noise would increase the informational value of high intensity
+molecules in homogeneous environments whose absorption and emission dipoles are
+parallel. We ignore light reflected from the cover slip and any other
+inhomogeneities in the sample. If we considered light reflected from the cover
+slip we expect that the results would put a lower weighting on large detection
+NAs because we would collect more light. Second, we only considered ideal,
+aplanatic, polarization-preserving objectives. In practice, these conditions are
+not always satisfied. For example, the power from high-NA rays is usually
+apodized by a factor of $\frac{n}{\cos\Theta}$ \cite{nov2006}. Therefore, our
+results are most accurate for paraxial rays and get progressively worse for
+non-paraxial rays, although our major conclusions would not change if we
+included this apodization factor. The main advantage of ignoring apodization is
+the tractability of the problem---we have provided approximate closed-form
+solutions for the illumination and detection efficiencies that have allowed us
+to draw useful design conclusions. Third, we have used a Poisson noise model
+which ignores noise introduced by the detector. Detector noise can be a large
+fraction of the total noise at low intensities, so including detector noise
+would increase the informational value of high intensity
 measurements. Therefore, we expect that including the effects of detector noise
 would favor microscopes with a large detection NA. Finally, we have focused on
 the task of estimating the orientation of molecules and ignored the equally
@@ -919,16 +930,17 @@ important task of estimating their location. The task of jointly estimating the
 orientation and location of single molecules from multiple views is a topic for
 future work.
 
-To compare the microscopes in this paper we used a fixed sample exposure. We
-think that this is the fairest way to compare microscopes with different numbers
-of intensity measurements. However, in cases where sample exposure and time are
-not an issue it may be more useful to compare microscopes with the same total
-detection exposure per measurement. This comparison would favor microscopes with
-many intensity measurements even more that the results in this paper because
-equal detection exposure would improve photon counting statistics.
+To compare the microscopes in this paper we used a fixed irradiance incident on
+the sample. We think that this is the fairest way to compare microscopes with
+different numbers of intensity measurements. However, in cases where sample
+irradiance and time are not an issue it may be more useful to compare
+microscopes with the same total detection irradiance per measurement. This
+comparison would favor microscopes with many intensity measurements even more
+that the results in this paper because equal detection irradiance would improve
+photon counting statistics.
 
 We have considered single- and dual-view microscopes in a variety of cases, but
-more multiview microscopes can be analyzed with the framework we have
+other multiview microscopes can be analyzed with the framework we have
 developed. Wu et. al. have developed a three-view design with a third objective
 below the cover slip\cite{wu2016}. Light-field detection schemes are also a type
 of multiview microscope\cite{levoy2006}, and we plan to extend our analysis to

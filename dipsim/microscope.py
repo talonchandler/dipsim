@@ -21,40 +21,41 @@ class Microscope:
     def calc_intensity(self, direction):
         return self.max_photons*self.calc_sensitivity(direction)
     
-    def calc_sensitivity(self, direction):
-        flu = fluorophore.Fluorophore(mu_abs=direction, mu_em=direction)
-        excite = self.illuminator.calc_excitation_efficiency(flu)
-        collect = self.detector.calc_collection_efficiency(flu)        
+    def calc_sensitivity(self, direction, kappa=None, epsrel=1e-2):
+        flu = fluorophore.Fluorophore(mu_abs=direction, mu_em=direction, kappa=kappa)
+        excite = self.illuminator.calc_excitation_efficiency(flu, epsrel=epsrel)
+        collect = self.detector.calc_collection_efficiency(flu, epsrel=epsrel)        
         return excite*collect
 
-    def plot_sensitivity(self, filename='', n=50, **kwargs):
+    def plot_sensitivity(self, filename='', n=50, kappa=None, **kwargs):
         directions = util.fibonacci_sphere(n)
         print('Generating data for microscope: '+filename)
-        I = np.apply_along_axis(self.calc_sensitivity, 1, directions)
+        I = np.apply_along_axis(self.calc_sensitivity, 1, directions, kappa=kappa)
         print('Plotting data for microscope: '+filename)
         util.plot_sphere(filename, directions=directions, data=I, **kwargs)
 
-    def calc_excitation_efficiency(self, direction):
-        flu = fluorophore.Fluorophore(mu_abs=direction, mu_em=direction)
+    def calc_excitation_efficiency(self, direction, kappa=None):
+        flu = fluorophore.Fluorophore(mu_abs=direction, mu_em=direction, kappa=kappa)
         I = self.illuminator.calc_excitation_efficiency(flu)
         return I
     
-    def plot_excitation_efficiency(self, filename='', n=50, **kwargs):
+    def plot_excitation_efficiency(self, filename='', n=50, kappa=None, **kwargs):
         directions = util.fibonacci_sphere(n)
         print('Generating data for microscope: '+filename)
-        I = np.apply_along_axis(self.calc_excitation_efficiency, 1, directions)
+        I = np.apply_along_axis(self.calc_excitation_efficiency, 1, directions, kappa=kappa)
+
         print('Plotting data for microscope: '+filename)
         util.plot_sphere(filename, directions=directions, data=I, **kwargs)
 
-    def calc_collection_efficiency(self, direction):
-        flu = fluorophore.Fluorophore(mu_abs=direction, mu_em=direction)
+    def calc_collection_efficiency(self, direction, kappa=None):
+        flu = fluorophore.Fluorophore(mu_abs=direction, mu_em=direction, kappa=kappa)
         I = self.detector.calc_collection_efficiency(flu)
         return I
     
-    def plot_collection_efficiency(self, filename='', n=50, **kwargs):
+    def plot_collection_efficiency(self, filename='', n=50, kappa=None, **kwargs):
         directions = util.fibonacci_sphere(n)
         print('Generating data for microscope: '+filename)
-        I = np.apply_along_axis(self.calc_collection_efficiency, 1, directions)
+        I = np.apply_along_axis(self.calc_collection_efficiency, 1, directions, kappa=kappa)
         print('Plotting data for microscope: '+filename)
         util.plot_sphere(filename, directions=directions, data=I, **kwargs)
 
@@ -115,4 +116,16 @@ class Microscope:
             pol_string = pol_string.replace('color', self.color)        
             asy_string += pol_string
 
-        return asy_string
+        sphere_string = """
+        // Sphere
+        draw(unitsphere, surfacepen=material(diffusepen=white+opacity(0.1), emissivepen=grey, specularpen=white));
+
+        // Draw points on sphere
+        dotfactor = 7;
+        dot(X); 
+        dot(Y); 
+
+        circle(0, pi/2, false, (0, 0, 0));
+        """
+
+        return asy_string + sphere_string

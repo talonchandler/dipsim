@@ -1,0 +1,33 @@
+\begin{thebibliography}{1}
+
+\bibitem{sra2007modeling}
+Suvrit Sra, Prateek Jain, and Inderjit Dhillon.
+\newblock Modeling data using directional distributions: Part {II}.
+\newblock Technical report, 2007.
+
+\bibitem{jupp}
+K.~V. Mardia and Peter~E. Jupp.
+\newblock {\em Directional statistics}.
+\newblock J. Wiley, Chichester; New York;, new edition, 2000.
+
+\bibitem{Love2007}
+Jeffrey~J. Love.
+\newblock {\em Bingham Statistics}, pages 45--47.
+\newblock Springer Netherlands, Dordrecht, 2007.
+
+\bibitem{Jespersen2012}
+Sune~N{\o}rh{\o}j Jespersen, Lindsey~A. Leigland, Anda Cornea, and
+  Christopher~D. Kroenke.
+\newblock Determination of axonal and dendritic orientation distributions
+  within the developing cerebral cortex by diffusion tensor imaging.
+\newblock {\em IEEE Trans Med Imaging}, 31(1):16--32, Jan 2012.
+\newblock 21768045[pmid].
+
+\bibitem{alex}
+Anastasios Alexandridis and Athanasios Mouchtaris.
+\newblock Improving narrowband {DOA} estimation of sound sources using the
+  complex watson distribution.
+\newblock In {\em Signal Processing Conference (EUSIPCO), 2016 24th European},
+  pages 1468--1472. IEEE, 2016.
+
+\end{thebibliography}

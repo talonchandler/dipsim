@@ -154,16 +154,17 @@ def generate_caxs(axs):
     return np.array(caxs).reshape(axs.shape)
 
 def draw_scene(scene_string, filename='out.png', my_ax=None, dpi=500,
-               save_file=False):
+               save_file=False, chop=True):
                 
     asy_string = """
     import three;
+    import graph3;
     settings.outformat = "pdf";
     settings.prc = true;
     settings.embed= true;
     settings.render=16;
 
-    size(6cm,0);
+    size(6cm,6cm);
     currentprojection = orthographic(1, 1, 1);
 
     void circle(real Theta, real Alpha, bool dash, triple color) {
@@ -205,15 +206,38 @@ def draw_scene(scene_string, filename='out.png', my_ax=None, dpi=500,
       }
     }
 
-    // Sphere
-    draw(unitsphere, surfacepen=material(diffusepen=white+opacity(0.1), emissivepen=grey, specularpen=white));
+    void watson(real Theta, real Phi, real kappa, real x, real y, real z) {
+     int n_phi = 10;
+     int n_theta = 10;
 
-    // Draw points on sphere
-    dotfactor = 7;
-    dot(X); 
-    dot(Y); 
+     real max_radius = 0;
+     if(kappa > 0){
+       max_radius = exp(kappa);
+     }
+     else{
+       max_radius = 1.0;
+     }
 
-    circle(0, pi/2, false, (0, 0, 0));
+     for(int i=0; i <= n_theta; ++i) {
+       real Theta_i = pi*i/n_theta;
+       real weight = exp(kappa*(cos(Theta_i)**2))/max_radius;     
+       path3 mycircle = circle(c=Z*weight*cos(Theta_i), r=weight*sin(Theta_i));
+       draw(shift((x, y, z))*rotate(angle=degrees(Phi), u=O, v=Z)*rotate(angle=degrees(Theta), u=O, v=Y)*mycircle);
+     }
+
+     triple f(real t) {
+       real weight = exp(kappa*(cos(t)**2))/max_radius;
+       return (0, weight*sin(t), weight*cos(t));
+     }
+     path3 phi_path = graph(f, 0, 2pi, operator ..);
+
+     for(int i=0; i <= n_phi; ++i) {
+       real Phi_i = 2*pi*i/n_theta;
+       draw(shift((x, y, z))*rotate(angle=degrees(Phi), u=O, v=Z)*rotate(angle=degrees(Theta), u=O, v=Y)*rotate(angle=degrees(Phi_i), u=(0,0,0), v=(0,0,1))*phi_path);
+     }
+    }
+    real len = 10;
+    draw((-len,-len)--(len,-len)--(len,len)--(-len,len)--(-len,-len), white);
     """
 
     asy_string += scene_string
@@ -229,7 +253,8 @@ def draw_scene(scene_string, filename='out.png', my_ax=None, dpi=500,
     im = mpimg.imread('temp.png')
 
     # Chop top of im to make it square and fix asy error
-    im = im[int(im.shape[1]*0.075):,:,:]
+    if chop:
+        im = im[int(im.shape[1]*0.075):,:,:]
     
     f = plt.figure(figsize=(5, 5), frameon=False)
     local_ax = plt.axes([0, 0, 1, 1]) # x, y, width, height

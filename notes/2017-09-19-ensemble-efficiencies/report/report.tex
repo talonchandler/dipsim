@@ -114,7 +114,7 @@ right  = 1.5cm]{geometry}
 \title{\vspace{-2.5em} Excitation and Detection Efficiency of Ensembles of
   Molecules Under Polarized Illumination \vspace{-1em}} \author{Talon
   Chandler}% and Patrick La Rivi\`ere}
-\date{\vspace{-1em}\today\vspace{-1em}}
+\date{\vspace{-1em}September 19, 2017\\ (Last Updated: \today)\vspace{-1em}}
 \maketitle
 \section{Introduction}
 In these notes I will calculate the excitation and detection efficiencies of
@@ -156,9 +156,11 @@ Similarly, the detection efficiency of an ensemble is
 \begin{align}
   \eta_{\text{det}} = \int_{\mathbb{S}^2}d\mh{r} f(\mh{r}) \eta_{\text{det}}^{\text{single}} \label{eq:ensemble_det}%
 \end{align} 
-which is only true if the fluorophores emit light independently. I haven't given
-the full expression for $\eta_{\text{det}}^{\text{single}}$ here---see the paper
-or equation 2 with $D = 1$.
+which is only true if the fluorophores emit light independently. If the detector
+uses a polarizer then $\eta_{\text{det}}^{\text{single}}$ is given by equation 2 with $D = 1$ (see Fourkas \cite{fourkas2001}). If the detector does not use a polarizer then
+\begin{align}
+  \eta_{\text{det}}^{\text{single}} = 2(A + B\sin^2\Theta).
+\end{align}
 
 Note that equations \ref{eq:ensemble} and \ref{eq:ensemble_det} are much more
 computationally expensive than the single molecule efficiencies that I've
@@ -248,10 +250,11 @@ is high in a ring of orientations.
   intersect the unit sphere. \newline \newline \textbf{Columns left to right:}
   1) fluorophore distributions with $\bs{\hat{\mu}} = \mb{\hat{z}}$ and varying
   $\kappa$; 2) microscope geometry schematics---all cases use two 0.8 NA
-  objectives in a diSPIM geometry 3) the absorption efficiency as a function of
-  $\bs{\hat{\mu}}$, see equation \ref{eq:ensemble}; 3) the detection efficiency
-  as a function of $\bs{\hat{\mu}}$, see equation \ref{eq:ensemble_det}; (4) the
-  total efficiency, the product of the absorption and detection
+  objectives in a diSPIM geometry with polarized illumination and unpolarized
+  detection 3) the absorption efficiency as a function of $\bs{\hat{\mu}}$, see
+  equation \ref{eq:ensemble}; 3) the detection efficiency as a function of
+  $\bs{\hat{\mu}}$, see equation \ref{eq:ensemble_det}; (4) the total
+  efficiency, the product of the absorption and detection
   efficiencies. \textbf{Note:} The last three columns do not use the same
   scale.}{single-frame}
 

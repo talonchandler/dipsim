@@ -1,5 +1,11 @@
 \begin{thebibliography}{1}
 
+\bibitem{fourkas2001}
+John~T. Fourkas.
+\newblock Rapid determination of the three-dimensional orientation of single
+  molecules.
+\newblock {\em Opt. Lett.}, 26(4):211--213, Feb 2001.
+
 \bibitem{sra2007modeling}
 Suvrit Sra, Prateek Jain, and Inderjit Dhillon.
 \newblock Modeling data using directional distributions: Part {II}.

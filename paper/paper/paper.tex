@@ -30,19 +30,20 @@
 %%%%%%%%%%%%%%%%%%% abstract and OCIS codes %%%%%%%%%%%%%%%%
 \begin{abstract*}
   We investigate the use of polarized illumination in multiview microscopes for
-  determining the orientation of single fluorescent molecules. First, we relate
-  the orientation of single molecules to measurable intensities in multiview
-  microscopes and develop an information-theoretic metric---the solid-angle
-  uncertainty---to compare the ability of multiview microscopes to estimate the
-  orientation of single molecules. Next, we compare a broad class of microscopes
-  using this metric---single- and dual-view microscopes with varying
-  illumination polarization, illumination numerical aperture (NA), detection NA,
-  obliquity, asymmetry, and exposure. We find that multiview microscopes are
-  better at determining the orientation of single molecules than single-view
-  microscopes. We also find that choosing a small illumination NA and a large
-  detection NA are good design choices, that multiview microscopes can benefit
-  from oblique illumination and detection, and that asymmetric NA microscopes
-  can benefit from exposure asymmetry.
+  determining the orientation of single-molecule fluorescence transition
+  dipoles. First, we relate the orientation of single dipoles to measurable
+  intensities in multiview microscopes and develop an information-theoretic
+  metric---the solid-angle uncertainty---to compare the ability of multiview
+  microscopes to estimate the orientation of single dipoles. Next, we compare
+  a broad class of microscopes using this metric---single- and dual-view
+  microscopes with varying illumination polarization, illumination numerical
+  aperture (NA), detection NA, obliquity, asymmetry, and exposure. We find that
+  multi-view microscopes can measure all dipole orientations, while the
+  orientations measurable with single-view microscopes is halved because of
+  symmetries in the detection process. We also find that choosing a small
+  illumination NA and a large detection NA are good design choices, that
+  multiview microscopes can benefit from oblique illumination and detection, and
+  that asymmetric NA microscopes can benefit from exposure asymmetry.
 \end{abstract*}
 
 \ocis{(110.0110) Imaging systems; (180.2520) Fluorescence microscopy; (180.0180)
@@ -238,23 +239,23 @@ M.~Levoy, R.~Ng, A.~Adams, M.~Footer, and M.~Horowitz, \enquote{Light field
 
 
 \section{Introduction}
-The orientation of single molecules is a valuable reporter for
-biological processes. By imaging biological samples with fluorescent probes that
-are fixed to known structures, researchers have studied the dynamics of motor
-proteins \cite{peterman2001, forkey2003}, DNA \cite{backer2016}, actin
-\cite{mehta2016}, septin \cite{demay2011, mcquilken2017}, and membranes
-\cite{anantharam2010}. The number of techniques available to biologists for
-measuring the orientation of single molecules in live cells is continually
-expanding. A recent review \cite{backlund2014} identified three major categories
-of single-molecule orientation determination techniques:
+The orientation of single-molecule fluorescence transition dipoles is a valuable
+reporter for biological processes. By imaging biological samples with
+fluorescent probes that are fixed to known structures, researchers have studied
+the dynamics of motor proteins \cite{peterman2001, forkey2003}, DNA
+\cite{backer2016}, actin \cite{mehta2016}, septin \cite{demay2011,
+  mcquilken2017}, and membranes \cite{anantharam2010}. The number of techniques
+available to biologists for measuring the orientation of single dipoles in live
+cells is continually expanding. A recent review \cite{backlund2014} identified
+three major categories of single-dipole orientation determination techniques:
 
 \textbf{Spatial/angular variation of emission} techniques image single molecules
 and use the distribution of intensity in the back focal plane \cite{lieb2004} or
-in the image plane \cite{backer2014} to estimate their
+in the image plane \cite{backer2014} to estimate their dipole
 orientation. Information-theoretically optimal techniques in this category use
 defocusing or phase masks in the back focal plane to encode orientation and
 position information in the image \cite{agrawal2012}. These techniques can
-estimate the orientation of molecules in all orientations and only require a
+estimate the orientation of dipoles in all orientations and only require a
 single frame of intensity measurements, but they require complex reconstruction
 algorithms, expensive high numerical aperture (NA) optics, and sensitive
 detectors. Furthermore, these techniques spread the signal from a single
@@ -262,17 +263,17 @@ molecule over a large area on the detector, so they suffer from a poor
 signal-to-noise ratio \cite{toprak2006}.
 
 \textbf{Spatial variation of illumination polarization} techniques vary the
-polarization and intensity in the illumination path to excite molecules in
+polarization and intensity in the illumination path to excite dipoles in
 specific orientations in the focal volume \cite{debarre2004}. Although these
-techniques can accurately estimate the orientation of molecules in all
+techniques can accurately estimate the orientation of dipoles in all
 orientations, they require scanning which makes acquisition time a concern in
 live-cell imaging.
 
 \textbf{Polarized illumination or detection} techniques vary the polarization of
 light in the illumination or detection paths and exploit the anisotropic
-absorption and emission patterns of single molecules to estimate their
+absorption and emission patterns of single molecules to estimate their dipole
 orientation. By illuminating and detecting from the focal plane, not just the
-focal point, these techniques can estimate the orientation of many molecules in
+focal point, these techniques can estimate the orientation of many dipoles in
 parallel without scanning. These techniques are easy to implement---changing the
 illumination or detection polarization is simple with a polarization splitter
 \cite{mehta2016} or universal compensator/polarizer \cite{shribak2003}---and the
@@ -281,7 +282,7 @@ reconstruction methods are straightforward \cite{fourkas2001, mehta2016,
 localized on the detector, so they have a signal-to-noise ratio advantage over
 defocusing and phase masking techniques. The main drawback is that these
 techniques require several intensity measurements under different polarization
-orientations to estimate the orientation of a single molecule. Despite the
+orientations to estimate the orientation of a single dipole. Despite the
 requirement for multiple measurements, polarized illumination or detection
 methods are good choices for live-cell imaging because of their combination of
 speed and ease of implementation.
@@ -301,17 +302,17 @@ to the sample \cite{demay2011}. By placing the DoT polarizer in the illumination
 arm we minimize exposure to the sample. We focus on DoT polarized illumination
 in this paper because of its combination of simplicity and low sample exposure.
 
-All single molecule orientation determination methods suffer from some degree of
-anisotropic orientation uncertainty, i.e., some molecular orientations cannot be
+All single-dipole orientation determination methods suffer from some degree of
+anisotropic orientation uncertainty, i.e., some dipole orientations cannot be
 determined as precisely as others. In some cases the orientation cannot be
 determined at all---the forward model can be degenerate for specific dipole
 orientations \cite{fourkas2001, lu2008}. We feel that the importance of
 isotropic orientation uncertainty has been underappreciated. To our knowledge,
 the only authors who have considered anisotropic orientation uncertainty in 3D
-have only analyzed a subset of molecular orientations \cite{agrawal2012}. Our
-view is that an ideal technique for determining the orientation of single
-molecules can reconstruct the orientation with a small and nearly uniform
-uncertainty for all molecular orientations.
+have only analyzed a subset of dipole orientations \cite{agrawal2012}. Our view
+is that an ideal technique for determining the orientation of single dipoles can
+reconstruct the orientation with a small and nearly uniform uncertainty for all
+dipole orientations.
 
 Recently, there has been increasing interest in multiview microscopy techniques
 for biological imaging \cite{wu2013, keller2015, wu2016, wu2017}. Multiview
@@ -330,17 +331,17 @@ regions. Together, these advantages make multiview microscopes good candidates
 for imaging live biological specimens for long periods.
 
 In this work we explore the use of polarized illumination in multiview
-microscopes for determining the orientation of single molecules. Existing
+microscopes for determining the orientation of single dipoles. Existing
 multiview microscopes can easily be outfitted with fast-switching polarizers
 that do not degrade image quality, so polarized illumination is a natural way to
 augment multiview microscopes for measuring the orientation of single
-molecules. Furthermore, multiview microscopes can achieve nearly isotropic
+dipoles. Furthermore, multiview microscopes can achieve nearly isotropic
 resolution while delivering selective illumination. We find that multiview
 microscopes also provide a small and uniform orientation uncertainty for single
-molecules in all orientations. We also find that single-view microscopes have
+dipoles in all orientations. We also find that single-view microscopes have
 symmetries that can be broken by adding a second view. This reduction of
 degeneracy allows multiview microscopes to uniquely determine the orientation of
-single molecules.
+single dipoles.
 
 In section \ref{methods} we develop the theory required to model polarized
 illumination microscopes, and we develop metrics to compare microscope
@@ -350,10 +351,10 @@ the results and their impact on polarized multiview microscope design.
 
 \section{Methods}\label{methods}
 In this section we develop a method to compare multiview polarized illumination
-microscopes for the task of reconstructing molecular orientations. In sections
+microscopes for the task of reconstructing dipole orientations. In sections
 \ref{excitation}--\ref{forward} we develop a model for the intensity collected
 with a fixed illumination and detection configuration as a function of the
-molecule orientation. In section \ref{designs} we list a variety of ways to
+dipole orientation. In section \ref{designs} we list a variety of ways to
 combine these intensity measurements into experimentally realizable polarized
 illumination microscopes. Finally, in section \ref{metrics} we develop metrics
 that we will use to compare these microscopes.
@@ -365,8 +366,8 @@ $\mb{R}, \mb{F}$.
 
 \subsection{Absorption Efficiency}\label{excitation}
 In this section we will calculate the \emph{absorption efficiency} of a single
-molecule---the fraction of the incident power that is absorbed by the
-molecule. Our approach is inspired by Fourkas \cite{fourkas2001}, but here we
+dipole---the fraction of the incident power that is absorbed by the
+dipole. Our approach is inspired by Fourkas \cite{fourkas2001}, but here we
 calculate the absorption efficiency instead of the detection efficiency.
 
 \begin{figure}[H]
@@ -426,7 +427,7 @@ as
   \mb{R}(\mh{r}) &= \begin{bmatrix} \cos\theta\cos^2\phi + \sin^2\phi & (\cos\theta -1)\sin\phi\cos\phi & -\sin\theta\cos\phi\\ (\cos\theta - 1)\sin\phi\cos\phi & \cos\theta\sin^2\phi + \cos^2\phi & -\sin\theta\sin\phi \\ \sin\theta\cos\phi& \sin\theta\sin\phi & \cos\theta \end{bmatrix} \label{eq:rot_mat}.
   \end{align}
 
-  To find the absorption efficiency $\eta_{\text{abs}}$ of a single molecule if
+  To find the absorption efficiency $\eta_{\text{abs}}$ of a single dipole if
   it were illuminated by a single ray, we take the unit incident electric field
   $\hat{\mb{p}}_{\text{exc}}$, take the dot product with the absorption dipole
   moment, then take the modulus squared
@@ -434,7 +435,7 @@ as
       \eta_{\text{abs}}^{\text{ray}} &= |\hat{\bs{\mu}}_{\text{abs}}\cdot\mh{p}_{\text{exc}}|^2. \label{eq:singleray}
     \end{align}
 
-    To find the absorption efficiency of a single molecule, we integrate over
+    To find the absorption efficiency of a single dipole, we integrate over
     all illumination rays and divide by the total incident power which gives the
     vector expression
 \begin{align}
@@ -456,6 +457,8 @@ where
   D &= \frac{4}{3(1 - \cos\alpha)}.
 \end{align}\label{eq:coefficients}%
 \end{subequations}
+Note that the factor $D$ keeps the specimen irradiance constant for any value of
+$\alpha$.
 
 We can extend these results to light-sheet illumination created by scanning a
 laser. If we shine a narrow, collimated, laser beam onto a galvanometer in the
@@ -466,8 +469,8 @@ laser is rendered ineffectual by the scanning---the light sheet is effectively
 composed of many incoherent beams. If we also ensure that the laser beam is
 weakly focused, we can ignore the excitation caused by the small fields aligned
 with the optical axis. Under slowly-scanned and weakly-focused light-sheet
-illumination, molecules in the sample will be excited as if a single plane wave
-was incident. Therefore, we can find the absorption efficiency of a molecule in
+illumination, dipoles in the sample will be excited as if a single plane wave
+was incident. Therefore, we can find the absorption efficiency of a dipole in
 this case by taking the limit of equation \ref{eq:scalarabs} as
 $\alpha \rightarrow 0$ (or by plugging equation \ref{eq:mu} and
 \ref{eq:excfield} into equation \ref{eq:singleray}) giving
@@ -476,15 +479,15 @@ $\alpha \rightarrow 0$ (or by plugging equation \ref{eq:mu} and
 \end{align}
 which is recognizable as Malus' law generalized to three dimensions. This means
 that light-sheet illumination is approximately equivalent to low-NA illumination
-with respect to the molecular orientations they excite. Notice that the
+with respect to the dipole orientations they excite. Notice that the
 absorption efficiency can take its maximum range of values
 ($\eta_{\text{abs}} \in [0, 1]$) when $\alpha=0$.
 
 \subsection{Detection Efficiency}\label{detection}
 In this section we will calculate the \emph{detection efficiency}---the fraction
-of the power emitted by a single molecule that we detect. Fourkas calculated the
+of the power emitted by a single dipole that we detect. Fourkas calculated the
 detection efficiency when an ideal objective with its optical axis aligned with
-the $\mh{z}$ axis is focused on a single molecule and a polarizer is placed in
+the $\mh{z}$ axis is focused on a single dipole and a polarizer is placed in
 the aperture plane \cite{fourkas2001}. He found that
 \begin{align}
   \eta_{\text{det}}^{\text{pol}} = A + B\sin^2\Theta + C\sin^{2}{\Theta} \cos{[2 (\Phi - \phi_{\text{det}}})], \label{eq:det_pol}
@@ -547,10 +550,10 @@ forward model for a single intensity measurement. Figure \ref{fig:single-frame}
 shows the efficiencies in three representative geometries. Note that in all
 cases there are multiple orientations that give the same intensity
 measurement. This means that a single intensity measurement does not give us
-enough information to reconstruct the orientation of a single molecule. Next, we
+enough information to reconstruct the orientation of a single dipole. Next, we
 will consider combining several intensity measurements to create polarized
 illumination microscopes that can reconstruct the orientation of single
-molecules.
+dipoles.
 
 \begin{figure}[H]
 \centering\includegraphics[width=\textwidth]{single-frame}
@@ -594,13 +597,13 @@ designs that meet these criteria.
 
 \subsection{Evaluation Metrics}\label{metrics}
 Our goal is to evaluate the ability of a microscope design to estimate the
-orientation of a single molecule (via parameters $\Theta$ and $\Phi$) from
+orientation of a single dipole (via parameters $\Theta$ and $\Phi$) from
 intensity data. A common way to evaluate the ability to estimate the parameters
 $\Theta$ and $\Phi$ from the data is to calculate the Cram\'er-Rao lower bound
 (CRLB) for each parameter \cite{kay1993}. The CRLBs are given by the diagonal
 elements of the inverse of the Fisher information matrix, and they give the
 minimum variance of an unbiased estimator for each parameter. For each
-microscope design and molecule orientation we calculate the Fisher information
+microscope design and dipole orientation we calculate the Fisher information
 matrix. We assume that the detected intensities are Poisson distributed, so the
 Fisher information matrix is given by
 \begin{align}
@@ -632,7 +635,7 @@ parameterization independent measure of the orientation uncertainty.
 
 For each microscope we calculate $\sigma_{\Omega}$ at 10,000 approximately
 equally spaced points on the unit sphere. A desirable microscope design will
-have a small solid-angle uncertainty that is uniform for all molecular
+have a small solid-angle uncertainty that is uniform for all dipole
 orientations. The most straightforward way to find the location and scale of the
 solid-angle uncertainty is to use the mean and variance, respectively. However,
 the solid-angle uncertainty can take extremely large values, e.g., when a
@@ -649,7 +652,7 @@ irradiance to the sample, not the detected intensity or the total intensity
 emitted by the molecule.
 
 We also use the Fisher information matrix to calculate uncertainty ellipses for
-each microscope and fluorophore orientation. The general equation of an ellipse
+each microscope and dipole orientation. The general equation of an ellipse
 with axis radii $a$ and $b$ and rotation angle $\gamma$ is
 \begin{align}
   \frac{(x\cos\gamma + y\sin\gamma)^2}{a^2} + \frac{(x\cos\gamma - y\sin\gamma)^2}{b^2} =1. 
@@ -682,8 +685,8 @@ and the uncertainty ellipse give no indication of this degeneracy. For this
 reason we also use the number of degeneracies as a measure of a microscope's
 ability to estimate the orientation of a dipole from intensity measurements. A
 small number of degeneracies is important for a microscope to find the
-orientation of a molecule---a twofold degenerate microscope can find the
-orientation of a molecule down to the hemisphere while a fourfold degenerate
+orientation of a dipole---a twofold degenerate microscope can find the
+orientation of a dipole down to the hemisphere while a fourfold degenerate
 microscope can only find the orientation down to the quadrant.
 
 To calculate and display these evaluation metrics we use NumPy \cite{walt2011}
@@ -708,11 +711,11 @@ modification requiring underfilling the aperture plane) improves the solid-angle
 uncertainty much less than increasing the detection NA (an expensive
 modification requiring a higher-NA objective). Also note in Figure
 \ref{fig:single-arm}c) that single-view designs suffer from high orientation
-uncertainty when the molecules are oriented along the optical axis (the
-molecules are not efficiently excited or detected), near the transverse plane
-(it is ambiguous whether the molecule is oriented above or below the transverse
+uncertainty when the dipoles are oriented along the optical axis (the
+dipoles are not efficiently excited or detected), near the transverse plane
+(it is ambiguous whether the dipole is oriented above or below the transverse
 plane, see Figure \ref{fig:single-arm}b)), and near the polarizer orientations
-(it is ambiguous whether the molecule is on either side of the polarizer
+(it is ambiguous whether the dipole is on either side of the polarizer
 orientation, see Figure \ref{fig:single-arm}b)).
 
 The single-view microscope in Figure \ref{fig:single-arm} is fourfold degenerate
@@ -723,15 +726,15 @@ inversion degeneracy---the dipole is an axis rather than a direction. A second
 twofold degeneracy is present in single-view designs---the microscope cannot
 distinguish between dipoles reflected through the transverse plane. Evidence of
 the second degeneracy is found in Figures \ref{fig:single-arm}b) and
-\ref{fig:single-arm}c) which show the ambiguity of whether the molecule is
+\ref{fig:single-arm}c) which show the ambiguity of whether the dipole is
 oriented above or below the transverse plane. Near the transverse plane this
 ambiguity is evident in the high solid-angle uncertainty, but far from the
 transverse plane evidence of the ambiguity is lost. Adding a second view and
 taking eight intensity measurements instead of four removes this degeneracy (see
 equations \ref{eq:thetap} and \ref{eq:phip}), so the dual-view microscopes we
 consider in this paper are only twofold degenerate. This means that while
-dual-view microscopes can find the orientation of a molecule up to the
-hemisphere, single-view microscopes can only find the orientation of a molecule
+dual-view microscopes can find the orientation of a dipole up to the
+hemisphere, single-view microscopes can only find the orientation of a dipole
 up to the quadrant.
 
 \begin{figure}[htbp]
@@ -797,10 +800,10 @@ similar to the single-view case in Figure \ref{fig:single-arm}. We find that
 optimal designs use a small illumination NA and a large detection NA. As we
 discussed in Section \ref{excitation}, low-NA illumination is
 approximately equivalent to light-sheet illumination for the task of estimating
-the orientation of molecules. Therefore, the preference for low-NA
+the orientation of dipoles. Therefore, the preference for low-NA
 illumination also implies that dual-view light-sheet illumination geometries are
 an excellent choice for uniformly reconstructing the orientation of single
-molecules.
+dipoles.
 
 \begin{figure}[htbp]
 \centering\includegraphics[width=\textwidth]{double-arm}
@@ -884,9 +887,9 @@ Dual-view orthogonal symmetric light-sheet (NA=0.94)&2&3.13$\times 10^{-3}$&1.28
 In this work we have developed a model to predict the intensities measured by
 polarized illumination microscopes in a wide range of geometries, developed
 metrics to measure the ability of a microscope design to estimate the
-orientation of single molecules, and used these metrics to compare a wide
+orientation of single dipoles, and used these metrics to compare a wide
 range of microscope designs. Our main result is a short list of design
-heuristics that can be used to design polarized-illumination single-molecule
+heuristics that can be used to design polarized-illumination single-dipole
 orientation microscopes:
 \begin{itemize}
 \item Single-view microscopes benefit from a small illumination NA and a large
@@ -925,9 +928,9 @@ fraction of the total noise at low intensities, so including detector noise
 would increase the informational value of high intensity
 measurements. Therefore, we expect that including the effects of detector noise
 would favor microscopes with a large detection NA. Finally, we have focused on
-the task of estimating the orientation of molecules and ignored the equally
+the task of estimating the orientation of dipoles and ignored the equally
 important task of estimating their location. The task of jointly estimating the
-orientation and location of single molecules from multiple views is a topic for
+orientation and location of single dipoles from multiple views is a topic for
 future work.
 
 To compare the microscopes in this paper we used a fixed irradiance incident on
@@ -947,23 +950,23 @@ of multiview microscope\cite{levoy2006}, and we plan to extend our analysis to
 this case in future work.
 
 Although we have only considered the orientation determination of fixed single
-molecules, polarized illumination techniques can be used to study the
-orientation distribution of ensembles of dynamic molecules \cite{mehta2016,
-  backer2016}. In future work we will investigate the ability of multiview
-polarized illumination microscopes to estimate the orientation distribution of
-ensembles of dynamic molecules.
+dipoles, polarized illumination techniques can be used to study the orientation
+distribution of ensembles of dynamic dipoles \cite{mehta2016, backer2016}. In
+future work we will investigate the ability of multiview polarized illumination
+microscopes to estimate the orientation distribution of ensembles of dynamic
+dipoles.
 
 We have only considered polarized illumination. In the introduction
 we discussed why we prefer polarized illumination to polarized detection, but
 there is information to be gained by adding polarized detection to the
 techniques discussed in this paper. Adding a polarization splitter to the
 detection arm can increase the information available for reconstructing the
-orientation of a single molecule without increasing the acquisition time.
+orientation of a single dipole without increasing the acquisition time.
 
 We conclude that multiview microscopes are useful tools for determining the
-orientation of single molecules. Using simple design heuristics, we can design
+orientation of single dipoles. Using simple design heuristics, we can design
 polarized illumination multiview microscopes that can determine the orientation
-of single molecules with a small and uniform orientation uncertainty.
+of single dipoles with a small and uniform orientation uncertainty.
 
 \section*{Funding}
 TC was supported by a University of Chicago Biological Sciences Division

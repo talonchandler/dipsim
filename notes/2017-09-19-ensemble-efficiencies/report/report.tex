@@ -4,6 +4,10 @@
 % Packages %
 %%%%%%%%%%%%
 \hyphenpenalty=10000
+\RequirePackage[normalem]{ulem} %DIF PREAMBLE
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1} %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{{\protect\color{blue}\uwave{#1}}} %DIF PREAMBLE
+\providecommand{\DIFdel}[1]{{\protect\color{red}\sout{#1}}}    
 \usepackage{tocloft}
 \renewcommand\cftsecleader{\cftdotfill{\cftdotsep}}
 \def\undertilde#1{\mathord{\vtop{\ialign{##\crcr
@@ -127,11 +131,11 @@ distributions of molecules. Next, we review possible orientation distribution
 functions that we can expect real ensembles to follow. Finally, we see how
 orientation distributions affect the intensities measured by microscopes.
 
-\section{Excitation and Detection Efficiency for Arbitrary Distributions of Molecules}
+\section{Intensity Collected From An Arbitrary Distributions of Molecules}
 Previously we showed that the excitation efficiency of a single molecule under
 incoherent uniform angular illumination is given by
 \begin{align}
-  \eta_{\text{abs}}^{\text{single}} &= D\{A + B\sin^{2}{\Theta} + C\sin^{2}{\Theta} \cos{[2 (\Phi - \phi_{\text{exc}}})]\}\label{eq:scalarabs}
+  \eta_{\text{abs}} &= D\{A + B\sin^{2}{\Theta} + C\sin^{2}{\Theta} \cos{[2 (\Phi - \phi_{\text{exc}}})]\}\label{eq:scalarabs}
 \end{align}
 where
 \begin{subequations}
@@ -142,32 +146,52 @@ where
   D &= \frac{4}{3(1 - \cos\alpha)}.
 \end{align}\label{eq:coefficients}%
 \end{subequations}
-
-If an ensemble of independent fluorescent molecules is illuminated then the
-absorption efficiency of the ensemble is
+If the detector does not use a polarizer then the detection efficiency is given by
 \begin{align}
-  \eta_{\text{abs}} = \int_{\mathbb{S}^2}d\mh{r} f(\mh{r}) \eta_{\text{abs}}^{\text{single}} \label{eq:ensemble}%
-\end{align} 
-where $f(\mh{r})$ is the orientation probability distribution function of the
-fluorophores. For equation \ref{eq:ensemble} to be true the fluorophores must
-absorb light independently---no homo-FRET or coherence effects.
-
-Similarly, the detection efficiency of an ensemble is
-\begin{align}
-  \eta_{\text{det}} = \int_{\mathbb{S}^2}d\mh{r} f(\mh{r}) \eta_{\text{det}}^{\text{single}} \label{eq:ensemble_det}%
-\end{align} 
-which is only true if the fluorophores emit light independently. If the detector
-uses a polarizer then $\eta_{\text{det}}^{\text{single}}$ is given by equation 2 with $D = 1$ (see Fourkas \cite{fourkas2001}). If the detector does not use a polarizer then
-\begin{align}
-  \eta_{\text{det}}^{\text{single}} = 2(A + B\sin^2\Theta).
+  \eta_{\text{det}} = 2(A + B\sin^2\Theta).
 \end{align}
 
-Note that equations \ref{eq:ensemble} and \ref{eq:ensemble_det} are much more
-computationally expensive than the single molecule efficiencies that I've
-implemented previously. The double integrals do not have closed form solutions,
-so I am using a numerical integration scheme---Gausse-Legendre adaptive
-quadrature methods implemented in QUADPACK and called from \texttt{scipy}. These
-methods allow us to easily trade speed for accuracy.
+
+\DIFdel{If an ensemble of independent fluorescent molecules is illuminated then the
+absorption efficiency of the ensemble is}
+\begin{align}
+  \DIFdel{\eta_{\text{abs}} = \int_{\mathbb{S}^2}d\mh{r} f(\mh{r}) \eta_{\text{abs}}^{\text{single}}} \label{eq:ensemble}%
+\end{align} 
+\DIFdel{where $f(\mh{r})$ is the orientation probability distribution function of the
+fluorophores. For equation \ref{eq:ensemble} to be true the fluorophores must
+absorb light independently---no homo-FRET or coherence effects.}
+
+\DIFdel{Similarly, the detection efficiency of an ensemble is}
+\begin{align}
+  \DIFdel{\eta_{\text{det}} = \int_{\mathbb{S}^2}d\mh{r} f(\mh{r}) \eta_{\text{det}}^{\text{single}}} \label{eq:ensemble_det}%
+\end{align} 
+\DIFdel{which is only true if the fluorophores emit light independently. If the detector
+  uses a polarizer then $\eta_{\text{det}}^{\text{single}}$ is given by equation 2 with $D = 1$ (see Fourkas \cite{fourkas2001}).}
+
+The detected intensity is proportional to
+\begin{align}
+  \DIFadd{I \propto I_{\text{out}}\int_{\mathbb{S}^2}d\mh{r} f(\mh{r}; \hat{\bs{\mu}}, \kappa) \eta_{\text{exc}}(\mh{r}) \eta_{\text{det}}(\mh{r})} \label{eq:ensemble_intensity}%
+\end{align}
+\begin{align}
+  \DIFdel{I \propto I_{\text{out}}\eta_{\text{abs}}\eta_{\text{det}}. }
+\end{align}
+Our goal is to estimate the parameters of the ensemble distribution ($\Theta$,
+$\Phi$, $\kappa$) and the total output intensity (proportional to the number of
+molecules in the distribution $N$) from the intensity measurements. \DIFdel{If we can
+estimate the number of photons each fluorophore emits (from a datasheet or a
+separate experiment), then we can estimate $N$ directly. If this information is
+not available, we will estimate a number that is directly proportional to $N$.}
+
+\DIFadd{Note that equation 6 integrates the intensity contributions from each
+  fluorophore. The previous expressions (equations 4, 5, and 7) integrate the
+  efficiencies which is incorrect.}
+
+Note that equation \ref{eq:ensemble_det} is much more computationally expensive
+than the single molecule efficiencies that I've implemented previously. The
+double integrals do not have closed form solutions, so I am using a numerical
+integration scheme---Gausse-Legendre adaptive quadrature methods implemented in
+QUADPACK and called from \texttt{scipy}. These methods allow us to easily trade
+speed for accuracy.
 
 \section{Axial Distributions On The Sphere}
 In this section we will review several orientation probability distribution functions. 
@@ -221,42 +245,53 @@ argument. The matrix $\mb{K}$ has three free parameters (two eigenvalues and a
 choice of principal axis), so the Bingham distribution is a 5 parameter
 distribution.
 
-\section{Forward Model For Watson Distributed Molecules}
-The detected intensity is proportional to the number of molecules in the
-ensemble $N$, the absorption efficiency $\eta_{\text{abs}}$, and the detection
-efficiency $\eta_{\text{det}}$
-\begin{align}
-  I \propto N\eta_{\text{abs}}\eta_{\text{det}}. 
-\end{align}
-Our goal is to estimate the parameters of the ensemble distribution
-($\Theta$, $\Phi$, $\kappa$) and the number of molecules in the distribution $N$
-from the intensity measurements. If we can estimate the number of photons each
-fluorophore emits (from a datasheet or a separate experiment), then we can
-estimate $N$ directly. If this information is not available, we will estimate a
-number that is directly proportional to $N$.
+\section{Example Results}
 
 Figure \ref{fig:single-frame} shows representative examples of intensity
-measurements collected from Watson-distributed fluorophores. Note how the total
-efficiency pattern changes as $\kappa$ changes. For large $\kappa$, we recover
+measurements collected from Watson-distributed fluorophores. Note how the
+intensity pattern changes as $\kappa$ changes. For large $\kappa$, we recover
 the case of single fluorophores and there is a concentrated set of orientations
-with high total efficiency. As $\kappa$ decreases, the set of orientations with
+with high intensity. As $\kappa$ decreases, the set of orientations with
 high total efficiency grows until $\kappa = 0$ and the total efficiency is
 independent of $\bs{\hat{\mu}}$ (this is because the mean orientation is
 meaningless for a uniform distribution). When $\kappa < 0$ the total efficiency
 is high in a ring of orientations.
 
-\fig{../figures/single-frame.pdf}{1.0}{Representative examples of ensemble
-  intensity measurements. Black dots indicate where the Cartesian unit vectors
-  intersect the unit sphere. \newline \newline \textbf{Columns left to right:}
-  1) fluorophore distributions with $\bs{\hat{\mu}} = \mb{\hat{z}}$ and varying
-  $\kappa$; 2) microscope geometry schematics---all cases use two 0.8 NA
-  objectives in a diSPIM geometry with polarized illumination and unpolarized
-  detection 3) the absorption efficiency as a function of $\bs{\hat{\mu}}$, see
-  equation \ref{eq:ensemble}; 3) the detection efficiency as a function of
-  $\bs{\hat{\mu}}$, see equation \ref{eq:ensemble_det}; (4) the total
-  efficiency, the product of the absorption and detection
-  efficiencies. \textbf{Note:} The last three columns do not use the same
-  scale.}{single-frame}
+\begin{figure}[h]
+ \captionsetup{width=1.0\linewidth}
+ \centering
+ \includegraphics[width = 0.8\textwidth]{../figures/single-frame.pdf}
+ \caption{\DIFadd{Replaced figure. Shows intensity instead of ``ensemble
+     efficiencies''.} Representative examples of ensemble intensity
+   measurements. Black dots indicate where the Cartesian unit vectors intersect
+   the unit sphere. \newline \newline \textbf{Columns left to right:} 1)
+   fluorophore distributions with $\bs{\hat{\mu}} = \mb{\hat{z}}$ and varying
+   $\kappa$; 2) microscope geometry schematics---all cases use two 0.8 NA
+   objectives in a diSPIM geometry with polarized illumination and unpolarized
+   detection 3) \DIFadd{the measured intensity as a function of $\bs{\hat{\mu}}$,
+     see equation \ref{eq:ensemble_intensity}}. \DIFdel{the absorption efficiency as a
+     function of $\bs{\hat{\mu}}$, see equation \ref{eq:ensemble_intensity}; 3)
+     the detection efficiency as a function of $\bs{\hat{\mu}}$, see equation
+     \ref{eq:ensemble_det}; (4) the total efficiency, the product of the
+     absorption and detection efficiencies. \textbf{Note:} The last three
+   columns do not use the same scale.}}
+ \label{fig:single-frame}
+\end{figure}
+
+% \fig{../figures/single-frame.pdf}{1.0}{\DIFadd{Replaced figure. Shows intensity
+%     instead of ``ensemble efficiencies''.} Representative examples of ensemble
+%   intensity measurements. Black dots indicate where the Cartesian unit vectors
+%   intersect the unit sphere. \newline \newline \textbf{Columns left to right:}
+%   1) fluorophore distributions with $\bs{\hat{\mu}} = \mb{\hat{z}}$ and varying
+%   $\kappa$; 2) microscope geometry schematics---all cases use two 0.8 NA
+%   objectives in a diSPIM geometry with polarized illumination and unpolarized
+%   detection 3) \DIFadd{the measured intensity as a function of $\bs{\hat{mu}}$,
+%     see equation \ref{eq:ensemble}}. \DIFdel{the absorption efficiency as a
+%       function of $\bs{\hat{\mu}}$, see equation \ref{eq:ensemble_intensity}; 3) the
+%       detection efficiency as a function of $\bs{\hat{\mu}}$, see equation
+%       \ref{eq:ensemble_det}; (4) the total efficiency, the product of the
+%       absorption and detection efficiencies.} \textbf{Note:} The last three
+%     columns do not use the same scale.}{single-frame}
 
 \section{Computation Time Estimates}
 A function evaluation for the intensity collected from a single fluorophore
@@ -269,13 +304,14 @@ calculation takes $\sim 50$ms.
 
 We're planning to implement a Fisher scoring algorithm that acts on the data
 from each voxel to estimate 4 parameters: the orientation distribution
-($\Theta$, $\Phi$, $\kappa$) and the number of fluorophores $N$. The algorithm
-(1) computes the Fisher information matrix at a starting guess which takes 5
-function evaluations (a central point and 4 derivative directions) which takes
-$\sim 0.25\ \text{s}$, (2) updates its guess (cheap), then (3) recomputes the Fisher
-information matrix until convergence. It's difficult to guess the number of
-iterations we will require for convergence, but let's say we can get it down to
-10 iterations ($\sim$ 2.5 s).
+($\Theta$, $\Phi$, $\kappa$) and the number of fluorophores $N$ (or a parameter
+that is proportional to $N$). The algorithm (1) computes the Fisher information
+matrix at a starting guess which takes 5 function evaluations (a central point
+and 4 derivative directions) which takes $\sim 0.25\ \text{s}$, (2) updates its
+guess (cheap), then (3) recomputes the Fisher information matrix until
+convergence. It's difficult to guess the number of iterations we will require
+for convergence, but let's say we can get it down to 10 iterations ($\sim$ 2.5
+s).
 
 The data set we took this summer has $\sim 150\times 150\times 800 \approx 2\e{7}$
 useful voxels which will take $\sim5\e{7} \text{s} = 1.5\ \text{y}$.

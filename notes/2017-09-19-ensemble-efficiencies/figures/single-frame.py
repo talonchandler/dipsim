@@ -13,11 +13,11 @@ ill_nas = 4*[0.8]
 det_nas = 4*[0.8]
 kappas = [-3, 0, 3, 6]
 n_rows = len(det_axes)
-n_cols = 5
+n_cols = 3
 inch_fig = 5
 dpi = 300
 
-col_labels = ['Fluorophore Geometry', 'Microscope Geometry', r'Absorption Efficiency $\eta_{\textrm{abs}}$', r'Detection Efficiency $\eta_{\textrm{det}}$', r'Total Efficiency $\eta_{\textrm{tot}}$']
+col_labels = ['Fluorophore Geometry', 'Microscope Geometry', '$I$ (Arbitrary Units)']
 row_labels = ['$\kappa = -3$', '$\kappa = 0$', '$\kappa = 3$', '$\kappa = 6$']
 
 # Generate axes
@@ -44,12 +44,8 @@ for i, (pol, det_axis, ill_axis, det_na, ill_na, kappa) in enumerate(zip(pols, d
     m = microscope.Microscope(illuminator=ill, detector=det, max_photons=1)
     
     # Plot scene and efficiencies
-    m.plot_excitation_efficiency(n=n_pts, kappa=kappa, my_ax=axs[i,2], my_cax=caxs[i,2],
-                                 color_min=0, color_max=0.75)
-    m.plot_collection_efficiency(n=n_pts, kappa=kappa, my_ax=axs[i,3], my_cax=caxs[i,3],
-                                 color_min=0, color_max=0.25)
-    m.plot_sensitivity(n=n_pts, kappa=kappa, my_ax=axs[i,4], my_cax=caxs[i,4],
-                                 color_min=0, color_max=0.15)
+    m.plot_intensity(n=n_pts, kappa=kappa, my_ax=axs[i,2], my_cax=caxs[i,2],
+                     color_min=0, color_max=0.06)
 
     scene_string = m.scene_string()
     util.draw_scene(scene_string, my_ax=axs[i,1], dpi=dpi)

@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import functools
 import vispy
 from dipsim import util, fluorophore, visuals
+from scipy import integrate, special
 
 class Microscope:
     """
@@ -18,44 +19,55 @@ class Microscope:
         self.max_photons = max_photons
         self.color = color
 
-    def calc_intensity(self, direction):
-        return self.max_photons*self.calc_sensitivity(direction)
-    
-    def calc_sensitivity(self, direction, kappa=None, epsrel=1e-2):
-        flu = fluorophore.Fluorophore(mu_abs=direction, mu_em=direction, kappa=kappa)
-        excite = self.illuminator.calc_excitation_efficiency(flu, epsrel=epsrel)
-        collect = self.detector.calc_collection_efficiency(flu, epsrel=epsrel)        
-        return excite*collect
+    def calc_intensity(self, direction, kappa=None, epsrel=1e-2):
+        fluo = fluorophore.Fluorophore(mu_abs=direction, mu_em=direction)        
+        if kappa==None:
+            excite = self.illuminator.calc_excitation_efficiency(fluo)
+            collect = self.detector.calc_collection_efficiency(fluo)
+            return self.max_photons*excite*collect
+        else:
+            def int_func(theta, phi):
+                theta_p = fluo.mu_em[0]
+                phi_p = fluo.mu_em[1]
+                int_single = self.calc_intensity((theta, phi), kappa=None)
+                norm = 1.0/(4*np.pi*special.hyp1f1(0.5, 1.5, kappa))
+                weight = np.exp(kappa*(np.dot(util.tp2xyz((theta, phi)), util.tp2xyz((theta_p, phi_p)))**2))
+                jacobian = np.sin(theta)
+                return jacobian*norm*weight*int_single
+            #return integrate.dblquad(int_func, 0, 2*np.pi, lambda x: 0, lambda y: np.pi, epsrel=epsrel, epsabs=0)[0]            
+            integral = integrate.nquad(int_func, [[0, np.pi], [0, 2*np.pi]], opts={'epsrel':epsrel, 'epsabs':0, 'limit':1}, full_output=True)
+            print(integral)
+            return integral[0]
 
-    def plot_sensitivity(self, filename='', n=50, kappa=None, **kwargs):
+    def plot_intensity(self, filename='', n=50, kappa=None, **kwargs):
         directions = util.fibonacci_sphere(n)
         print('Generating data for microscope: '+filename)
-        I = np.apply_along_axis(self.calc_sensitivity, 1, directions, kappa=kappa)
+        I = np.apply_along_axis(self.calc_intensity, 1, directions, kappa=kappa)
         print('Plotting data for microscope: '+filename)
         util.plot_sphere(filename, directions=directions, data=I, **kwargs)
 
-    def calc_excitation_efficiency(self, direction, kappa=None):
-        flu = fluorophore.Fluorophore(mu_abs=direction, mu_em=direction, kappa=kappa)
+    def calc_excitation_efficiency(self, direction):
+        flu = fluorophore.Fluorophore(mu_abs=direction, mu_em=direction)
         I = self.illuminator.calc_excitation_efficiency(flu)
         return I
     
-    def plot_excitation_efficiency(self, filename='', n=50, kappa=None, **kwargs):
+    def plot_excitation_efficiency(self, filename='', n=50, **kwargs):
         directions = util.fibonacci_sphere(n)
         print('Generating data for microscope: '+filename)
-        I = np.apply_along_axis(self.calc_excitation_efficiency, 1, directions, kappa=kappa)
+        I = np.apply_along_axis(self.calc_excitation_efficiency, 1, directions)
 
         print('Plotting data for microscope: '+filename)
         util.plot_sphere(filename, directions=directions, data=I, **kwargs)
 
-    def calc_collection_efficiency(self, direction, kappa=None):
-        flu = fluorophore.Fluorophore(mu_abs=direction, mu_em=direction, kappa=kappa)
+    def calc_collection_efficiency(self, direction):
+        flu = fluorophore.Fluorophore(mu_abs=direction, mu_em=direction)
         I = self.detector.calc_collection_efficiency(flu)
         return I
     
-    def plot_collection_efficiency(self, filename='', n=50, kappa=None, **kwargs):
+    def plot_collection_efficiency(self, filename='', n=50, **kwargs):
         directions = util.fibonacci_sphere(n)
         print('Generating data for microscope: '+filename)
-        I = np.apply_along_axis(self.calc_collection_efficiency, 1, directions, kappa=kappa)
+        I = np.apply_along_axis(self.calc_collection_efficiency, 1, directions)
         print('Plotting data for microscope: '+filename)
         util.plot_sphere(filename, directions=directions, data=I, **kwargs)
 

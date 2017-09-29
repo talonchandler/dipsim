@@ -40,6 +40,15 @@ def fibonacci_sphere(n):
     phi = np.mod((np.pi*(3.0 - np.sqrt(5.0)))*np.arange(n), 2*np.pi) - np.pi
     return np.vstack((theta, phi)).T
 
+def sphere_profile(n):
+    # Returns equally spaced points on a profile around the unit sphere in
+    # spherical coordinates. Only on the equator for now. 
+    z = np.linspace(1 - 1/n, -1 + 1/n, num=n)
+    theta = n*[np.pi/2]
+    phi = np.linspace(-np.pi, np.pi, num=n)
+    return np.vstack((theta, phi)).T
+
+
 def plot_sphere(filename=None, directions=None, data=None, interact=False,
                 color_norm='linear', color_min=0, color_max=None,
                 gamma=0.25, color_map='coolwarm', linthresh=1e-3,

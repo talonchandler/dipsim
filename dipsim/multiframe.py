@@ -1,4 +1,4 @@
-from dipsim import fluorophore, illuminator, detector, microscope, stats, util, multiframe
+from dipsim import fluorophore, illuminator, detector, microscope, stats, util, multiframe, recon
 import numpy as np
 import matplotlib.pyplot as plt
 import functools
@@ -75,7 +75,42 @@ class MultiFrameMicroscope:
 
         # Coefficient of variation
         self.coeff_of_variation = util.coeff_of_variation(self.sa_uncert)
-        
+
+    def reconstruct(self, data, start=None, eps=1e-3, dx=1e-6, recon_type='Fisher'):
+        rh = recon.ReconHistory()
+        rh.eps = eps
+        estimate = start
+        rh.estimates.append(estimate)
+        if recon_type == 'Fisher':
+            # Fisher scoring algorithm
+            iteration = 0
+            while iteration < 100:
+                inv_fi = self.noise_model.calc_inv_fi(estimate, 2*[dx])
+                score = self.noise_model.score(estimate, data, 2*[dx])
+                estimate = estimate + inv_fi.dot(score)
+                score_norm = np.linalg.norm(score)
+                rh.estimates.append(estimate)
+                rh.score_norm.append(score_norm)
+                iteration += 1
+                if score_norm < eps:
+                    break
+        else:
+            import autograd.numpy as np
+            from pymanopt.manifolds import Sphere
+            from pymanopt import Problem
+            from pymanopt.solvers import ParticleSwarm, NelderMead
+            manifold = Sphere(3)
+            def cost(X, data=data):
+                ll = self.noise_model.loglikelihood(util.xyz2tp(X), data)
+                return -ll
+            problem = Problem(manifold=manifold, cost=cost, verbosity=0)
+            solver = ParticleSwarm(populationsize=, maxcostevals=100, nostalgia=0, social=0)
+            Xopt = solver.solve(problem)
+            estimate = util.xyz2tp(Xopt)
+            rh.estimates.append(estimate)
+            
+        return estimate, rh
+            
     def scene_string(self):
         asy_string = ''
         for m in self.microscopes:

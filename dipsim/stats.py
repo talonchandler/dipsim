@@ -107,7 +107,7 @@ class NoiseModel:
         my_ax.set_xlabel('x')
 
         my_ax.legend()
-        
+
     def calc_fi(self, x0, dx):
         """
         Calculates the fisher information matrix at the point x0 using 
@@ -144,3 +144,28 @@ class NoiseModel:
     def calc_inv_fi(self, x0, dx):
         f_inf = self.calc_fi(x0, dx)
         return np.linalg.pinv(f_inf)
+
+    def loglikelihood(self, estimate, data):
+        # Assuming Poisson model
+        lamb = self.ev_func(estimate)
+        return np.sum(data*np.log(lamb) - lamb)
+
+    def score(self, estimate, data, dx):
+        # Assuming Poisson
+        f = self.loglikelihood
+        f0 = f(estimate, data) 
+        n = len(estimate) # number of params
+
+        # Calculate derivative directions
+        h = np.zeros((n, n),) # array of derivative directions
+        for i in range(n):
+            h[i, :] = np.eye(1, n, k=i).flatten()*dx # ith h vector
+
+        # Calculate derivative along each direction
+        score = []
+        for i in range(n):
+            score.append((f(estimate + 0.5*h[i, :], data) - f(estimate - 0.5*h[i, :], data))/dx[i])
+
+        return score
+
+    

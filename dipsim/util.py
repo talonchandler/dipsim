@@ -29,7 +29,10 @@ def xyz2tp(xyz, R=np.eye(3,3)):
     xyz_prime = np.dot(np.linalg.inv(R), xyz)
     theta = np.arccos(xyz_prime[2]/np.linalg.norm(xyz_prime)),
     phi = np.arctan2(xyz_prime[1], xyz_prime[0])
-    return np.array([theta, phi])
+    return np.array([theta[0], phi])
+
+def axis_angle(tp1, tp2):
+    return np.arccos(np.dot(np.abs(tp2xyz(tp1)), np.abs(tp2xyz(tp2))))
 
 # Plotting functions
 def fibonacci_sphere(n):
@@ -52,8 +55,7 @@ def sphere_profile(n):
 def plot_sphere(filename=None, directions=None, data=None, interact=False,
                 color_norm='linear', color_min=0, color_max=None,
                 gamma=0.25, color_map='coolwarm', linthresh=1e-3,
-                my_ax=None, my_cax=None, dpi=500, vis_px=1000,
-                save_file=False):
+                my_ax=None, my_cax=None, dpi=500, vis_px=1000):
 
     # Setup viewing window
     vispy.use('glfw')
@@ -113,7 +115,7 @@ def plot_sphere(filename=None, directions=None, data=None, interact=False,
             f.colorbar(cmap, cax=cax, orientation='vertical')
 
         # Save
-        if save_file:
+        if filename is not None:
             f.savefig(filename, dpi=dpi)
 
 def coeff_of_variation(data):

@@ -119,7 +119,7 @@ right  = 1.5cm]{geometry}
 \title{\vspace{-2.5em} Ad-Hoc Coordinate Change Algorithm For The Split-Aperture\\
   Polarization Microscope \vspace{-1em}} \author{Talon
   Chandler}% and Patrick La Rivi\`ere}
-\date{\vspace{-1em}\today\vspace{-1em}}
+\date{\vspace{-1em}October 3, 2017\\(Last Updated: \today)\vspace{-1em}}
 \maketitle
 \section{Introduction}
 The split-aperture polarization microscope can measure the azimuth orientation
@@ -127,7 +127,7 @@ of a single dipole in two rotated views. These notes describe an algorithm for
 converting noise-corrupted azimuth orientations in two rotated views into the
 azimuth and inclination orientation. We define the coordinates, outline the
 algorithm, then show the error in the estimate with noise-free and noise-corrupted
-measurements.
+measurements. Finally, we test the algorithm on a set of single-molecule data. 
 
 \section{Coordinates}
 \begin{figure*}[h]
@@ -215,7 +215,7 @@ constructing a lookup table with equally spaced $\theta$ and $\phi$ points, I
 used approximately equally spaced points found using the
 \href{http://stackoverflow.com/a/26127012/5854689}{Fibonnaci sphere algorithm}.
 
-\section{Results}
+\section{Accuracy Results}
 I used $\alpha = 30^{\circ}$ for all tests.
 
 To test the algorithm I chose 2000 equally spaced values of $\mb{f}$, calculated
@@ -260,5 +260,25 @@ This model assumes that
 
 \fig{../figures/recon-error-gauss.pdf}{.9}{Error in the estimate with
   noise-corrupted data. I assumed that the two azimuth angle measurements had normally distributed noise with $\mu = 0$ and $\sigma = 2^{\circ}$.}{results}
+\pagebreak
+
+\section{Test Data Results}
+Tomomi supplied five frames of test data in a \texttt{.xlsx} file. Each frame
+had $\sim$40 single molecules with its x-y position and its azimuthal angle from
+each view.
+
+I used the algorithm detailed above to calculate the coordinates in the
+laboratory frame (see Figure 1a)) then plotted the orientations and positions of
+the molecules in Figures 4-8. The origin is marked by a dot in the top corner. The
+data was supplied without units, so the scale bar may be in units of $\mu$m or
+pixels.
+
+\fig{../test-analysis/output/frame01.pdf}{.4}{Frame 1.}{results}
+\fig{../test-analysis/output/frame02.pdf}{.4}{Frame 2.}{results}
+\fig{../test-analysis/output/frame03.pdf}{.4}{Frame 3.}{results}
+\fig{../test-analysis/output/frame04.pdf}{.4}{Frame 4.}{results}
+\fig{../test-analysis/output/frame05.pdf}{.4}{Frame 5.}{results}
+
+
 \end{document}
 

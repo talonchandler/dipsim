@@ -15,8 +15,8 @@ class Detector:
         self.phi_pol = phi_pol
 
     def calc_collection_efficiency(self, fluorophore):
-        theta = util.theta_prime(fluorophore.mu_em[0], fluorophore.mu_em[1], self.theta_optical_axis)
-        phi = util.phi_prime(fluorophore.mu_em[0], fluorophore.mu_em[1], self.theta_optical_axis)        
+        theta = util.theta_prime(fluorophore.theta, fluorophore.phi, self.theta_optical_axis)
+        phi = util.phi_prime(fluorophore.theta, fluorophore.phi, self.theta_optical_axis)        
         A = (1.0/4.0) - (3.0/8.0)*np.cos(self.alpha) + (1.0/8.0)*(np.cos(self.alpha)**3)
         B = (3.0/16.0)*np.cos(self.alpha) - (3.0/16.0)*(np.cos(self.alpha)**3)
         C = (7.0/32.0) - (3.0/32.0)*np.cos(self.alpha) - (3.0/32.0)*(np.cos(self.alpha)**2) - (1.0/32.0)*(np.cos(self.alpha)**3)

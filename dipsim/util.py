@@ -21,18 +21,17 @@ def phi_prime(theta, phi, psi):
     else:
         return 0
     
-def tp2xyz(tp, R=np.eye(3,3)):
-    xyz = [np.sin(tp[0])*np.cos(tp[1]), np.sin(tp[0])*np.sin(tp[1]), np.cos(tp[0])]
-    return np.dot(R, xyz)
+def tp2xyz(theta, phi):
+    # Convert spherical to cartesian
+    return np.sin(theta)*np.cos(phi), np.sin(theta)*np.sin(phi), np.cos(theta)
 
-def xyz2tp(xyz, R=np.eye(3,3)):
-    xyz_prime = np.dot(np.linalg.inv(R), xyz)
-    theta = np.arccos(xyz_prime[2]/np.linalg.norm(xyz_prime)),
-    phi = np.arctan2(xyz_prime[1], xyz_prime[0])
-    return np.array([theta[0], phi])
+def xyz2tp(x, y, z):
+    # Convert cartesian to spherical
+    return np.arccos(z/np.sqrt(x**2 + y**2 + z**2)), np.arctan2(y, x)
 
-def axis_angle(tp1, tp2):
-    return np.arccos(np.dot(np.abs(tp2xyz(tp1)), np.abs(tp2xyz(tp2))))
+def axis_angle(theta1, phi1, theta2, phi2):
+    # Find angle between axes in spherical coordinates
+    return np.arccos(np.abs(np.dot(tp2xyz(theta1, phi1), tp2xyz(theta2, phi2))))
 
 # Plotting functions
 def fibonacci_sphere(n):

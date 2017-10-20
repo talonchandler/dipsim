@@ -1,12 +1,19 @@
 import numpy as np
+import util
 
 class Fluorophore:
     """A fluorophore is specified by its orientation (in theta and phi spherical
     coordinates), it distribution (using a kappa watson distribution), and a
     constant (c) proportional to the fluorohphore's brightness.
     """
-    def __init__(self, theta=np.pi/2, phi=0, kappa=None, c=1.0):
+    def __init__(self, theta=np.pi/2, phi=0, kappa=np.inf, c=1.0):
         self.theta = theta
         self.phi = phi
         self.kappa = kappa
-        self.c = c        
+        self.c = c
+
+    def __sub__(self, x):
+        return {'angle_diff': util.axis_angle(self.theta, self.phi, x.theta, x.phi),
+                'kappa_diff': self.kappa - x.kappa,
+                'c_diff': self.c - x.c
+                }

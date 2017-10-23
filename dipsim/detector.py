@@ -26,4 +26,7 @@ class Detector:
             return A + B*(np.sin(theta)**2) + C*(np.sin(theta)**2)*np.cos(2*(phi - self.phi_pol))
         elif self.det_type=='4pi':
             return 1.0
+        else:
+            print("Warning: invalid det_type")
+            return 1.0
 

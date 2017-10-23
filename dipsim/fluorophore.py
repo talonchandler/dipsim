@@ -1,5 +1,5 @@
 import numpy as np
-import util
+from dipsim import util
 
 class Fluorophore:
     """A fluorophore is specified by its orientation (in theta and phi spherical
@@ -13,7 +13,7 @@ class Fluorophore:
         self.c = c
 
     def __sub__(self, x):
-        return {'angle_diff': util.axis_angle(self.theta, self.phi, x.theta, x.phi),
+        return {'angle_diff': np.rad2deg(util.axis_angle(self.theta, self.phi, x.theta, x.phi)), 
                 'kappa_diff': self.kappa - x.kappa,
                 'c_diff': self.c - x.c
                 }

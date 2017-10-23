@@ -17,7 +17,7 @@ class MySphereVisual(CompoundVisual):
     def __init__(self, radius=1.0, directions=None, colors=None):
                  
         # Convert spherical to cartesian
-        points = np.apply_along_axis(util.tp2xyz, 1, directions)
+        points = np.array([util.tp2xyz(*x) for x in directions])
 
         # Create mesh
         import scipy.spatial

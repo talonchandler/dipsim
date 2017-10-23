@@ -1,6 +1,6 @@
 import numpy as np
 import scipy.integrate, scipy.misc, scipy.interpolate
-from dipsim import util
+from dipsim import util, fluorophore
 import functools
 
 class NoiseModel:
@@ -147,7 +147,8 @@ class NoiseModel:
 
     def loglikelihood(self, estimate, data):
         # Assuming Poisson model
-        lamb = self.ev_func(estimate)
+        est_fluo = fluorophore.Fluorophore(*estimate)
+        lamb = self.ev_func(est_fluo)
         return np.sum(data*np.log(lamb) - lamb)
 
     def score(self, estimate, data, dx):

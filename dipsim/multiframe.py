@@ -1,4 +1,5 @@
-from dipsim import fluorophore, illuminator, detector, microscope, stats, util, multiframe, recon
+from dipsim import illuminator, detector, microscope, stats, util
+import dipsim.fluorophore as flu
 import numpy as np
 import matplotlib.pyplot as plt
 import functools
@@ -11,15 +12,16 @@ class MultiFrameMicroscope:
     A MultiFrameMicroscope consists mainly of a list of Microscopes and a
     NoiseModel.
     """
-    def __init__(self, ill_thetas, det_thetas, ill_nas, det_nas, ill_types,
-                 det_types, colors, n_frames=4, n_det_frames=1,
-                 frame_offsets=None, n_pts=1000, max_photons=1000, n_samp=1.33,
+    def __init__(self, ill_thetas=[0], det_thetas=[0],
+                 ill_nas=[0.8], det_nas=[0.8],
+                 ill_types=['wide'], det_types=['lens'],
+                 colors=['(1,0,0)'], n_frames=4, n_det_frames=1,
+                 frame_offsets=None, max_photons=1, n_samp=1.33,
                  **kwargs):
         
         self.n_frames = n_frames
         self.frame_offsets = frame_offsets
         self.n_det_frames = n_det_frames
-        self.n_pts = n_pts
 
         m = []
         for i, det_theta in enumerate(det_thetas):
@@ -51,22 +53,19 @@ class MultiFrameMicroscope:
                     m.append(microscope.Microscope(illuminator=ill, detector=det, max_photons=max_photon, color=colors[i]))
 
         self.microscopes = m
-        self.noise_model = stats.NoiseModel(self.calc_total_intensities, **kwargs)
+        self.noise_model = stats.NoiseModel(self.calc_intensities, **kwargs)
         
-    def calc_total_intensities(self, arguments):
-        I = []
-        for m in self.microscopes:
-            I.append(m.calc_intensity(arguments))
-        return np.array(I)
+    def calc_intensities(self, fluorophore=flu.Fluorophore(), epsrel=1e-2):
+        return [x.calc_intensity(fluorophore=fluorophore, epsrel=epsrel) for x in self.microscopes]
     
-    def calc_estimation_stats(self):
-        self.sphere_dx = np.arccos(1 - 2/self.n_pts) # avg. half angle betweeen n points on sphere
-        self.directions = util.fibonacci_sphere(self.n_pts)
+    def calc_estimation_stats(self, n_pts):
+        sphere_dx = np.arccos(1 - 2/n_pts) # avg. half angle betweeen n points on sphere
+        directions = util.fibonacci_sphere(n_pts)
 
         # Fisher information matrix
         fi_list = []
-        for direction in self.directions:
-            fi_list.append(self.noise_model.calc_fi(direction, 2*[self.sphere_dx]))
+        for direction in directions:
+            fi_list.append(self.noise_model.calc_fi(direction, 2*[sphere_dx]))
         self.fi = np.array(fi_list)
 
         # Solid angle uncertainty
@@ -76,41 +75,6 @@ class MultiFrameMicroscope:
         # Coefficient of variation
         self.coeff_of_variation = util.coeff_of_variation(self.sa_uncert)
 
-    def reconstruct(self, data, start=None, eps=1e-3, dx=1e-6, recon_type='Fisher'):
-        rh = recon.ReconHistory()
-        rh.eps = eps
-        estimate = start
-        rh.estimates.append(estimate)
-        if recon_type == 'Fisher':
-            # Fisher scoring algorithm
-            iteration = 0
-            while iteration < 100:
-                inv_fi = self.noise_model.calc_inv_fi(estimate, 2*[dx])
-                score = self.noise_model.score(estimate, data, 2*[dx])
-                estimate = estimate + inv_fi.dot(score)
-                score_norm = np.linalg.norm(score)
-                rh.estimates.append(estimate)
-                rh.score_norm.append(score_norm)
-                iteration += 1
-                if score_norm < eps:
-                    break
-        else:
-            import autograd.numpy as np
-            from pymanopt.manifolds import Sphere
-            from pymanopt import Problem
-            from pymanopt.solvers import ParticleSwarm, NelderMead
-            manifold = Sphere(3)
-            def cost(X, data=data):
-                ll = self.noise_model.loglikelihood(util.xyz2tp(X), data)
-                return -ll
-            problem = Problem(manifold=manifold, cost=cost, verbosity=0)
-            solver = ParticleSwarm(populationsize=, maxcostevals=100, nostalgia=0, social=0)
-            Xopt = solver.solve(problem)
-            estimate = util.xyz2tp(Xopt)
-            rh.estimates.append(estimate)
-            
-        return estimate, rh
-            
     def scene_string(self):
         asy_string = ''
         for m in self.microscopes:

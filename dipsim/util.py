@@ -27,11 +27,22 @@ def tp2xyz(theta, phi):
 
 def xyz2tp(x, y, z):
     # Convert cartesian to spherical
-    return np.arccos(z/np.sqrt(x**2 + y**2 + z**2)), np.arctan2(y, x)
+    arccos_arg = z/np.sqrt(x**2 + y**2 + z**2)
+    if np.isclose(arccos_arg, 1.0): # Avoid arccos floating point issues
+        arccos_arg = 1.0
+    elif np.isclose(arccos_arg, -1.0):
+        arccos_arg = -1.0
+    return np.arccos(arccos_arg), np.arctan2(y, x)
 
 def axis_angle(theta1, phi1, theta2, phi2):
     # Find angle between axes in spherical coordinates
-    return np.arccos(np.abs(np.dot(tp2xyz(theta1, phi1), tp2xyz(theta2, phi2))))
+    arccos_arg = np.abs(np.dot(tp2xyz(theta1, phi1), tp2xyz(theta2, phi2)))
+    if np.isclose(arccos_arg, 1.0, atol=1e-5): # Avoid arccos floating point issues
+        arccos_arg = 1.0
+    elif np.isclose(arccos_arg, -1.0):
+        arccos_arg = -1.0
+
+    return np.arccos(arccos_arg)
 
 # Plotting functions
 def fibonacci_sphere(n):

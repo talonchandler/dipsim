@@ -2,14 +2,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from dipsim import util, multiframe, fluorophore
+from pymanopt.manifolds import Product, Sphere, Euclidean
+from pymanopt import Problem
+from pymanopt.solvers import ParticleSwarm
 
 class Reconstruction():
     """A reconstruction is specified by a MuliFrameMicroscope, data, and a 
     reconstruction options. 
     """
     def __init__(self, multiframe=multiframe.MultiFrameMicroscope(),
-                 data=None, recon_type=None, recon_dx=1e-6, recon_eps=1e-3,
-                 recon_max_iter=1e2, recon_start=None):
+                 data=None, recon_type='tp', recon_dx=1e-6, recon_eps=1e-3,
+                 recon_max_iter=1e2):
         
         self.multiframe = multiframe
         self.data = data
@@ -20,38 +23,14 @@ class Reconstruction():
         self.recon_dx = recon_dx
         self.recon_eps = recon_eps
         self.recon_max_iter = recon_max_iter
-        self.recon_start = recon_start
 
         self.recon_est_history = []
         self.recon_norm_history = []
         self.estimated_fluorophore = None
         
     def evaluate(self):
-        # Initial estimate
-        estimate = self.recon_start
-        self.recon_est_history.append(estimate)
-
-        # Iterative procedures
-        if self.recon_type == 'Fisher':
-            # Fisher scoring algorithm
-            iteration = 0
-            while iteration < self.recon_max_iter:
-                inv_fi = self.noise_model.calc_inv_fi(estimate, 2*[self.recon_dx])
-                score = self.noise_model.score(estimate, self.data, 2*[self.recon_dx])
-                estimate = estimate + inv_fi.dot(score)
-                score_norm = np.linalg.norm(score)
-                self.recon_est_history.append(estimate)
-                self.recon_norm_history.append(score_norm)
-                iteration += 1
-                if score_norm < self.recon_eps:
-                    break
-            self.estimated_fluorophore = fluorophore.Fluorophore(*estimate)
-        else:
-            # Default reconstruction
-            import autograd.numpy as np
-            from pymanopt.manifolds import Sphere
-            from pymanopt import Problem
-            from pymanopt.solvers import ParticleSwarm, NelderMead
+        # Perform reconstruction
+        if self.recon_type == 'tp': # Estimate theta and phi
             manifold = Sphere(3)
             def cost(X, data=self.data):
                 ll = self.multiframe.noise_model.loglikelihood(util.xyz2tp(*X), data)
@@ -61,6 +40,31 @@ class Reconstruction():
             solver = ParticleSwarm(maxcostevals=200)
             Xopt = solver.solve(problem, x=start_pts)
             self.estimated_fluorophore = fluorophore.Fluorophore(*util.xyz2tp(*Xopt))
+        elif self.recon_type == 'tpkc': # Estimate theta, phi, kappa, constant
+            # Create manifold and cost function
+            manifold = Product((Sphere(3), Euclidean(2)))
+            def cost(X, data=self.data):
+                estimate = np.array([util.xyz2tp(*X[0]), X[1]]).flatten() # Reshape data for loglikelihood function
+                ll = self.multiframe.noise_model.loglikelihood(estimate, data)
+                print(estimate, ll)
+                return -ll
+            
+            problem = Problem(manifold=manifold, cost=cost, verbosity=0)
+
+            # Generate start_pts and format            
+            xyz_start_pts = 3*[np.array(util.tp2xyz(*x)) for x in util.sphere_profile(10)]
+            k_start_pts = np.expand_dims(np.hstack((10*[-100], 10*[0], 10*[100])), axis=1)
+            c_start_pts = np.expand_dims(np.hstack((10*[0.1], 10*[1], 10*[10])), axis=1)
+            start_pts = np.hstack((xyz_start_pts, k_start_pts, c_start_pts))
+            pts = []
+            for start_pt in start_pts:
+                pts.append([np.array(start_pt[0:3]), np.array(start_pt[3:5])])
+
+            # Solve
+            solver = ParticleSwarm(maxcostevals=200)
+            Xopt = solver.solve(problem, x=pts)
+
+            self.estimated_fluorophore = fluorophore.Fluorophore(*np.array([util.xyz2tp(*Xopt[0]), Xopt[1]]).flatten())
     
     def plot(self, filename, truth=None, n_pts=1e3):
         # Make axes

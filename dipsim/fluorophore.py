@@ -10,7 +10,7 @@ class Fluorophore:
         self.theta = theta
         self.phi = phi
         self.kappa = kappa
-        self.c = c
+        self.c = np.abs(c)
 
     def __sub__(self, x):
         return {'angle_diff': np.rad2deg(util.axis_angle(self.theta, self.phi, x.theta, x.phi)), 

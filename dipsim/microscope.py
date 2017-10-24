@@ -24,16 +24,16 @@ class Microscope:
     
     def calc_intensity(self, fluorophore=flu.Fluorophore(), epsrel=1e-2):
         # Calculate the intensity measured by this microscope when a given
-        # fluorophore distribution is present. 
+        # fluorophore distribution is present.
         if np.isinf(fluorophore.kappa):
             # For single fluorophores
             excite = self.illuminator.calc_excitation_efficiency(fluorophore)
             collect = self.detector.calc_collection_efficiency(fluorophore)
-            return self.max_photons*excite*collect
+            return self.max_photons*fluorophore.c*excite*collect
         else:
             # For fluorophore distributions (this function calls itself!)
             def int_func(theta, phi):
-                int_single = self.calc_intensity(fluorophore=flu.Fluorophore(theta=theta, phi=phi, kappa=np.inf))
+                int_single = self.calc_intensity(fluorophore=flu.Fluorophore(theta=theta, phi=phi, kappa=np.inf, c=fluorophore.c))
                 norm = 1.0/(4*np.pi*special.hyp1f1(0.5, 1.5, fluorophore.kappa))
                 weight = np.exp(fluorophore.kappa*(np.dot(util.tp2xyz(theta, phi), util.tp2xyz(fluorophore.theta, fluorophore.phi))**2))
                 jacobian = np.sin(theta)

@@ -147,6 +147,7 @@ class NoiseModel:
 
     def loglikelihood(self, estimate, data):
         # Assuming Poisson model
+        # http://statweb.stanford.edu/~susan/courses/s200/lectures/lect11.pdf
         est_fluo = fluorophore.Fluorophore(*estimate)
         lamb = self.ev_func(est_fluo)
         return np.sum(data*np.log(lamb) - lamb)

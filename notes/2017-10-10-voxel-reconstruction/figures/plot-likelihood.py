@@ -5,7 +5,7 @@ import os; import time; start = time.time(); print('Running...')
 import matplotlib.gridspec as gridspec
 
 # Setup k and c sweep
-kappas = [10, 100, np.inf]
+kappas = [10 , 100, np.inf]
 cs = [0.1, 1, 2]
 col_labels = ['$\kappa$ = ' + str(x) for x in kappas]
 row_labels = ['c = ' + str(x) for x in cs]
@@ -39,19 +39,21 @@ exp = multiframe.MultiFrameMicroscope(ill_thetas=[theta1, theta2], det_thetas=[t
                                       colors=['(1,0,0)', '(0,0,1)'], n_frames=4,
                                       max_photons=[dose1, dose2], n_samp=1.33)
 
+#exp.precompute_efficiencies(n_pts=1e2)
+
 # Plot likelihoood
 for i, kappa in enumerate(kappas):
     for j, c in enumerate(cs):
         print(i, j)
         fluo = fluorophore.Fluorophore(theta=0.01, phi=0.01)
         data = exp.calc_intensities(fluo)
-        n_pts = 500
+        n_pts = 50
         directions = util.fibonacci_sphere(n_pts)
         input_points = np.hstack([directions, kappa*np.ones([n_pts, 1]), c*np.ones([n_pts, 1])])
         likelihoods = [exp.noise_model.loglikelihood(x, data=data) for x in input_points]
         util.plot_sphere(directions=directions, data=likelihoods,
                          my_ax=axs[j,i], my_cax=caxs[j,i],
-                         color_min=1e1, color_max=1e3, color_norm='log')
+                         color_min=1e1, color_max=1e3)
 
 # Label axes and save
 util.label_rows_and_cols(axs, row_labels, col_labels, row_pos=(-0.2, 0.5))

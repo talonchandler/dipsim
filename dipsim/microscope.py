@@ -4,7 +4,7 @@ import functools
 import vispy
 from dipsim import util, visuals, detector, illuminator
 from dipsim import fluorophore as flu
-from scipy import integrate, special
+from scipy import integrate, special, interpolate
 
 class Microscope:
     """
@@ -21,14 +21,22 @@ class Microscope:
         self.detector = detector
         self.max_photons = max_photons
         self.color = color
+        
+        self.precompute_flag = False
+        self.fluos_LUT = None
+        self.excite_bspl = None
+        self.collect_bspl = None
     
     def calc_intensity(self, fluorophore=flu.Fluorophore(), epsrel=1e-2):
         # Calculate the intensity measured by this microscope when a given
         # fluorophore distribution is present.
         if np.isinf(fluorophore.kappa):
             # For single fluorophores
-            excite = self.illuminator.calc_excitation_efficiency(fluorophore)
-            collect = self.detector.calc_collection_efficiency(fluorophore)
+            if self.precompute_flag:
+                excite, collect = self.efficiency_from_LUT(fluorophore)
+            else:
+                excite = self.illuminator.calc_excitation_efficiency(fluorophore)
+                collect = self.detector.calc_collection_efficiency(fluorophore)
             return self.max_photons*fluorophore.c*excite*collect
         else:
             # For fluorophore distributions (this function calls itself!)
@@ -40,6 +48,23 @@ class Microscope:
                 return jacobian*norm*weight*int_single
             integral = integrate.nquad(int_func, [[0, np.pi], [0, 2*np.pi]], opts={'epsrel':epsrel, 'epsabs':0, 'limit':1}, full_output=True)
             return integral[0]
+
+    def precompute_efficiencies(self, n_pts=1e3):
+        # Generate a LUT for efficiencies
+        print("Precomputing efficiencies...")
+        directions = util.fibonacci_sphere(n_pts)
+        self.fluos = [flu.Fluorophore(*x) for x in directions]
+        excite_effs = [self.illuminator.calc_excitation_efficiency(fluo) for fluo in self.fluos]
+        collect_effs = [self.detector.calc_collection_efficiency(fluo) for fluo in self.fluos]
+
+        self.excite_bspl = interpolate.bisplrep(directions[:,0], directions[:,1], excite_effs, s=0)
+        self.collect_bspl = interpolate.bisplrep(directions[:,0], directions[:,1], collect_effs, s=0)
+
+        self.precompute_flag = True
+
+    def efficiency_from_LUT(self, fluo):
+        # Find the closest entry in the lookup table and return
+        return interpolate.bisplev(fluo.theta, fluo.phi, self.excite_bspl), interpolate.bisplev(fluo.theta, fluo.phi, self.collect_bspl)
     
     def scene_string(self):
         ill = self.illuminator

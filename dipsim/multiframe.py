@@ -75,6 +75,10 @@ class MultiFrameMicroscope:
         # Coefficient of variation
         self.coeff_of_variation = util.coeff_of_variation(self.sa_uncert)
 
+    def precompute_efficiencies(self, n_pts=1e3):
+        for m in self.microscopes:
+            m.precompute_efficiencies(n_pts)
+
     def scene_string(self):
         asy_string = ''
         for m in self.microscopes:

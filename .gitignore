@@ -5,6 +5,9 @@
 __init__*
 *.pyc
 
+# Cython
+dipsim/cythonlib/*
+
 # PyPi
 dist/*
 pmst.egg-info/*

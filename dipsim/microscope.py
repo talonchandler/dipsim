@@ -5,6 +5,7 @@ import vispy
 from dipsim import util, visuals, detector, illuminator
 from dipsim import fluorophore as flu
 from scipy import integrate, special, interpolate
+from dipsim.cythonlib.calc_efficiencies import cy_calc_collection_efficiency, cy_calc_excitation_efficiency
 
 class Microscope:
     """
@@ -26,6 +27,7 @@ class Microscope:
         self.fluos_LUT = None
         self.excite_bspl = None
         self.collect_bspl = None
+        self.cython_flag = True
     
     def calc_intensity(self, fluorophore=flu.Fluorophore(), epsrel=1e-2):
         # Calculate the intensity measured by this microscope when a given
@@ -35,8 +37,12 @@ class Microscope:
             if self.precompute_flag:
                 excite, collect = self.efficiency_from_LUT(fluorophore)
             else:
-                excite = self.illuminator.calc_excitation_efficiency(fluorophore)
-                collect = self.detector.calc_collection_efficiency(fluorophore)
+                if self.cython_flag:
+                    excite = cy_calc_excitation_efficiency(fluorophore.theta, fluorophore.phi, self.illuminator.phi_pol, self.illuminator.theta_optical_axis)
+                    collect = cy_calc_collection_efficiency(fluorophore.theta, fluorophore.phi, self.detector.theta_optical_axis, self.detector.alpha)
+                else:
+                    excite = self.illuminator.calc_excitation_efficiency(fluorophore)
+                    collect = self.detector.calc_collection_efficiency(fluorophore)
             return self.max_photons*fluorophore.c*excite*collect
         else:
             # For fluorophore distributions (this function calls itself!)

@@ -3,6 +3,7 @@
 \usepackage{float}
 \usepackage{booktabs}
 \usepackage{menukeys}
+\usepackage[normalem]{ulem}
 \providecommand{\e}[1]{\ensuremath{\times 10^{#1}}} 
 \providecommand{\mb}[1]{\mathbf{#1}}
 \providecommand{\mh}[1]{\mathbf{\hat{#1}}}
@@ -129,13 +130,19 @@ paper.
   offered by multi view microscopes to capture the temporal dependence of dipole
   orientation evolution.}\\
 
-We thank the reviewer for a valuable comment. We neglected to comment on the
-ability of our designs to image the temporal evolution of a dipole, so we have
-\hyperlink{temporal}{\color{urlblue} added several sentences} to address this
-omission. In particular, we highlight that the brightness of the fluorophores is
-the main factor that limits temporal resolution in these designs. We also
-mention that the comparison we carried out in the manuscript only compare microscopes
-with identical temporal resolution because we use a fixed sample irradiance.\\
+We thank the reviewer for this valuable comment. We neglected to comment on the
+ability of our designs to image dipoles that are rotating during the measurement
+time, so we have \hyperlink{temporal}{\color{urlblue} added a paragraph} to
+address this omission. We highlight that the modeling in this work only applies
+to fixed dipoles, so estimating the orientation of rotating dipoles using these
+methods will, in general, lead to incorrect estimates. However, if the dipole
+rotates through a small solid angle during the measurement time, the models used
+in this paper will give a slightly biased estimate of the average orientation of
+the dipole. The precision results in this paper for fixed dipoles apply to
+rotating dipoles if the dipoles rotate through a small solid angle during the
+measurement time. If the dipoles rotate through a large solid angle during the
+measurement time, then further modeling is required to
+accurately estimate the dipole orientation.\\
 
 {\color{OE} While this work provides an interesting and novel perspective into
   the problem, what is missing is an experimental validation of the author's
@@ -1188,14 +1195,14 @@ comparison would favor microscopes with many intensity measurements even more
 that the results in this paper because equal detection irradiance would improve
 photon counting statistics.
 
-\hypertarget{temporal}{{\color{urlblue} We also chose to compare microscopes
-    with a fixed irradiance incident on the sample so that all of the
-    microscopes had the same temporal resolution. Given a fixed irradiance, the
-    main factor that limits the temporal resolution of an orientation microscope
-    is the brightness of the fluorophore (the rate of photon emission from the
-    fluorophore). The orientation of bright fluorophores can be determined more
-    quickly than dim fluorophores at the same level of accuracy because bright
-    fluorophores generate measurements with a higher signal-to-noise ratio.}}
+% \hypertarget{temporal}{{\color{urlblue} We also chose to compare microscopes
+%     with a fixed irradiance incident on the sample so that all of the
+%     microscopes had the same temporal resolution. Given a fixed irradiance, the
+%     main factor that limits the temporal resolution of an orientation microscope
+%     is the brightness of the fluorophore (the rate of photon emission from the
+%     fluorophore). The orientation of bright fluorophores can be determined more
+%     quickly than dim fluorophores at the same level of accuracy because bright
+%     fluorophores generate measurements with a higher signal-to-noise ratio.}}
 
 We have considered single- and dual-view microscopes in a variety of cases, but
 other multiview microscopes can be analyzed with the framework we have
@@ -1204,12 +1211,30 @@ below the cover slip\cite{wu2016}. Light-field detection schemes are also a type
 of multiview microscope\cite{levoy2006}, and we plan to extend our analysis to
 this case in future work.
 
-Although we have only considered the orientation determination of fixed single
-dipoles, polarized illumination techniques can be used to study the orientation
-distribution of ensembles of dynamic dipoles \cite{mehta2016, backer2016}. In
-future work we will investigate the ability of multiview polarized illumination
-microscopes to estimate the orientation distribution of ensembles of dynamic
-dipoles.
+\hypertarget{temporal}{{\color{urlblue} The models in this paper only consider
+    estimating the orientation of fixed dipoles, but real dipoles change their
+    orientation during measurement. Therefore, it is necessary to comment on the
+    applicability of our results to dynamic dipoles. In general, using the
+    models in this paper to estimate the orientation of rotating dipoles will
+    lead to incorrect results. However, if a dipole rotates through a small
+    solid angle during the measurement, the models in this paper will give a
+    precise and slightly biased estimate of the average orientation of the
+    dipole. The results in this paper apply to the precision of our estimates
+    for the average dipole orientation of rotating dipoles, but the direction
+    and size of the bias has not been characterized in detail. In future work we
+    will model dynamic dipoles and attempt to estimate the average dipole
+    orientation and the dipole's orientation distribution. Single-view polarized
+    illumination techniques have already been used to study the orientation
+    distribution of ensembles of dynamic dipoles \cite{mehta2016, backer2016},
+    but multiview polarized illumination microscopes have not been investigated
+    for this purpose.}}
+
+{\color{red}\sout{Although we have only considered the orientation determination
+    of fixed single dipoles, polarized illumination techniques can be used to
+    study the orientation distribution of ensembles of dynamic dipole. In future
+    work we will investigate the ability of multiview polarized illumination
+    microscopes to estimate the orientation distribution of ensembles of dynamic
+    dipoles.}}
 
 We have only considered polarized illumination. In the introduction
 we discussed why we prefer polarized illumination to polarized detection, but

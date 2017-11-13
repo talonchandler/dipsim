@@ -11,233 +11,6 @@
 \providecommand{\intinf}{\int_{-\infty}^{\infty}}
 
 \begin{document}
-\section*{Reviewer Comments and Author Responses}\hypertarget{test}{}
-
-This document shows the {\color{OE}reviewers' original comments}, our responses,
-and the complete paper marked up with the latest revisions. If this document is
-viewed as a .pdf, the reader can use the
-\hyperlink{test}{{\color{urlblue}links}} in each of our responses to view the
-section of the paper that has been changed. After viewing the part of the paper
-that was changed, the reader can use the back button ($\cmd + [$ in macOS
-Preview.app) to return to the comments and responses.
-
-\section*{Reviewer 1 Comments and Responses}
-
-{\color{OE} Chandler et al. present an exhaustive study of the potential of
-  polarization- dependent multiview microscopy for the determination of the
-  orientation of individual fluorophores (or any other nano-object with dipolar
-  absorption and emission characteristics). Based on earlier work by Fourkas
-  (Ref. 15), the authors establish a quantitative description of
-  single-fluorophore microscopy that is general enough to cover both
-  polarization-dependent excitation and detection, as well non-collinear
-  excitation and detection paths and specialized modalities such as light-sheet
-  illumination. The authors thus show that an astute choice of the experimental
-  configuration allows to determine the 3D orientation of the fluorophore with
-  high precision. The latter point is quantified with an information-theoretic
-  treatment of the solid-angle uncertainty and illustrated with simulations of
-  the resulting performance as a function of several experimental
-  parameters. The manuscript is rounded off with a clear discussion of the
-  implications for the experimenter, which also takes into account practical
-  experimental constraints such as space requirements and the availability of
-  high-NA objectives.}
-
-{\color{OE} The manuscript is well-written, thorough and clear, and the
-  illustrations are carefully designed to convey the most important conclusions
-  in graphical form.  Given the widespread interest in the accurate
-  determination of the orientation of single fluorophores, I would expect this
-  work to be interesting to many readers, as it carefully addresses both
-  theoretical and practical issues related to this topic. I myself have enjoyed
-  reading the manuscript and following the reasoning of the authors, and I can
-  wholeheartedly recommend publication of this
-  nice work in Optics Express.}
-
-{\color{OE} I have a few remarks that the authors may wish to take into account
-  to make some
-  (very minor) revisions:}
-
-{\color{OE} As far as I know, the correct way to cite the second author of Ref. 17 is D.
-A. Vanden Bout. ("Vanden" is part of his last name and should not be
-abbreviated.)}\\
-
-\hyperlink{vanden}{\color{urlblue} Corrected.} Thank you for pointing this out.\\
-
-{\color{OE} The rotation matrix of Eq. 6 is identical to the one given by
-  Fourkas in Ref.  15. This might surprise readers, because the matrix of
-  Fourkas describes the transformation of rays emanating from the focus and
-  being refracted by the objective towards the detection polarizer, while Eq. 6
-  deals with excitation light being focused, i.e. traveling the reverse optical
-  path as far as the objective is concerned. Making the corresponding
-  adjustments in Fourkas's treatment, I find that all $\sin\theta$ terms change their
-  sign, which affects four matrix elements in Eq. 6. However, using this
-  modified matrix results in the exact same of the expressions in Eq. 10, so
-  this issue has no practical consequences. It may nevertheless be worthwhile to
-  briefly comment on it in order to eliminate a potential source of confusion.}\\
-
-Excellent point. We've changed the signs of the $\sin\theta$ terms in Eq. 6 and \hyperlink{signs}{\color{urlblue} added a sentence} comparing our rotation matrix with Fourkas'.\\
-
-{\color{OE} The expressions for $A$, $B$ and $C$ in Eq. 10 all contain a factor
-  of (1-$\cos\alpha$), which can be canceled with the same term in the
-  denominator of $D$. I assume the authors have chosen the slightly more
-  complicated form of Eq. 10 for didactic purposes (explicitly showing the
-  irradiance-conserving factor) and to facilitate comparison with Fourkas's
-  results in the subsequent discussion, but it may be worthwhile to mention the
-  possibility of further simplification before starting
-  numerical calculations.}\\
-
-Very good point. We've \hyperlink{dfactor}{\color{urlblue} added a sentence}
-that mentions that these expressions can be simplified.\\
-
-{\color{OE} I think the authors raise an important point when they note that
-  Fourkas has incorrectly normalized his expressions for the detected
-  intensities. Maybe the authors can briefly comment on whether the underlying
-  issue is really only the choice of normalization constant or if this
-  discrepancy points to a more fundamental reasoning error that would require an
-  angle-dependent correction term.}\\
-
-Fourkas' issue is with incorrect normalization only---there is no
-angle-dependent correction required. We've \hyperlink{normalization}{\color{urlblue}
-  modified two sentences} to make this clearer.\\
-
-{\color{OE} If one sets $a=b=r$ in Eq. 19 then one does not recover the
-  $\gamma$-independent equation of a circle. It seems to me that $x$ and $y$
-  have to be exchanged in the
-  numerator of the second term of the left-hand side of Eq. 19.}\\
-
-Excellent catch. Thank you. We've \hyperlink{ellipse}{\color{urlblue}
-  corrected the equation} and confirmed that when
-$a=b=r$ we recover the equation of a circle. We also confirmed that this was a
-transcription error only, so it did not affect the ellipse plots throughout the
-paper.
-
-\section*{Reviewer 2 Comments and Responses}
-
-{\color{OE} The work by Chandler et al presents an elegant derivation of the
-  expressions that characterise the intensity of an single-molecule level
-  micrograph containing dipoles with varied orientations, obtained with
-  instruments offering multiple views of the same sample. This relates chiefly
-  to Light Sheet Microscopes.}
-
-{\color{OE} The derivations in paragraphs 2.2 and 2.3 are scholastic, although
-  they provide a correction to a previous work by Fourkas.}
-
-{\color{OE} Figures 4-6 provide the most interesting information to the
-  reader, as they describe the theoretical performance of distinct experimental
-  arrangements.}
-
-{\color{OE} Surprisingly, no mention is made of the temporal evolution of the
-  dipoles. In other words, while these results apply to a fixed condition, it
-  would be interesting to discuss a metric concerning the advantages, if any,
-  offered by multi view microscopes to capture the temporal dependence of dipole
-  orientation evolution.}\\
-
-We thank the reviewer for this valuable comment. We neglected to comment on the
-ability of our designs to image dipoles that are rotating during the measurement
-time, so we have \hyperlink{temporal}{\color{urlblue} added a paragraph} to
-address this omission. We highlight that the modeling in this work only applies
-to fixed dipoles, so estimating the orientation of rotating dipoles using these
-methods will, in general, lead to incorrect estimates. However, if the dipole
-rotates through a small solid angle during the measurement time, the models used
-in this paper will give a slightly biased estimate of the average orientation of
-the dipole. If the dipoles rotate through a large solid angle during the
-measurement time, then further modeling is required to
-accurately estimate the dipole orientation.\\
-
-{\color{OE} While this work provides an interesting and novel perspective into
-  the problem, what is missing is an experimental validation of the author's
-  analytical derivations. This would make the manuscript truly valuable, by
-  providing a comparison with experiments where the orientation of the dipoles
-  can be fixed, or the rate of change be controlled (i.e. by controlling the
-  viscosity). In this respect, an obvious application would be steady state
-  anisotropy.}
-
-{\color{OE} We therefore recommend the authors to resubmit the manuscript
-  including an experimental section where they test their predictions on at
-  least one sample.}\\
-
-We thank the reviewer for the suggestion, but we think that including
-experimental results would significantly change the scope of this manuscript. We
-wrote this paper to serve as a design guide for those building multiview
-polarized light microscopes, and we don't think that experimental results would
-help the paper fulfill this role. Also, many of the experimental predictions
-made in this paper have already been predicted by Fourkas \cite{fourkas2001} and
-verified by others \cite{lu2008}. For these reasons, we have decided to resubmit
-the manuscript without experimental results.
-
-\section*{Pre-Production Review Comments and Responses}
-
-{\color{OE} Be sure to include and correct the year on your copyright line to
-  the current year.}\\
-
-\hyperlink{copyright}{\color{urlblue} Added.}\\
-
-{\color{OE} For book reference publishers with "Press" as part of publisher
-  name, e.g., "Cambridge U. Press," delete "Press" and spell out "University."}\\
-
-\hyperlink{press}{\color{urlblue} Corrected.}\\
-
-{\color{OE} Do not include the city in parentheses with the publisher and year
-  for book citations.}\\
-
-\hyperlink{wiley}{\color{urlblue} Changed ``Wiley New York'' to ``Wiley''.}\\
-
-{\color{OE} When you cite a part of a figure in the text, include parentheses
-  around the subfigure letter: Fig. 1(b).}\\
-
-Changed throughout and marked in blue.\\
-
-{\color{OE} Do not enclose your figure numbers in parentheses. Parentheses are
-  reserved for parts of a figure [Fig. 2(a)] and equations [Eq. (4)].}\\
-
-Changed throughout and marked in blue.\\
-
-{\color{OE} Abbreviate the single word "equation" to "Eq." and the plural word
-  "equations" to "Eqs." throughout the text, except for when either word appears
-  at the beginning of a sentence.}\\
-
-Changed throughout and marked in blue.\\
-
-{\color{OE} Include parentheses around the equation number in the text:
-  Eq. (2), or Eqs. (6)--(8).}\\
-
-Changed throughout.\\
-
-{\color{OE} When citing multiple equations in your text, it should be
-  formatted like this: Eqs. (1) and (2) or Eqs. (1)--(3).}\\
-
-Changed throughout.\\
-
-{\color{OE} Include the figure abbreviation each time you cite one in your
-  text. Instead of having "(a) and (b)", each time it should be "Fig. 2(a) and
-  2(b)".}\\
-
-Changed throughout and marked in blue.\\
-
-{\color{OE} If your paper has funding from the U.S. Department of Energy (DOE)
-  or any of its sub-agencies, you are required to deposit a copy of your
-  accepted manuscript to the DOE PAGES system. For more information, see
-  https://www.osti.gov/elink/am-submission.jsp.}\\
-
-No funding from the DOE.\\
-
-{\color{OE} Please confirm that all of your funding sources have been added
-  into your Prism submission in the Fees and Funding step.}\\
-
-Confirmed. \\
-
-{\color{OE} Please make sure to include all of your funding. See the style
-  guide for more details at
-  https://www.osapublishing.org/submit/templates/default.cfm}\\
-
-Revised the funding section to match the template and mentioned individual funding
-sources in the acknowledgments.
-
-\section*{Other Notes}
-
-\hyperlink{typo}{\color{urlblue} Corrected a typo} in the caption of Fig. 1 from $\hat{\mb{e}}_{\text{exc}}$ to
-$\hat{\mb{p}}_{\text{exc}}$ for consistency with the rest of the paper. 
-
-\pagebreak
-
 \title{Single-fluorophore orientation determination with multiview polarized
   illumination: modeling and microscope design}
 
@@ -274,7 +47,6 @@ $\hat{\mb{p}}_{\text{exc}}$ for consistency with the rest of the paper.
   multiview microscopes can benefit from oblique illumination and detection, and
   that asymmetric NA microscopes can benefit from exposure asymmetry.
 \end{abstract}
-\hypertarget{copyright}{}
 
 \ocis{(110.0110) Imaging systems; (180.2520) Fluorescence microscopy; (180.0180)
   Microscopy; (180.6900) Three-dimensional microscopy; (130.5440)
@@ -384,7 +156,7 @@ J.~S. Tyo, D.~L. Goldstein, D.~B. Chenault, and J.~A. Shaw, \enquote{Review of
   \textbf{45}, 5453--5469 (2006).
 
 \bibitem{lu2008}
-C.-Y. Lu and D.~A.~\hypertarget{vanden}{{\color{urlblue} Vanden}} Bout, \enquote{Analysis of orientational dynamics of
+C.-Y. Lu and D.~A.~Vanden Bout, \enquote{Analysis of orientational dynamics of
   single fluorophore trajectories from three-angle polarization experiments,}
   J. Chem. Phys. \textbf{128}, 244501 (2008).
 
@@ -420,8 +192,7 @@ S.~M. Kay, \emph{Fundamentals of statistical signal processing} (Prentice Hall
 
 \bibitem{anderson1958}
   T.~W. Anderson, \emph{An introduction to multivariate statistical analysis}
-(\hypertarget{wiley}{{\color{urlblue}
-Wiley}}, 1958).
+(Wiley, 1958).
 
 \bibitem{coe2009}
 D.~Coe, \enquote{Fisher matrices and confidence ellipses: a quick-start guide
@@ -458,9 +229,7 @@ J.~C. Bowman and A.~Hammerlindl, \enquote{Asymptote: A vector graphics
   language,} TUGBOAT \textbf{29}, 288--294 (2008).
 
 \bibitem{nov2006}
-L.~Novotny and B.~Hecht, \emph{Principles of Nano-Optics} (\hypertarget{press}
-  {{\color{urlblue}
-Cambridge University}}, 2006).
+L.~Novotny and B.~Hecht, \emph{Principles of Nano-Optics} (Cambridge University, 2006).
 
 \bibitem{levoy2006}
 M.~Levoy, R.~Ng, A.~Adams, M.~Footer, and M.~Horowitz, \enquote{Light field
@@ -615,7 +384,7 @@ calculate the absorption efficiency instead of the detection efficiency.
 
 We consider a single molecule with a fixed absorption dipole moment
 $\hat{\bs{\mu}}_{\text{abs}}$ that we express in spherical coordinates $\Theta$
-and $\Phi$ {\color{urlblue}[}see {\color{urlblue}Fig.} \ref{fig:coordinates}{\color{urlblue}(a)}{\color{urlblue}]} as
+and $\Phi$ [see Fig. \ref{fig:coordinates}(a)] as
 \begin{align}
   \hat{\bs{\mu}}_{\text{abs}}(\Theta, \Phi) = \sin\Theta\cos\Phi\hat{\mb{x}} + \sin\Theta\sin\Phi\hat{\mb{y}} + \cos\Theta\hat{\mb{z}} \label{eq:mu}.
 \end{align}
@@ -628,15 +397,15 @@ transmission axis $\hat{\mb{p}}_{\text{exc}}$ that we express as
 \sin\phi_{\text{exc}}\hat{\mb{y}},\label{eq:excfield}
 \end{align}
 where $\phi_{\text{exc}}$ is the angle between the transmission axis of the
-polarizer and the positive $\mh{x}$ axis {\color{urlblue}[}see {\color{urlblue}Fig.}
-\ref{fig:coordinates}{\color{urlblue}(b)}{\color{urlblue}]}. Finally, we place a spatially incoherent and spatially
-uniform light source (or its image) in the aperture plane to illuminate the
-focal plane. In this geometry each point in the sample is illuminated by a range
-of angles that can be changed by adjusting the radius of the diaphragm in the
-aperture plane. We denote the set of illuminated angles by $\Omega$ {\color{urlblue}[}see {\color{urlblue}Fig.}
-\ref{fig:coordinates}{\color{urlblue}(d)}{\color{urlblue}]}. If we use unit vectors $\hat{\mb{r}}$ expressed in
-spherical coordinates $\theta$ and $\phi$ {\color{urlblue}[}see {\color{urlblue}Fig.} \ref{fig:coordinates}{\color{urlblue}(c)}{\color{urlblue}]}
-as
+polarizer and the positive $\mh{x}$ axis [see Fig.
+\ref{fig:coordinates}(b)]. Finally, we place a spatially incoherent and
+spatially uniform light source (or its image) in the aperture plane to
+illuminate the focal plane. In this geometry each point in the sample is
+illuminated by a range of angles that can be changed by adjusting the radius of
+the diaphragm in the aperture plane. We denote the set of illuminated angles by
+$\Omega$ [see Fig. \ref{fig:coordinates}(d)]. If we use unit vectors
+$\hat{\mb{r}}$ expressed in spherical coordinates $\theta$ and $\phi$ [see
+Fig. \ref{fig:coordinates}{(c)] as
   \begin{align}
    \hat{\mb{r}}(\theta, \phi) = \sin\theta\cos\phi\hat{\mb{x}} + \sin\theta\sin\phi\hat{\mb{y}} + \cos\theta\hat{\mb{z}}, 
   \end{align}
@@ -659,11 +428,10 @@ as
   \begin{align}
   \mb{R}(\mh{r}) &= \begin{bmatrix} \cos\theta\cos^2\phi + \sin^2\phi & (\cos\theta -1)\sin\phi\cos\phi & \sin\theta\cos\phi\\ (\cos\theta - 1)\sin\phi\cos\phi & \cos\theta\sin^2\phi + \cos^2\phi & \sin\theta\sin\phi \\ -\sin\theta\cos\phi& -\sin\theta\sin\phi & \cos\theta \end{bmatrix} \label{eq:rot_mat}.
   \end{align}
-  \hypertarget{signs}
-  {{\color{urlblue}Note the difference of signs between Eq.
+  Note the difference of signs between Eq.
   (\ref{eq:rot_mat}) and the rotation matrix given by
     Fourkas---our matrix rotates rays propagating towards the sample while
-    Fourkas' matrix rotates rays propagating away from the sample.}}
+    Fourkas' matrix rotates rays propagating away from the sample.
 
   To find the absorption efficiency $\eta_{\text{abs}}$ of a single dipole if
   it were illuminated by a single ray, we take the unit incident electric field
@@ -680,8 +448,8 @@ as
   \eta_{\text{abs}} = \frac{\int_{\Omega}d\mh{r}|\hat{\bs{\mu}}_{\text{abs}}\cdot\mb{R}(\mh{r})\mh{p}_{\text{exc}}|^2}{\int_{\Omega}d\mh{r}}\label{eq:abs}. 
 \end{align}
 
-We substitute {\color{urlblue}Eqs.} (\ref{eq:mu})--(\ref{eq:rot_mat}) into
-{\color{urlblue}Eq.} (\ref{eq:abs}), evaluate the integrals, and simplify to
+We substitute Eqs. (\ref{eq:mu})--(\ref{eq:rot_mat}) into
+Eq. (\ref{eq:abs}), evaluate the integrals, and simplify to
 express the absorption efficiency in scalar notation as
 \begin{align}
   \eta_{\text{abs}} &= D\{A + B\sin^{2}{\Theta} + C\sin^{2}{\Theta} \cos{[2 (\Phi - \phi_{\text{exc}}})]\}\label{eq:scalarabs}
@@ -696,10 +464,9 @@ where
 \end{align}\label{eq:coefficients}%
 \end{subequations}
 Note that the factor $D$ keeps the specimen irradiance constant for any value of
-$\alpha$. \hypertarget{dfactor}{{\color{urlblue} We have kept $D$ as a
-    multiplicative factor in Eq. (\ref{eq:scalarabs}) to facilitate comparison
-    with Fourkas' results, but Eq. (\ref{eq:scalarabs}) can be simplified
-    further by distributing $D$.}}
+$\alpha$. We have kept $D$ as a multiplicative factor in
+Eq. (\ref{eq:scalarabs}) to facilitate comparison with Fourkas' results, but
+Eq. (\ref{eq:scalarabs}) can be simplified further by distributing $D$.
 
 We can extend these results to light-sheet illumination created by scanning a
 laser. If we shine a narrow, collimated, laser beam onto a galvanometer in the
@@ -712,10 +479,9 @@ weakly focused, we can ignore the excitation caused by the small fields aligned
 with the optical axis. Under slowly-scanned and weakly-focused light-sheet
 illumination, dipoles in the sample will be excited as if a single plane wave
 was incident. Therefore, we can find the absorption efficiency of a dipole in
-this case by taking the limit of {\color{urlblue}Eq.} (\ref{eq:scalarabs}) as
-$\alpha \rightarrow 0$ {\color{urlblue}[}or by plugging {\color{urlblue}Eqs.}
-(\ref{eq:mu}) and (\ref{eq:excfield}) into {\color{urlblue}Eq.}
-(\ref{eq:singleray}){\color{urlblue}]} giving
+this case by taking the limit of Eq. (\ref{eq:scalarabs}) as
+$\alpha \rightarrow 0$ [or by plugging Eqs. (\ref{eq:mu}) and
+(\ref{eq:excfield}) into Eq. (\ref{eq:singleray})] giving
 \begin{align}
   \eta_{\text{abs}}^{\text{ray}} &= \sin^2\Theta\cos^2(\Phi - \phi_{\text{exc}}),
 \end{align}
@@ -737,7 +503,7 @@ the aperture plane \cite{fourkas2001}. He found that
 where $\phi_{\text{det}}$ is the angle between the transmission axis of the
 detection polarizer and the positive $\mh{x}$ axis. 
 
-To calculate the detection efficiency without a polarizer, we use {\color{urlblue}Eq.}
+To calculate the detection efficiency without a polarizer, we use Eq.
 (\ref{eq:det_pol}) and take the sum of polarized detection efficiencies with
 orthogonal polarizer orientations to find
 \begin{align}
@@ -747,17 +513,16 @@ In this case the detection efficiency only depends on $\Theta$, not $\Phi$,
 because there is no detection polarizer. We have assumed that the absorption
 dipole moment is equal to the emission dipole moment.
 
-Note that $A$, $B$, and $C$ in {\color{urlblue}Eq.} (\ref{eq:coefficients}) are a
-factor of $\frac{3}{2}$ larger than the expressions given by Fourkas. We found
-that Fourkas' expressions were incorrectly normalized (the limit of
+Note that $A$, $B$, and $C$ in Eq. (\ref{eq:coefficients}) are a factor of
+$\frac{3}{2}$ larger than the expressions given by Fourkas. We found that
+Fourkas' expressions were incorrectly normalized (the limit of
 $\eta_{\text{det}}$ as $\alpha\rightarrow \frac{\pi}{2}$ should be
-$\frac{1}{2}$), and the extra factor of $\frac{3}{2}$ corrects the
-error. \hypertarget{normalization}{{\color{urlblue} The extra factor of
-    $\frac{3}{2}$ is a constant multiplicative factor, so the}} correction
-{\color{urlblue} is not angle-dependent which means that it} does not affect
-Fourkas' orientation reconstruction. {\color{urlblue}However, the correction}
-does mean that Fourkas' algorithm underpredicts the total emitted intensity by a
-factor of $\frac{3}{2}$.
+$\frac{1}{2}$), and the extra factor of $\frac{3}{2}$ corrects the error. The
+extra factor of $\frac{3}{2}$ is a constant multiplicative factor, so the
+correction is not angle-dependent which means that it does not affect Fourkas'
+orientation reconstruction. However, the correction does mean that Fourkas'
+algorithm underpredicts the total emitted intensity by a factor of
+$\frac{3}{2}$.
 
 Also note that the detection efficiency can take its maximum range of values
 when $B$ takes its maximum value, i.e. when
@@ -803,18 +568,18 @@ dipoles.
 \begin{figure}[H]
 \centering\includegraphics[width=\textwidth]{single-frame}
 \caption{Representative examples of single intensity measurements. Black dots
-  indicate where the Cartesian unit vectors intersect the unit sphere. \newline \newline \textbf{Columns left to right:} 1) schematics where
-  the solid line encloses the illumination solid angle, the dashed line encloses
-  the detection solid angle, and the arrow indicates the transmission axis of
-  the illumination polarizer; 2) the absorption efficiency, see {\color{urlblue}Eq.}
-  (\ref{eq:scalarabs}); 3) the detection efficiency, see {\color{urlblue}Eq.}
-  (\ref{eq:scalardet}); 4) the total efficiency, the product of the absorption
-  and detection efficiencies.\newline \newline \textbf{Rows top to bottom:} 1)
-  coincident illumination ($\text{NA} = 1.1$ with $x$-polarized light) and
-  detection (NA = 1.1); 2) non-coincident orthogonal illumination
-  ($\text{NA} = 0.8$) and detection ($\text{NA} = 0.8$); 3) non-coincident
-  135${}^{\circ}$-separated illumination ($\text{NA} = 0.8$) and detection
-  ($\text{NA} = 0.8$). All simulations use $n=1.33$.}
+  indicate where the Cartesian unit vectors intersect the unit sphere. \newline
+  \newline \textbf{Columns left to right:} 1) schematics where the solid line
+  encloses the illumination solid angle, the dashed line encloses the detection
+  solid angle, and the arrow indicates the transmission axis of the illumination
+  polarizer; 2) the absorption efficiency, see Eq.  (\ref{eq:scalarabs}); 3) the
+  detection efficiency, see Eq.  (\ref{eq:scalardet}); 4) the total efficiency,
+  the product of the absorption and detection efficiencies.\newline \newline
+  \textbf{Rows top to bottom:} 1) coincident illumination ($\text{NA} = 1.1$
+  with $x$-polarized light) and detection (NA = 1.1); 2) non-coincident
+  orthogonal illumination ($\text{NA} = 0.8$) and detection ($\text{NA} = 0.8$);
+  3) non-coincident 135${}^{\circ}$-separated illumination ($\text{NA} = 0.8$)
+  and detection ($\text{NA} = 0.8$). All simulations use $n=1.33$.}
   \label{fig:single-frame}
 \end{figure}
 
@@ -899,10 +664,9 @@ emitted by the molecule.
 We also use the Fisher information matrix to calculate uncertainty ellipses for
 each microscope and dipole orientation. The general equation of an ellipse
 with axis radii $a$ and $b$ and rotation angle $\gamma$ is
-\hypertarget{ellipse}{{\color{urlblue} 
 \begin{align}
   \frac{(x\cos\gamma + y\sin\gamma)^2}{a^2} + \frac{(x\sin\gamma - y\cos\gamma)^2}{b^2} =1. 
-\end{align}}}%
+\end{align}%
 We calculate the ellipse parameters in terms of the Fisher information matrix
 using the following set of equations
 \begin{align}
@@ -914,7 +678,7 @@ using the following set of equations
   \gamma &= \frac{1}{2}\text{arctan}\left(\frac{2\sigma_{xy}}{\sigma_x^2 - \sigma_y^2}\right). \label{eq:last}
 \end{align}
 Equations (\ref{eq:first})--(\ref{eq:last}) are identical to those found in
-\cite{coe2009} with an additional factor of $\sin\Theta$ on {\color{urlblue}Eqs.}
+\cite{coe2009} with an additional factor of $\sin\Theta$ on Eqs.
 (\ref{eq:second}) and (\ref{eq:third}) to account for the non-Euclidean geometry of
 the sphere. Instead of plotting ellipses with widely varying radii on the same
 figure, we chose a constant major axis radius. This means that the uncertainty
@@ -925,13 +689,13 @@ The solid-angle uncertainty and the uncertainty ellipse are good local measures
 of orientation uncertainty, but they are insensitive to degeneracies with
 distant dipole orientations. For example, all of the intensity measurements in
 this paper are identical under inversion of the dipole orientation
-{\color{urlblue}[}$I(\Theta, \Phi) = I(\Theta + \pi, \Phi)$ in {\color{urlblue}Eqs.} (\ref{eq:scalarabs}),
-(\ref{eq:scalardet}), and (\ref{eq:forward_frame}){\color{urlblue}]}, but the solid-angle uncertainty
-and the uncertainty ellipse give no indication of this degeneracy. For this
-reason we also use the number of degeneracies as a measure of a microscope's
-ability to estimate the orientation of a dipole from intensity measurements. A
-small number of degeneracies is important for a microscope to find the
-orientation of a dipole---a twofold degenerate microscope can find the
+[$I(\Theta, \Phi) = I(\Theta + \pi, \Phi)$ in Eqs. (\ref{eq:scalarabs}),
+(\ref{eq:scalardet}), and (\ref{eq:forward_frame})], but the
+solid-angle uncertainty and the uncertainty ellipse give no indication of this
+degeneracy. For this reason we also use the number of degeneracies as a measure
+of a microscope's ability to estimate the orientation of a dipole from intensity
+measurements. A small number of degeneracies is important for a microscope to
+find the orientation of a dipole---a twofold degenerate microscope can find the
 orientation of a dipole down to the hemisphere while a fourfold degenerate
 microscope can only find the orientation down to the quadrant.
 
@@ -946,8 +710,8 @@ single objective is used for illumination and detection. We swept through the
 illumination and detection NA while keeping the sample irradiance constant, and
 we found that the lowest median and MAD of the solid-angle uncertainty occurs
 with a small illumination NA and a large detection NA where
-$\alpha \approx 65^{\circ}$ {\color{urlblue}[}see {\color{urlblue}Fig.} \ref{fig:single-arm}{\color{urlblue}(e)} at
-NA${}_{\text{det}} \approx 1.2${\color{urlblue}]}. A small illumination NA maximizes the range of
+$\alpha \approx 65^{\circ}$ [see Fig. \ref{fig:single-arm}(e) at
+NA${}_{\text{det}} \approx 1.2$]. A small illumination NA maximizes the range of
 absorption efficiencies, while a large detection NA optimizes the number of
 detected photons and the range of the detection efficiencies. The optimal
 detection NA is slightly larger than $\alpha = 57.4^{\circ}$ because increasing
@@ -955,35 +719,34 @@ the detection NA reduces the effect of shot noise. Note the relative importance
 of illumination and detection NAs---reducing the illumination NA (an inexpensive
 modification requiring underfilling the aperture plane) improves the solid-angle
 uncertainty much less than increasing the detection NA (an expensive
-modification requiring a higher-NA objective). Also note in {\color{urlblue}Fig.}
-\ref{fig:single-arm}{\color{urlblue}(c)} that single-view designs suffer from high orientation
-uncertainty when the dipoles are oriented along the optical axis (the
-dipoles are not efficiently excited or detected), near the transverse plane
+modification requiring a higher-NA objective). Also note in
+Fig. \ref{fig:single-arm}(c) that single-view designs suffer from high
+orientation uncertainty when the dipoles are oriented along the optical axis
+(the dipoles are not efficiently excited or detected), near the transverse plane
 (it is ambiguous whether the dipole is oriented above or below the transverse
-plane, see {\color{urlblue}Fig.} \ref{fig:single-arm}{\color{urlblue}(b)}, and near the polarizer orientations
-{\color{urlblue}[}it is ambiguous whether the dipole is on either side of the polarizer
-orientation, see {\color{urlblue}Fig.} \ref{fig:single-arm}{\color{urlblue}(b)}{\color{urlblue}]}.
+plane, see Fig. \ref{fig:single-arm}(b), and near the polarizer orientations [it
+is ambiguous whether the dipole is on either side of the polarizer orientation,
+see Fig. \ref{fig:single-arm}(b)].
 
-The single-view microscope in {\color{urlblue}Fig.} \ref{fig:single-arm} is
-fourfold degenerate
-{\color{urlblue}[}$I(\Theta, \Phi) = I(\Theta + \pi, \Phi) = I(\Theta, \Phi + \pi) = I(\Theta +
-\pi, \Phi+\pi)$ in {\color{urlblue}Eqs.} (\ref{eq:scalarabs}), (\ref{eq:scalardet}),
-and (\ref{eq:forward_frame}){\color{urlblue}]}. The first twofold degeneracy is due to the usual
+The single-view microscope in Fig. \ref{fig:single-arm} is fourfold degenerate
+[$I(\Theta, \Phi) = I(\Theta + \pi, \Phi) = I(\Theta, \Phi + \pi) = I(\Theta +
+\pi, \Phi+\pi)$ in Eqs. (\ref{eq:scalarabs}), (\ref{eq:scalardet}), and
+(\ref{eq:forward_frame})]. The first twofold degeneracy is due to the usual
 inversion degeneracy---the dipole is an axis rather than a direction. A second
 twofold degeneracy is present in single-view designs---the microscope cannot
 distinguish between dipoles reflected through the transverse plane. Evidence of
-the second degeneracy is found in {\color{urlblue}Figs.}
-\ref{fig:single-arm}{\color{urlblue}(b)} and
-\ref{fig:single-arm}{\color{urlblue}(c)} which show the ambiguity of whether the
-dipole is oriented above or below the transverse plane. Near the transverse
-plane this ambiguity is evident in the high solid-angle uncertainty, but far
-from the transverse plane evidence of the ambiguity is lost. Adding a second
-view and taking eight intensity measurements instead of four removes this
-degeneracy {\color{urlblue}[}see {\color{urlblue}Eqs.} (\ref{eq:thetap}) and (\ref{eq:phip}){\color{urlblue}]}, so the dual-view
-microscopes we consider in this paper are only twofold degenerate. This means
-that while dual-view microscopes can find the orientation of a dipole up to the
-hemisphere, single-view microscopes can only find the orientation of a dipole up
-to the quadrant.
+the second degeneracy is found in Figs. \ref{fig:single-arm}(b) and
+\ref{fig:single-arm}(c) which show the ambiguity of whether the dipole is
+oriented above or below the transverse plane. Near the transverse plane this
+ambiguity is evident in the high solid-angle uncertainty, but far from the
+transverse plane evidence of the ambiguity is lost. Adding a second view and
+taking eight intensity measurements instead of four removes this degeneracy
+[see Eqs. (\ref{eq:thetap}) and
+(\ref{eq:phip})], so the dual-view microscopes we consider in
+this paper are only twofold degenerate. This means that while dual-view
+microscopes can find the orientation of a dipole up to the hemisphere,
+single-view microscopes can only find the orientation of a dipole up to the
+quadrant.
 
 \begin{figure}[htbp]
 \centering\includegraphics[width=\textwidth]{single-arm}
@@ -1003,9 +766,9 @@ to the quadrant.
 \end{figure}
 
 Figures \ref{fig:symmetric-widefield} and \ref{fig:double-arm} show our results
-for dual-view symmetric designs. We illuminate from one objective and
-detect from the other for four polarization orientations, then we repeat the
-polarization orientations with the same objectives in reversed roles. In {\color{urlblue}Fig.}
+for dual-view symmetric designs. We illuminate from one objective and detect
+from the other for four polarization orientations, then we repeat the
+polarization orientations with the same objectives in reversed roles. In Fig.
 \ref{fig:symmetric-widefield} we sweep through the NA of both objectives and the
 angle between the objectives while considering steric constraints. Note how
 adding a second view removes the high uncertainty region in the transverse
@@ -1016,10 +779,10 @@ solid-angle uncertainty occurs with the largest possible NA objectives. We also
 find that increasing NA always lowers the MAD, but orthogonal arms are not
 always optimal. At large NA, it is advantageous to move the objectives together
 or against the cover slip. Given the high uncertainty in the transverse plane
-for a single-view shown in {\color{urlblue}Fig.} \ref{fig:single-arm}{\color{urlblue}(c)}), we can see why oblique
+for a single-view shown in Fig. \ref{fig:single-arm}(c), we can see why oblique
 views perform better than orthogonal views---oblique views are complementary
 because the regions of high orientation uncertainty from each view do not
-overlap. 
+overlap.
 
 \begin{figure}[htbp]
 \centering\includegraphics[width=\textwidth]{symmetric-widefield}
@@ -1044,7 +807,7 @@ overlap.
 
 Figure \ref{fig:double-arm} shows our results when we used a dual-view symmetric
 orthogonal design and varied the illumination and detection NA. Our results are
-similar to the single-view case in {\color{urlblue}Fig.} \ref{fig:single-arm}. We find that
+similar to the single-view case in Fig. \ref{fig:single-arm}. We find that
 optimal designs use a small illumination NA and a large detection NA. As we
 discussed in Section \ref{excitation}, low-NA illumination is
 approximately equivalent to light-sheet illumination for the task of estimating
@@ -1074,25 +837,22 @@ and kept the objectives orthogonal so that the light sheet from one objective
 illuminates the focal plane of the other objective. Then, we swept through the
 NA of one objective while maximizing the NA of the other objective so that both
 objectives would touch the cover slip and each other
-{\color{urlblue}[}$\alpha_1 + \alpha_2 = 90^{\circ}$ in {\color{urlblue}Fig.}
-\ref{fig:asymmetric-double}{\color{urlblue}(a)}{\color{urlblue}]}. We swept
-through the NA asymmetry and the sample-exposure asymmetry while keeping the
-sample irradiance constant, and found that symmetric designs are at a local
+[$\alpha_1 + \alpha_2 = 90^{\circ}$ in Fig. \ref{fig:asymmetric-double}(a)]. We
+swept through the NA asymmetry and the sample-exposure asymmetry while keeping
+the sample irradiance constant, and found that symmetric designs are at a local
 minimum of the median and MAD of the solid-angle uncertainty. We also found that
 at extreme asymmetries where the exposure from the low-NA arm is much larger
-than the exposure from the high-NA arm {\color{urlblue}[}top-left and
-bottom-right corners of {\color{urlblue}Figs.}
-\ref{fig:asymmetric-double}{\color{urlblue}(d)} and {\color{urlblue}6(e)]} the
-median and MAD are comparable to the symmetric light-sheet microscope. This
-means that if a very high-NA objective is available and a low-NA objective can
-provide light sheet illumination, this microscope will perform comparably with a
-dual-view microscope with two medium-NA objectives. Note that this asymmetric
-exposure configuration maximizes the use of the high-NA detection objective---if
-a high-NA objective is available it should be used for detection as much as
-possible. Figure \ref{fig:asymmetric-double} also shows that
-designs with slightly asymmetric NA can trade off a low solid-angle uncertainty
-median for a low solid-angle uncertainty MAD by changing the sample exposure
-ratio.
+than the exposure from the high-NA arm [top-left and bottom-right corners of
+Figs. \ref{fig:asymmetric-double}(d) and 6(e)] the median and MAD are comparable
+to the symmetric light-sheet microscope. This means that if a very high-NA
+objective is available and a low-NA objective can provide light sheet
+illumination, this microscope will perform comparably with a dual-view
+microscope with two medium-NA objectives. Note that this asymmetric exposure
+configuration maximizes the use of the high-NA detection objective---if a
+high-NA objective is available it should be used for detection as much as
+possible. Figure \ref{fig:asymmetric-double} also shows that designs with
+slightly asymmetric NA can trade off a low solid-angle uncertainty median for a
+low solid-angle uncertainty MAD by changing the sample exposure ratio.
 
 \begin{figure}[htbp]
   \centering\includegraphics[width=\textwidth]{asymmetric-double}
@@ -1209,28 +969,20 @@ below the cover slip\cite{wu2016}. Light-field detection schemes are also a type
 of multiview microscope\cite{levoy2006}, and we plan to extend our analysis to
 this case in future work.
 
-\hypertarget{temporal}{{\color{urlblue} The models in this paper only consider
-    estimating the orientation of fixed dipoles, but real dipoles change their
-    orientation during measurement. Therefore, it is necessary to comment on the
-    applicability of our results to dynamic dipoles. In general, using the
-    models in this paper to estimate the orientation of rotating dipoles will
-    lead to incorrect results. However, if a dipole rotates through a small
-    solid angle during the measurement, the models in this paper will give a
-    slightly biased estimate of the average orientation of the dipole. The
-    direction and size of the bias has not been characterized in detail. In
-    future work we will model dynamic dipoles and attempt to estimate the
-    average dipole orientation and the dipole's orientation
-    distribution. Single-view polarized illumination techniques have already
-    been used to study the orientation distribution of ensembles of dynamic
-    dipoles \cite{mehta2016, backer2016}, but multiview polarized illumination
-    microscopes have not been investigated for this purpose.}}
-
-{\color{red}\sout{Although we have only considered the orientation determination
-    of fixed single dipoles, polarized illumination techniques can be used to
-    study the orientation distribution of ensembles of dynamic dipole. In future
-    work we will investigate the ability of multiview polarized illumination
-    microscopes to estimate the orientation distribution of ensembles of dynamic
-    dipoles.}}
+The models in this paper only consider estimating the orientation of fixed
+dipoles, but real dipoles change their orientation during
+measurement. Therefore, it is necessary to comment on the applicability of our
+results to dynamic dipoles. In general, using the models in this paper to
+estimate the orientation of rotating dipoles will lead to incorrect
+results. However, if a dipole rotates through a small solid angle during the
+measurement, the models in this paper will give a slightly biased estimate of
+the average orientation of the dipole. The direction and size of the bias has
+not been characterized in detail. In future work we will model dynamic dipoles
+and attempt to estimate the average dipole orientation and the dipole's
+orientation distribution. Single-view polarized illumination techniques have
+already been used to study the orientation distribution of ensembles of dynamic
+dipoles \cite{mehta2016, backer2016}, but multiview polarized illumination
+microscopes have not been investigated for this purpose.
 
 We have only considered polarized illumination. In the introduction
 we discussed why we prefer polarized illumination to polarized detection, but

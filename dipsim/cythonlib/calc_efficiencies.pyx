@@ -1,5 +1,5 @@
 #cython: boundscheck=False, wraparound=False, nonecheck=False
-from libc.math cimport sin, cos, acos, sqrt, M_PI
+from libc.math cimport sin, cos, acos, atan2, sqrt, M_PI
 
 def cy_calc_collection_efficiency(double theta_lab, double phi_lab, double theta_optical_axis, double alpha):
     cdef double theta_opt, A, B
@@ -28,3 +28,26 @@ def cy_calc_excitation_efficiency(double theta_lab, double phi_lab, double phi_p
         phi_opt = -acos(acos_arg)
         
     return (sin(theta_opt)*cos(phi_opt - phi_pol))**2
+
+def cy_tp2xyz(double theta, double phi):
+    # Convert spherical to cartesian
+    cdef double x, y, z
+    x = sin(theta)*cos(phi)
+    y = sin(theta)*sin(phi)
+    z = cos(theta)
+    return x, y, z
+
+def cy_xyz2tp(double x, double y, double z):
+    # Convert cartesian to spherical
+    cdef double acos_arg, theta, phi
+    acos_arg = z/sqrt(x**2 + y**2 + z**2)
+    # Prevent nan from floating point errors
+    if acos_arg > 1.0:
+        acos_arg = 1.0
+    if acos_arg < -1.0:
+        acos_arg = -1.0
+
+    theta = acos(acos_arg)
+    phi = atan2(y, x)
+        
+    return theta, phi

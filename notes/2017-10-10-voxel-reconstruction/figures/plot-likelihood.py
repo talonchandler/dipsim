@@ -5,7 +5,7 @@ import os; import time; start = time.time(); print('Running...')
 import matplotlib.gridspec as gridspec
 
 # Setup k and c sweep
-kappas = [-10, 0, 10, np.inf]
+kappas = [-3, 0, 3, np.inf]
 cs = [0.1, 1, 2]
 col_labels = ['$\kappa$ = ' + str(x) for x in kappas]
 row_labels = ['c = ' + str(x) for x in cs]

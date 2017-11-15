@@ -5,7 +5,7 @@ import vispy
 from dipsim import util, visuals, detector, illuminator
 from dipsim import fluorophore as flu
 from scipy import integrate, special, interpolate
-from dipsim.cythonlib.calc_efficiencies import cy_calc_collection_efficiency, cy_calc_excitation_efficiency, cy_tp2xyz
+from dipsim.cythonlib.calc_efficiencies import intensity, intensity_from_dist
 
 class Microscope:
     """
@@ -33,28 +33,43 @@ class Microscope:
         # Calculate the intensity measured by this microscope when a given
         # fluorophore distribution is present.
         if np.isinf(fluorophore.kappa):
-            # For single fluorophores
-            if self.precompute_flag:
-                excite, collect = self.efficiency_from_LUT(fluorophore)
+            if self.cython_flag:
+                excite = self.illuminator.calc_excitation_efficiency(fluorophore)
+                collect = self.detector.calc_collection_efficiency(fluorophore)
+                py_int = self.max_photons*fluorophore.c*excite*collect
+                
+                c_int = intensity(fluorophore.theta, fluorophore.phi,
+                                 self.illuminator.phi_pol,
+                                 self.illuminator.theta_optical_axis,                             
+                                 self.detector.theta_optical_axis,
+                                 self.detector.alpha,
+                                 self.max_photons*fluorophore.c)
+                return c_int
             else:
-                if self.cython_flag:
-                    excite = cy_calc_excitation_efficiency(fluorophore.theta, fluorophore.phi, self.illuminator.phi_pol, self.illuminator.theta_optical_axis)
-                    collect = cy_calc_collection_efficiency(fluorophore.theta, fluorophore.phi, self.detector.theta_optical_axis, self.detector.alpha)
-                else:
-                    excite = self.illuminator.calc_excitation_efficiency(fluorophore)
-                    collect = self.detector.calc_collection_efficiency(fluorophore)
-            return self.max_photons*fluorophore.c*excite*collect
+                excite = self.illuminator.calc_excitation_efficiency(fluorophore)
+                collect = self.detector.calc_collection_efficiency(fluorophore)
+                return self.max_photons*fluorophore.c*excite*collect
         else:
-            # For fluorophore distributions (this function calls itself!)
-            def int_func(theta, phi):
-                int_single = self.calc_intensity(fluorophore=flu.Fluorophore(theta=theta, phi=phi, kappa=np.inf, c=fluorophore.c))
-                norm = 1.0/(4*np.pi*special.hyp1f1(0.5, 1.5, fluorophore.kappa))
-                weight = np.exp(fluorophore.kappa*(np.dot(cy_tp2xyz(theta, phi), cy_tp2xyz(fluorophore.theta, fluorophore.phi))**2))
-                jacobian = np.sin(theta)
-                return jacobian*norm*weight*int_single
-            integral = integrate.nquad(int_func, [[0, np.pi], [0, 2*np.pi]], opts={'epsrel':epsrel, 'epsabs':0, 'limit':1}, full_output=True)
-            #import pdb; pdb.set_trace()
-            return integral[0]
+            if self.cython_flag:
+                c_int = intensity_from_dist(self.illuminator.phi_pol,
+                                            self.illuminator.theta_optical_axis,
+                                            self.detector.theta_optical_axis,
+                                            self.detector.alpha,
+                                            self.max_photons*fluorophore.c,
+                                            fluorophore.theta,
+                                            fluorophore.phi,
+                                            fluorophore.kappa)
+                return c_int
+            else:
+                # For fluorophore distributions (this function calls itself!)
+                def int_func(theta, phi):
+                    int_single = self.calc_intensity(fluorophore=flu.Fluorophore(theta=theta, phi=phi, kappa=np.inf, c=fluorophore.c))
+                    norm = 1.0/(4*np.pi*special.hyp1f1(0.5, 1.5, fluorophore.kappa))
+                    weight = np.exp(fluorophore.kappa*(np.dot(util.tp2xyz(theta, phi), util.tp2xyz(fluorophore.theta, fluorophore.phi))**2))
+                    jacobian = np.sin(theta)
+                    return jacobian*weight*int_single
+                integral = integrate.nquad(int_func, [[0, np.pi], [0, 2*np.pi]], opts={'epsrel':epsrel, 'epsabs':0, 'limit':1}, full_output=True)
+                return integral[0]
 
     def precompute_efficiencies(self, n_pts=1e3):
         # Generate a LUT for efficiencies

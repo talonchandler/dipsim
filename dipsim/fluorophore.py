@@ -6,7 +6,7 @@ class Fluorophore:
     coordinates), it distribution (using a kappa watson distribution), and a
     constant (c) proportional to the fluorohphore's brightness.
     """
-    def __init__(self, theta=np.pi/2, phi=0, kappa=np.inf, c=1.0):
+    def __init__(self, theta=np.pi/2, phi=0, c=1.0, kappa=np.inf):
         self.theta = theta
         self.phi = phi
         self.kappa = kappa

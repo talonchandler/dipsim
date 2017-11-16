@@ -40,7 +40,31 @@ class Reconstruction():
             solver = ParticleSwarm(maxcostevals=200)
             Xopt = solver.solve(problem, x=start_pts)
             self.estimated_fluorophore = fluorophore.Fluorophore(*util.xyz2tp(*Xopt))
-        elif self.recon_type == 'tpkc': # Estimate theta, phi, kappa, constant
+        elif self.recon_type == 'tpc': # Estimate theta, phi, constant
+            # Create manifold and cost function
+            manifold = Product((Sphere(3), Euclidean(1)))
+            def cost(X, data=self.data):
+                estimate = np.hstack([util.xyz2tp(*X[0]), X[1]])
+                ll = self.multiframe.noise_model.loglikelihood(estimate, data)
+                return -ll
+            
+            problem = Problem(manifold=manifold, cost=cost, verbosity=0)
+
+            # Generate start_pts and format            
+            xyz_start_pts = 3*[np.array(util.tp2xyz(*x)) for x in util.sphere_profile(10)]
+            c_start_pts = np.expand_dims(np.hstack((10*[0.1], 10*[2], 10*[10])), axis=1)
+            start_pts = np.hstack((xyz_start_pts, c_start_pts))
+            pts = []
+            for start_pt in start_pts:
+                pts.append([np.array(start_pt[0:3]), np.array(start_pt[3:5])])
+
+            # Solve
+            solver = ParticleSwarm(maxcostevals=500)
+            Xopt = solver.solve(problem, x=pts)
+
+            self.estimated_fluorophore = fluorophore.Fluorophore(*np.hstack([util.xyz2tp(*Xopt[0]), Xopt[1]]).flatten())
+
+        elif self.recon_type == 'tpck': # Estimate theta, phi, constant, kappa
             # Create manifold and cost function
             manifold = Product((Sphere(3), Euclidean(2)))
             def cost(X, data=self.data):
@@ -55,7 +79,7 @@ class Reconstruction():
             xyz_start_pts = 3*[np.array(util.tp2xyz(*x)) for x in util.sphere_profile(10)]
             k_start_pts = np.expand_dims(np.hstack((10*[-100], 10*[0], 10*[100])), axis=1)
             c_start_pts = np.expand_dims(np.hstack((10*[0.1], 10*[1], 10*[10])), axis=1)
-            start_pts = np.hstack((xyz_start_pts, k_start_pts, c_start_pts))
+            start_pts = np.hstack((xyz_start_pts, c_start_pts, k_start_pts))
             pts = []
             for start_pt in start_pts:
                 pts.append([np.array(start_pt[0:3]), np.array(start_pt[3:5])])

@@ -26,14 +26,15 @@ exp = multiframe.MultiFrameMicroscope(ill_thetas=[theta1, theta2], det_thetas=[t
 truth_dirs = util.fibonacci_sphere(250)
 angle_err = []
 for truth in truth_dirs:
-    fluo = fluorophore.Fluorophore(theta=truth[0], phi=truth[1])
-    recon = reconstruction.Reconstruction(multiframe=exp, recon_type='tpkc',
+    fluo = fluorophore.Fluorophore(theta=truth[0], phi=truth[1], c=1.0)
+    recon = reconstruction.Reconstruction(multiframe=exp, recon_type='tpc',
                                           data=exp.calc_intensities(fluo))
     recon.evaluate()
     error = fluo - recon.estimated_fluorophore
     angle_err.append(error['angle_diff'])
-    import pdb; pdb.set_trace()
-    print(error['angle_diff'])
+    if truth[0] < 0.2:
+        print('*')
+    print('theta', np.round(truth[0], 2), '\t phi', np.round(truth[1], 2), '\t ang_err', np.round(error['angle_diff'], 2), '\t c_err', np.round(error['c_diff'], 2))
 
 util.plot_sphere('angle-error.pdf', directions=truth_dirs, data=angle_err)
 

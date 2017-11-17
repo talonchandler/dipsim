@@ -59,7 +59,7 @@ class Reconstruction():
                 pts.append([np.array(start_pt[0:3]), np.array(start_pt[3:5])])
 
             # Solve
-            solver = ParticleSwarm(maxcostevals=500)
+            solver = ParticleSwarm(maxcostevals=250)
             Xopt = solver.solve(problem, x=pts)
 
             self.estimated_fluorophore = fluorophore.Fluorophore(*np.hstack([util.xyz2tp(*Xopt[0]), Xopt[1]]).flatten())

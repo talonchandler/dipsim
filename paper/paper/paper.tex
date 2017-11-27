@@ -15,8 +15,8 @@
   illumination: modeling and microscope design}
 
 \author{Talon Chandler,\authormark{1,*} Shalin Mehta,\authormark{1,2,3} Hari
-  Shroff,\authormark{4,5} Rudolf Oldenbourg,\authormark{2, 6} and Patrick J. La
-  Rivi\`ere\authormark{1, 5}}
+  Shroff,\authormark{4,5} Rudolf Oldenbourg,\authormark{2,6} and Patrick J. La
+  Rivi\`ere\authormark{1,5}}
 \address{\authormark{1}University of Chicago, Department of Radiology, Chicago, Illinois 60637, USA\\
   \authormark{2}Marine Biological Laboratory, Bell Center, Woods Hole, Massachusetts 02543, USA\\
   \authormark{3}(present address) Chan Zuckerberg Biohub, San Francisco, California 94158, USA\\
@@ -365,7 +365,7 @@ vectors, e.g., $\mb{r}, \bs{\mu}$; hats for unit vectors, e.g.,
 $\mh{r}, \hat{\bs{\mu}}$; and bold capital type for matrices, e.g.,
 $\mb{R}, \mb{F}$.
 
-\subsection{Absorption Efficiency}\label{excitation}
+\subsection{Absorption efficiency}\label{excitation}
 In this section we will calculate the \emph{absorption efficiency} of a single
 dipole---the fraction of the incident power that is absorbed by the
 dipole. Our approach is inspired by Fourkas \cite{fourkas2001}, but here we
@@ -491,7 +491,7 @@ with respect to the dipole orientations they excite. Notice that the
 absorption efficiency can take its maximum range of values
 ($\eta_{\text{abs}} \in [0, 1]$) when $\alpha=0$.
 
-\subsection{Detection Efficiency}\label{detection}
+\subsection{Detection efficiency}\label{detection}
 In this section we will calculate the \emph{detection efficiency}---the fraction
 of the power emitted by a single dipole that we detect. Fourkas calculated the
 detection efficiency when an ideal objective with its optical axis aligned with
@@ -530,7 +530,7 @@ $\alpha=\arccos\left(\frac{1}{\sqrt{3}}\right) \approx 54.7^{\circ}$. This means
 that the maximum modulation of detected intensities will occur when we choose a
 detection objective with $\alpha \approx 54.7^{\circ}$.
 
-\subsection{Oblique Illumination and Detection}\label{oblique}
+\subsection{Oblique illumination and detection}\label{oblique}
 In sections \ref{excitation} and \ref{detection} we assumed that both the
 illumination and detection objectives had $\mh{z}$ aligned optical axes, i.e.,
 we assumed traditional epi- or transmitted light illumination. To extend the
@@ -548,7 +548,7 @@ rotated coordinate frame using the following expressions
 where $\psi$ is the angle of a right handed rotation about the $\mh{y}$ axis
 that maps the $\mh{z}$ axis onto the new optical axis.
 
-\subsection{Intensity Measurements}\label{forward}
+\subsection{Intensity measurements}\label{forward}
 The detected intensity is proportional to the product of the sample irradiance
 $I_{\text{in}}$, the absorption efficiency, and the detection efficiency
 \begin{align}
@@ -583,7 +583,7 @@ dipoles.
   \label{fig:single-frame}
 \end{figure}
 
-\subsection{Polarized Illumination Microscope Configurations}\label{designs}
+\subsection{Polarized illumination microscope configurations}\label{designs}
 One way to collect multiple intensity measurements is to add a universal
 compensator/polarizer to the illumination arm and rapidly select the incident
 polarization by changing $\phi_{\text{exc}}$ \cite{shribak2003}. All of the
@@ -605,7 +605,7 @@ All multiview microscopes are subject to steric constraints---the objectives
 must not collide with the cover slip or each other. We only consider microscope
 designs that meet these criteria.
 
-\subsection{Evaluation Metrics}\label{metrics}
+\subsection{Evaluation metrics}\label{metrics}
 Our goal is to evaluate the ability of a microscope design to estimate the
 orientation of a single dipole (via parameters $\Theta$ and $\Phi$) from
 intensity data. A common way to evaluate the ability to estimate the parameters
@@ -877,24 +877,45 @@ intermediate NA performs reasonably well on all three metrics, while the
 dual-view orthogonal symmetric light-sheet microscopes with large NA perform
 very well on all three metrics.
 
+% \begin{table}[ht!]
+% \centering
+% \caption{Comparison of designs in each class of microscope. All solid-angle
+%   uncertainty statistics are in steradians.}
+% \begin{tabular}{lllll}
+%   \toprule
+
+%   Microscope Type&$n$-fold&Max\{$\sigma_{\Omega}$\}&Median\{$\sigma_{\Omega}$\}&MAD\{$\sigma_{\Omega}$\}\\ 
+%     &Degeneracy&&&\\\midrule
+% Single-view (NA${}_\textrm{ill}$=0, NA${}_\textrm{det}$=1.1)&4&3.04$\times 10^{0}$&8.20$\times 10^{-4}$&1.48$\times 10^{-4}$ \\ 
+%   Dual-view oblique symmetric (NA=0.6, $\beta$=53${}^{\circ}$)&2&1.35$\times 10^{-1}$&4.49$\times 10^{-3}$&9.17$\times 10^{-4}$\\
+% Dual-view orthogonal symmetric light-sheet (NA=0.8)&2&6.23$\times 10^{-3}$&1.79$\times 10^{-3}$&1.65$\times 10^{-4}$\\  
+% Dual-view orthogonal symmetric light-sheet (NA=0.94)&2&3.13$\times 10^{-3}$&1.28$\times 10^{-3}$&1.14$\times 10^{-4}$\\
+% \bottomrule
+% \end{tabular}
+% \end{table}
+
 \begin{table}[ht!]
 \centering
 \caption{Comparison of designs in each class of microscope. All solid-angle
   uncertainty statistics are in steradians.}
 \begin{tabular}{lllll}
   \toprule
-
-  Microscope Type&$n$-fold&Max\{$\sigma_{\Omega}$\}&Median\{$\sigma_{\Omega}$\}&MAD\{$\sigma_{\Omega}$\}\\ 
-    &Degeneracy&&&\\\midrule
-Single-view (NA${}_\textrm{ill}$=0, NA${}_\textrm{det}$=1.1)&4&3.04$\times 10^{0}$&8.20$\times 10^{-4}$&1.48$\times 10^{-4}$ \\ 
-  Dual-view oblique symmetric (NA=0.6, $\beta$=53${}^{\circ}$)&2&1.35$\times 10^{-1}$&4.49$\times 10^{-3}$&9.17$\times 10^{-4}$\\
-Dual-view orthogonal symmetric light-sheet (NA=0.8)&2&6.23$\times 10^{-3}$&1.79$\times 10^{-3}$&1.65$\times 10^{-4}$\\  
-Dual-view orthogonal symmetric light-sheet (NA=0.94)&2&3.13$\times 10^{-3}$&1.28$\times 10^{-3}$&1.14$\times 10^{-4}$\\
+  Microscope Type&Single-view&Dual-view&Dual-view&Dual-view\\ 
+    &NA${}_\textrm{ill}$=0&oblique&orthogonal&orthogonal \\
+    &NA${}_\textrm{det}$=1.1&symmetric&symmetric&symmetric\\
+    &&NA=0.6&light-sheet&light-sheet\\  
+    &&$\beta$=53${}^{\circ}$&NA=0.8&NA=0.94\\\midrule
+  
+  $n$-fold Degeneracy&4&2&2&2\\
+  Max\{$\sigma_{\Omega}$\}&3.04$\times 10^{0}$&1.35$\times 10^{-1}$&$6.23\times 10^{-3}$&3.13$\times 10^{-3}$\\
+  Median\{$\sigma_{\Omega}$\}&8.20$\times 10^{-4}$&4.49$\times 10^{-3}$&$1.79\times 10^{-3}$&1.28$\times 10^{-3}$\\
+  MAD\{$\sigma_{\Omega}$\}&1.48$\times 10^{-4}$&9.17$\times 10^{-4}$&$1.65\times 10^{-4}$&1.14$\times 10^{-4}$\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\section{Discussion and Conclusions}\label{discussion}
+
+\section{Discussion and conclusions}\label{discussion}
 In this work we have developed a model to predict the intensities measured by
 polarized illumination microscopes in a wide range of geometries, developed
 metrics to measure the ability of a microscope design to estimate the

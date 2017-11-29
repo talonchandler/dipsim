@@ -1,0 +1,78 @@
+#+TITLE: Progress Report On Orientation Determination With Maximum Likelihood Methods
+#+DATE: October 11, 2017
+#+OPTIONS: H:1 num:t toc:nil
+#+BEAMER_FRAME_LEVEL: 1
+#+BEAMER_COLOR_THEME:
+#+BEAMER_FONT_THEME: serif
+#+BEAMER_HEADER:
+#+BEAMER_INNER_THEME:
+#+BEAMER_OUTER_THEME:
+#+BEAMER_THEME: simple
+#+LATEX_CLASS: beamer
+#+COLUMNS: %40ITEM %10BEAMER_env(Env) %9BEAMER_envargs(Env Args) %4BEAMER_col(Col) %10BEAMER_extra(Extra)
+#+LATEX_HEADER: \usepackage{graphicx}
+* Microscope Geometry 
+  \begin{center}
+    \includegraphics[width=0.5\textwidth, interpolate=true]{figs/geometry.pdf}\\
+    1.1 and 0.71 NA\\
+    8 Poisson-distributed intensity measurements\\
+    Goal: Estimate the orientation of the dipole.
+  \end{center}
+* Fisher Scoring Algorithm
+  \begin{center}
+  \begin{align*}
+    \vec{\theta} = \{\Theta, \Phi\} &\rightarrow \text{Parameters}\\
+    \vec{X}  &\rightarrow \text{Data (8 intensity measurements)}\\
+    \textbf{F}(\vec{\theta}) &\rightarrow \text{Fisher information matrix}\\
+    \vec{V}(\vec{\theta}, \vec{X}) = \frac{\partial}{\partial \vec{\theta}} \log L(\vec{\theta}, \vec{X}) &\rightarrow \text{Score}
+  \end{align*}
+  \begin{align*}
+    \vec{\theta}_{i+1} = \vec{\theta}_{i} + \textbf{F}^{-1}(\vec{\theta})\vec{V}(\vec{\theta}, \vec{X})
+  \end{align*}
+  \end{center}
+* Fisher Scoring Run 1
+  \begin{center}
+  True orientation: $\Theta = \pi/2, \Phi = \pi/4$\\
+  Starting orientation: $\Theta = \pi/3, \Phi = \pi/3$
+    \includegraphics[width=1.0\textwidth, interpolate=true]{figs/recon-history1.pdf}
+  \end{center}
+* Fisher Scoring Run 2
+  \begin{center}
+  True orientation: $\Theta = \pi/2, \Phi = \pi/4$\\
+  Starting orientation: $\Theta = \pi/3, \Phi = \pi/2$
+    \includegraphics[width=1.0\textwidth, interpolate=true]{figs/recon-history2.pdf}
+  \end{center}
+* Fisher Scoring Run 3
+  \begin{center}
+  True orientation: $\Theta = \pi/2, \Phi = \pi/4$\\
+  Starting orientation: $\Theta = 0, \Phi = 0$
+    \includegraphics[width=1.0\textwidth, interpolate=true]{figs/recon-history3.pdf}
+  \end{center}
+* Log-likelihood as a function of the estimate orientation
+  \begin{center}
+  True orientation: $\Theta = \pi/2, \Phi = \pi/4$\\
+    \includegraphics[width=0.55\textwidth, interpolate=true]{figs/likelihood.pdf}\\
+Gradient descent isn't going to cut it.\\
+I need to be careful with derivatives on curved spaces. 
+  \end{center}
+
+
+* Log-likelihood as a function of the estimate orientation
+  \begin{center}
+  True orientation: $\Theta = 0, \Phi = 0$\\
+    \includegraphics[width=0.55\textwidth, interpolate=true]{figs/likelihood2.pdf}\\
+  \end{center}
+
+* Brute Force Optimization
+Choose number of points (100). \\
+Plot error in degrees (great circle arc) between truth and estimate as a function of truth. \\
+  \begin{center}
+    \includegraphics[width=0.55\textwidth, interpolate=true]{figs/angle-error-brute.pdf}\\
+  \end{center}
+* Particle Swarm Optimization
+    Choose starting number of points (25). \\
+    Choose max number of function evaluations (100). \\
+    Plot error in degrees (great circle arc) between truth and estimate as a function of truth. \\
+  \begin{center}
+    \includegraphics[width=0.55\textwidth, interpolate=true]{figs/angle-error.pdf}\\
+  \end{center}

@@ -1,0 +1,40 @@
+#+TITLE: Progress Report On 3D Orientation Determination
+#+DATE: October 25, 2017
+#+OPTIONS: H:1 num:t toc:nil
+#+BEAMER_FRAME_LEVEL: 1
+#+BEAMER_COLOR_THEME:
+#+BEAMER_FONT_THEME: serif
+#+BEAMER_HEADER:
+#+BEAMER_INNER_THEME:
+#+BEAMER_OUTER_THEME:
+#+BEAMER_THEME: simple
+#+LATEX_CLASS: beamer
+#+COLUMNS: %40ITEM %10BEAMER_env(Env) %9BEAMER_envargs(Env Args) %4BEAMER_col(Col) %10BEAMER_extra(Extra)
+#+LATEX_HEADER: \usepackage{graphicx}
+* Distributions of fluorophores
+  \begin{center}
+    \includegraphics[width=1.0\textwidth, interpolate=true]{figs/watson.pdf}\\
+  \end{center}
+
+* Log-likelihood as a function of the estimate orientation ($\Theta$, $\Phi$)
+  \begin{center}
+  True orientation: $\Theta = 0, \Phi = 0$\\
+    \includegraphics[width=0.55\textwidth, interpolate=true]{figs/likelihood2.pdf}\\
+  \end{center}
+
+* Log-likelihood as a function of the fluorophore distribution ($\Theta$, $\Phi$, $\kappa$, $c$)
+  \begin{center}
+  True orientation: $\Theta = 0, \Phi = 0, \kappa = \infty, c = 1$\\
+    \includegraphics[width=0.9\textwidth, interpolate=true]{figs/likelihood-dist.pdf}\\
+  \end{center}
+
+* Log-likelihood as a function of the fluorophore distribution ($\Theta$, $\Phi$, $\kappa$, $c$)
+  \begin{center}
+  True orientation: $\Theta = 0, \Phi = 0, \kappa = 10, c = 1$\\
+    \includegraphics[width=0.9\textwidth, interpolate=true]{figs/likelihood-dist2.pdf}\\
+  \end{center}
+* Discussion 
+\begin{itemize}
+\item $\Theta$ and $\Phi$ are bounded
+\item $\kappa$ and $c$ are unbounded...estimate log($\kappa$) and log($c$) instead?
+\end{itemize}

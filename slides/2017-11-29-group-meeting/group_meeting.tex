@@ -1,4 +1,4 @@
-% Created 2017-11-29 Wed 11:57
+% Created 2017-11-29 Wed 13:14
 \documentclass[presentation]{beamer}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -112,7 +112,7 @@ x^* &= \underset{x\in \mathbb{S}^2}{\mathrm{argmin}}\ f(x)
 \begin{enumerate}
 \item Let $f:\mathbb{S}^2 \rightarrow \mathbb{R}$ be the function we want to optimize. 
 \item {Embed the manifold in Euclidean space and define a new smooth function $\bar{f}: \mathbb{R}^3 \rightarrow \mathbb{R}$. If we 
-constr$\bar{f}$ to $\mathbb{S}^2$ then we recover $f$.}
+constrain $\bar{f}$ to $\mathbb{S}^2$ then we recover $f$.}
 \item Choose an initial guess on $\mathbb{S}^2$. 
 \item Take the usual Euclidean gradient of $\bar{f}$. $\nabla \bar{f} = \left(\frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}, \frac{\partial f}{\partial z})$
 \item Project the Euclidean gradient onto the tangent space of $\mathbb{S}^2$. This projected gradient is called the \textit{Riemannian gradient}. 

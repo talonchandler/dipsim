@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Faster Techniques For 3D Orientation Reconstruction</title>
+<!-- 2017-12-02 Sat 11:54 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Talon Chandler" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+<script type="text/javascript" src="http://orgmode.org/mathjax/MathJax.js"></script>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+    MathJax.Hub.Config({
+        // Only one of the two following lines, depending on user settings
+        // First allows browser-native MathML display, second forces HTML/CSS
+        //  config: ["MMLorHTML.js"], jax: ["input/TeX"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+        extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js",
+                     "TeX/noUndefined.js"],
+        tex2jax: {
+            inlineMath: [ ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"], ["\\begin{displaymath}","\\end{displaymath}"] ],
+            skipTags: ["script","noscript","style","textarea","pre","code"],
+            ignoreClass: "tex2jax_ignore",
+            processEscapes: false,
+            processEnvironments: true,
+            preview: "TeX"
+        },
+        showProcessingMessages: true,
+        displayAlign: "center",
+        displayIndent: "2em",
+
+        "HTML-CSS": {
+             scale: 100,
+             availableFonts: ["STIX","TeX"],
+             preferredFont: "TeX",
+             webFont: "TeX",
+             imageFont: "TeX",
+             showMathMenu: true,
+        },
+        MMLorHTML: {
+             prefer: {
+                 MSIE:    "MML",
+                 Firefox: "MML",
+                 Opera:   "HTML",
+                 other:   "HTML"
+             }
+        }
+    });
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Faster Techniques For 3D Orientation Reconstruction</h1>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Background: Real Projective Plane \(\mathbb{RP}^2\)</h2>
+<div class="outline-text-2" id="text-1">
+\begin{itemize}
+\item Set of all infinite lines through the origin
+\item Two dimensional space
+\item Not a vector space! 
+\item Single dipole orientations live in the real projective plane 
+\item The sphere \(\mathbb{S}^2\) is a \textit{double cover} of \(\mathbb{RP}^2\) 
+\item The sphere \(\mathbb{S}^2\) can be \textit{embedded} in 3D Euclidean space \(\mathbb{R}^3\) 
+\end{itemize}
+</div>
+</div>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Watson Distribution</h2>
+<div class="outline-text-2" id="text-2">
+\begin{center}
+  \includegraphics[width=1.0\textwidth, interpolate=true]{figs/watson.pdf}\\
+\end{center}
+\begin{align*}
+  &f(\mh{r}; \bs{\hat{\mu}}, \kappa) = \frac{1}{4\pi{}_1F_1\left(\frac{1}{2}, \frac{3}{2}, \kappa\right)}\text{exp}\{\kappa (\bs{\hat{\mu}}^T\mh{r})^2\}\\
+  &r \in \mathbb{RP}^2, \hat{\mu} \in \mathbb{RP}^2, \kappa \in \mathbb{R}
+\end{align*}
+\begin{itemize}
+\item Expensive special function \({}_1F_1\)
+\item Can't take integrals or derivatives wrt \(\kappa\)
+\item Can't take intensity integrals wrt \(\hat{\mu}\)
+\end{itemize}
+</div>
+</div>
+
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Central Angular Gaussian Distribution</h2>
+<div class="outline-text-2" id="text-3">
+\begin{align*}
+  &f(\mh{r}; \mathbf{A}) = \frac{r^T\mathbf{A}r}{|\mathbf{A}|}\\
+  &r \in \mathbb{RP}^2\\
+  &\mathbf{A}\ \text{is a}\ 3\times 3\ \text{positive definite matrix}
+\end{align*}
+\begin{itemize}
+\item Projection of a Gaussian in \(\mathbb{R}^3\) into \(\mathbb{RP}^2\)
+\item \(\mathbf{A}\) defines a ellipsoid.
+\item Too general for us. We want rotational symmetry. 
+\end{itemize}
+</div>
+</div>
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Spheroid Distribution</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+\vspace{-1em}
+</p>
+\begin{center}
+  \includegraphics[width=1.0\textwidth, interpolate=true]{figs/spheroid.pdf}
+\end{center}
+<p>
+\vspace{-4em}
+</p>
+\begin{align*}
+  f(\mh{r}; \mathbf{A}) = \frac{r^T\mathbf{A}r}{|\mathbf{A}|}
+\end{align*}
+<p>
+\vspace{-1em}
+</p>
+\begin{itemize}
+\item \(\mathbf{A}\) is a 3 \(\times\) 3 positive definite matrix with 3 orthonormal evecs.
+\item The first evec is pointed along the symmetry axis \(\hat{\mu} \in \mathbb{RP}^2\)
+\item The other two evecs are have the same eigenvalue. 
+\item The ratio of the symmetry evalue to orthogonal evalues is \(\kappa^2\). 
+\item Cheap to compute. Can take derivatives and integrals.
+\item \(\kappa\) has an easy interpretation---ratio of symmetry axis radius to orthogonal axis radius
+\item Matches Rudolf's previous work with birefringent materials. We're comfortable reasoning about spheroids. 
+\end{itemize}
+</div>
+</div>
+
+<div id="outline-container-sec-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> Next Topic: Optimization Problem</h2>
+<div class="outline-text-2" id="text-5">
+\begin{align*}
+f&: \mathbb{S}^2 \rightarrow \mathbb{R}\\ \\
+x^* &= \underset{x\in \mathbb{S}^2}{\mathrm{argmin}}\ f(x)
+\end{align*}
+\begin{itemize}
+\item What is the gradient of \(f\)?\\
+\item Use spherical coordinates (\(\theta\), \(\phi\)). \(\nabla f \stackrel{?}{=} \left(\frac{\partial f}{\partial \theta}, \frac{\partial f}{\partial \phi})\)
+\item Step size is different at different points on the sphere.
+\item Gradient depends on the coordinate choice. 
+\item Trouble at the poles!
+\end{itemize}
+</div>
+</div>
+<div id="outline-container-sec-6" class="outline-2">
+<h2 id="sec-6"><span class="section-number-2">6</span> Instead optimize on a manifold</h2>
+<div class="outline-text-2" id="text-6">
+\begin{center}
+  \includegraphics[width=0.4\textwidth, interpolate=true]{figs/book.png}\\
+\end{center}
+</div>
+</div>
+<div id="outline-container-sec-7" class="outline-2">
+<h2 id="sec-7"><span class="section-number-2">7</span> Rough Recipe For Optimizing On A Manifold</h2>
+<div class="outline-text-2" id="text-7">
+\begin{enumerate}
+\item Let \(f:\mathbb{S}^2 \rightarrow \mathbb{R}\) be the function we want to optimize. 
+\item {Embed the manifold in Euclidean space and define a new smooth function \(\bar{f}: \mathbb{R}^3 \rightarrow \mathbb{R}\). If we 
+constrain \(\bar{f}\) to \(\mathbb{S}^2\) then we recover \(f\).}
+\item Choose an initial guess on \(\mathbb{S}^2\). 
+\item Take the usual Euclidean gradient of \(\bar{f}\). \(\nabla \bar{f} = \left(\frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}, \frac{\partial f}{\partial z})\)
+\item Project the Euclidean gradient onto the tangent space of \(\mathbb{S}^2\). This projected gradient is called the \textit{Riemannian gradient}. 
+\item Update your guess by moving along the Riemannian gradient. 
+\item \textit{Retract} your new guess from the tangent space back onto \(\mathbb{S}^2\). 
+\item Repeat from step 4.
+\end{enumerate}
+</div>
+</div>
+<div id="outline-container-sec-8" class="outline-2">
+<h2 id="sec-8"><span class="section-number-2">8</span> </h2>
+<div class="outline-text-2" id="text-8">
+\begin{center}
+  \includegraphics[width=1.0\textwidth, interpolate=true]{figs/tangent.pdf}\\
+\end{center}
+</div>
+</div>
+<div id="outline-container-sec-9" class="outline-2">
+<h2 id="sec-9"><span class="section-number-2">9</span> Summary + Work In Progress</h2>
+<div class="outline-text-2" id="text-9">
+\begin{itemize}
+\item A central angular Gaussian distribution with rotational symmetry gives the spheroid distribution.
+\item Spheroid distributions are easier to handle than Watson distributions.
+\item I'm working on integrating the spheroid distribution analytically which will yield a much faster forward model.
+\item Optimizing on an embedded manifold allows us to calculate gradients correctly.
+\item Multiple seed gradient methods will be much faster than the gradient-free particle swarm methods I've been using.
+\item Initial seed could be generated with Rudolf's proposed change of coordinates.
+\end{itemize}
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Date: November 29, 2017</p>
+<p class="author">Author: Talon Chandler</p>
+<p class="date">Created: 2017-12-02 Sat 11:54</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 25.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
